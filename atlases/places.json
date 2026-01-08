@@ -1,0 +1,135 @@
+{
+  "frames": {
+    "Jungle": {
+      "frame": {
+        "x": 4,
+        "y": 4,
+        "w": 374,
+        "h": 301
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 91,
+        "w": 374,
+        "h": 301
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Arctic": {
+      "frame": {
+        "x": 386,
+        "y": 4,
+        "w": 348,
+        "h": 292
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 104,
+        "w": 348,
+        "h": 292
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Farm": {
+      "frame": {
+        "x": 742,
+        "y": 4,
+        "w": 345,
+        "h": 288
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 27,
+        "y": 98,
+        "w": 345,
+        "h": 288
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Ocean": {
+      "frame": {
+        "x": 1095,
+        "y": 4,
+        "w": 348,
+        "h": 265
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 129,
+        "w": 348,
+        "h": 265
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Savannah": {
+      "frame": {
+        "x": 1451,
+        "y": 4,
+        "w": 360,
+        "h": 252
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 25,
+        "y": 140,
+        "w": 360,
+        "h": 252
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "places.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1815,
+      "h": 309
+    },
+    "scale": 1
+  }
+}

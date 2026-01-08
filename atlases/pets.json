@@ -1,56 +1,8 @@
 {
   "frames": {
-    "FurSeal": {
-      "frame": {
-        "x": 4,
-        "y": 4,
-        "w": 211,
-        "h": 319
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 25,
-        "y": 2,
-        "w": 211,
-        "h": 319
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Robot": {
-      "frame": {
-        "x": 4,
-        "y": 331,
-        "w": 220,
-        "h": 308
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 38,
-        "y": 8,
-        "w": 220,
-        "h": 308
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "Bunny": {
       "frame": {
-        "x": 223,
+        "x": 4,
         "y": 4,
         "w": 190,
         "h": 303
@@ -58,34 +10,10 @@
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 49,
-        "y": 15,
+        "x": 60,
+        "y": 18,
         "w": 190,
         "h": 303
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Princess": {
-      "frame": {
-        "x": 4,
-        "y": 647,
-        "w": 223,
-        "h": 296
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 36,
-        "y": 26,
-        "w": 223,
-        "h": 296
       },
       "sourceSize": {
         "w": 300,
@@ -98,7 +26,7 @@
     },
     "Deer": {
       "frame": {
-        "x": 232,
+        "x": 4,
         "y": 315,
         "w": 201,
         "h": 290
@@ -106,8 +34,8 @@
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 39,
-        "y": 22,
+        "x": 42,
+        "y": 20,
         "w": 201,
         "h": 290
       },
@@ -120,68 +48,20 @@
         "y": 0.5
       }
     },
-    "Dragon": {
+    "Kangaroo": {
       "frame": {
-        "x": 421,
+        "x": 202,
         "y": 4,
-        "w": 234,
-        "h": 288
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 37,
-        "y": 17,
-        "w": 234,
-        "h": 288
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Pony": {
-      "frame": {
-        "x": 4,
-        "y": 951,
-        "w": 245,
+        "w": 208,
         "h": 281
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 43,
-        "w": 245,
+        "x": 53,
+        "y": 36,
+        "w": 208,
         "h": 281
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Mermaid": {
-      "frame": {
-        "x": 235,
-        "y": 613,
-        "w": 220,
-        "h": 280
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 49,
-        "y": 30,
-        "w": 220,
-        "h": 280
       },
       "sourceSize": {
         "w": 300,
@@ -194,16 +74,16 @@
     },
     "Mouse": {
       "frame": {
-        "x": 441,
-        "y": 300,
+        "x": 4,
+        "y": 613,
         "w": 214,
         "h": 279
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 43,
-        "y": 32,
+        "x": 57,
+        "y": 34,
         "w": 214,
         "h": 279
       },
@@ -216,18 +96,42 @@
         "y": 0.5
       }
     },
+    "NavySeal": {
+      "frame": {
+        "x": 4,
+        "y": 900,
+        "w": 253,
+        "h": 216
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 35,
+        "y": 87,
+        "w": 253,
+        "h": 216
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Zebra": {
       "frame": {
-        "x": 257,
-        "y": 901,
+        "x": 213,
+        "y": 293,
         "w": 205,
         "h": 277
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 42,
-        "y": 42,
+        "x": 47,
+        "y": 40,
         "w": 205,
         "h": 277
       },
@@ -242,8 +146,8 @@
     },
     "Duck": {
       "frame": {
-        "x": 463,
-        "y": 587,
+        "x": 418,
+        "y": 4,
         "w": 182,
         "h": 273
       },
@@ -266,8 +170,8 @@
     },
     "Dolphin": {
       "frame": {
-        "x": 470,
-        "y": 868,
+        "x": 226,
+        "y": 578,
         "w": 242,
         "h": 268
       },
@@ -288,20 +192,20 @@
         "y": 0.5
       }
     },
-    "Puppy": {
+    "Pony": {
       "frame": {
-        "x": 653,
-        "y": 587,
-        "w": 207,
-        "h": 267
+        "x": 426,
+        "y": 854,
+        "w": 227,
+        "h": 261
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 35,
-        "y": 45,
-        "w": 207,
-        "h": 267
+        "x": 32,
+        "y": 55,
+        "w": 227,
+        "h": 261
       },
       "sourceSize": {
         "w": 300,
@@ -312,20 +216,20 @@
         "y": 0.5
       }
     },
-    "Filly": {
+    "Raccoon": {
       "frame": {
-        "x": 720,
-        "y": 862,
-        "w": 216,
-        "h": 264
+        "x": 426,
+        "y": 285,
+        "w": 231,
+        "h": 267
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 45,
-        "y": 45,
-        "w": 216,
-        "h": 264
+        "x": 15,
+        "y": 44,
+        "w": 231,
+        "h": 267
       },
       "sourceSize": {
         "w": 300,
@@ -338,7 +242,7 @@
     },
     "Panda": {
       "frame": {
-        "x": 663,
+        "x": 661,
         "y": 4,
         "w": 210,
         "h": 261
@@ -362,16 +266,16 @@
     },
     "Cougar": {
       "frame": {
-        "x": 663,
-        "y": 273,
+        "x": 476,
+        "y": 560,
         "w": 204,
         "h": 261
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 39,
-        "y": 53,
+        "x": 42,
+        "y": 50,
         "w": 204,
         "h": 261
       },
@@ -384,18 +288,66 @@
         "y": 0.5
       }
     },
+    "Lion": {
+      "frame": {
+        "x": 665,
+        "y": 273,
+        "w": 210,
+        "h": 255
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 48,
+        "y": 50,
+        "w": 210,
+        "h": 255
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Tiger": {
+      "frame": {
+        "x": 879,
+        "y": 4,
+        "w": 203,
+        "h": 254
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 48,
+        "w": 203,
+        "h": 254
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Penguin": {
       "frame": {
-        "x": 868,
-        "y": 542,
+        "x": 661,
+        "y": 829,
         "w": 183,
         "h": 254
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 53,
-        "y": 56,
+        "x": 59,
+        "y": 53,
         "w": 183,
         "h": 254
       },
@@ -410,42 +362,18 @@
     },
     "Fish": {
       "frame": {
-        "x": 875,
-        "y": 273,
+        "x": 688,
+        "y": 536,
         "w": 217,
         "h": 252
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 38,
-        "y": 33,
+        "x": 51,
+        "y": 38,
         "w": 217,
         "h": 252
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Kitty": {
-      "frame": {
-        "x": 881,
-        "y": 4,
-        "w": 238,
-        "h": 251
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 36,
-        "y": 58,
-        "w": 238,
-        "h": 251
       },
       "sourceSize": {
         "w": 300,
@@ -458,16 +386,16 @@
     },
     "Cat": {
       "frame": {
-        "x": 944,
-        "y": 804,
+        "x": 883,
+        "y": 266,
         "w": 217,
         "h": 251
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 37,
-        "y": 57,
+        "x": 43,
+        "y": 61,
         "w": 217,
         "h": 251
       },
@@ -480,20 +408,68 @@
         "y": 0.5
       }
     },
-    "Tiger": {
+    "Snake": {
       "frame": {
-        "x": 1059,
-        "y": 533,
-        "w": 210,
+        "x": 1090,
+        "y": 4,
+        "w": 209,
+        "h": 251
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 54,
+        "y": 58,
+        "w": 209,
+        "h": 251
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "PolarBear": {
+      "frame": {
+        "x": 852,
+        "y": 796,
+        "w": 207,
         "h": 250
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 33,
+        "x": 49,
         "y": 61,
-        "w": 210,
+        "w": 207,
         "h": 250
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Koala": {
+      "frame": {
+        "x": 913,
+        "y": 525,
+        "w": 235,
+        "h": 249
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 44,
+        "y": 58,
+        "w": 235,
+        "h": 249
       },
       "sourceSize": {
         "w": 300,
@@ -506,7 +482,7 @@
     },
     "Axolotl": {
       "frame": {
-        "x": 1100,
+        "x": 1108,
         "y": 263,
         "w": 250,
         "h": 248
@@ -514,8 +490,32 @@
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
+        "x": 24,
+        "y": 64,
+        "w": 250,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Bat": {
+      "frame": {
+        "x": 1307,
+        "y": 4,
+        "w": 250,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
         "x": 22,
-        "y": 63,
+        "y": 56,
         "w": 250,
         "h": 248
       },
@@ -530,15 +530,15 @@
     },
     "Monkey": {
       "frame": {
-        "x": 1277,
-        "y": 4,
+        "x": 1067,
+        "y": 782,
         "w": 202,
         "h": 248
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 47,
+        "x": 58,
         "y": 58,
         "w": 202,
         "h": 248
@@ -552,10 +552,34 @@
         "y": 0.5
       }
     },
+    "Owl": {
+      "frame": {
+        "x": 1156,
+        "y": 519,
+        "w": 177,
+        "h": 248
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 67,
+        "y": 53,
+        "w": 177,
+        "h": 248
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Chick": {
       "frame": {
-        "x": 1487,
-        "y": 4,
+        "x": 1277,
+        "y": 775,
         "w": 173,
         "h": 248
       },
@@ -576,20 +600,20 @@
         "y": 0.5
       }
     },
-    "Swordfish": {
+    "Frog": {
       "frame": {
-        "x": 1668,
-        "y": 4,
-        "w": 234,
-        "h": 226
+        "x": 1341,
+        "y": 519,
+        "w": 198,
+        "h": 243
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 28,
-        "y": 59,
-        "w": 234,
-        "h": 226
+        "x": 43,
+        "y": 70,
+        "w": 198,
+        "h": 243
       },
       "sourceSize": {
         "w": 300,
@@ -602,90 +626,18 @@
     },
     "Parrot": {
       "frame": {
-        "x": 1668,
-        "y": 238,
+        "x": 1366,
+        "y": 260,
         "w": 231,
         "h": 239
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 16,
-        "y": 75,
+        "x": 18,
+        "y": 71,
         "w": 231,
         "h": 239
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Elephant": {
-      "frame": {
-        "x": 1668,
-        "y": 485,
-        "w": 227,
-        "h": 225
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 24,
-        "y": 75,
-        "w": 227,
-        "h": 225
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Capybara": {
-      "frame": {
-        "x": 1668,
-        "y": 718,
-        "w": 224,
-        "h": 236
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 33,
-        "y": 76,
-        "w": 224,
-        "h": 236
-      },
-      "sourceSize": {
-        "w": 300,
-        "h": 350
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Fledgling": {
-      "frame": {
-        "x": 1668,
-        "y": 962,
-        "w": 218,
-        "h": 246
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 43,
-        "y": 59,
-        "w": 218,
-        "h": 246
       },
       "sourceSize": {
         "w": 300,
@@ -698,8 +650,8 @@
     },
     "Octopus": {
       "frame": {
-        "x": 1358,
-        "y": 260,
+        "x": 1565,
+        "y": 4,
         "w": 261,
         "h": 237
       },
@@ -720,20 +672,20 @@
         "y": 0.5
       }
     },
-    "Turtle": {
+    "Capybara": {
       "frame": {
-        "x": 1358,
-        "y": 505,
-        "w": 214,
-        "h": 233
+        "x": 1458,
+        "y": 770,
+        "w": 224,
+        "h": 236
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 29,
-        "y": 69,
-        "w": 214,
-        "h": 233
+        "x": 33,
+        "y": 74,
+        "w": 224,
+        "h": 236
       },
       "sourceSize": {
         "w": 300,
@@ -744,10 +696,10 @@
         "y": 0.5
       }
     },
-    "Doggy": {
+    "Dog": {
       "frame": {
-        "x": 1358,
-        "y": 746,
+        "x": 1547,
+        "y": 507,
         "w": 210,
         "h": 230
       },
@@ -768,20 +720,68 @@
         "y": 0.5
       }
     },
-    "Frog": {
+    "KillerWhale": {
       "frame": {
-        "x": 1358,
-        "y": 984,
-        "w": 198,
-        "h": 243
+        "x": 1765,
+        "y": 249,
+        "w": 226,
+        "h": 189
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 43,
-        "y": 70,
-        "w": 198,
-        "h": 243
+        "x": 45,
+        "y": 106,
+        "w": 226,
+        "h": 189
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Turtle": {
+      "frame": {
+        "x": 1765,
+        "y": 446,
+        "w": 210,
+        "h": 213
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 87,
+        "w": 210,
+        "h": 213
+      },
+      "sourceSize": {
+        "w": 300,
+        "h": 350
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Elephant": {
+      "frame": {
+        "x": 1690,
+        "y": 745,
+        "w": 245,
+        "h": 225
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 69,
+        "w": 245,
+        "h": 225
       },
       "sourceSize": {
         "w": 300,
@@ -794,13 +794,11 @@
     }
   },
   "meta": {
-    "app": "http://free-tex-packer.com",
-    "version": "0.6.7",
     "image": "pets.png",
     "format": "RGBA8888",
     "size": {
-      "w": 1906,
-      "h": 1236
+      "w": 1995,
+      "h": 1120
     },
     "scale": 1
   }
