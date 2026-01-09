@@ -1,0 +1,135 @@
+{
+  "frames": {
+    "Arctic": {
+      "frame": {
+        "x": 4,
+        "y": 4,
+        "w": 80,
+        "h": 87
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 87
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 87
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Farm": {
+      "frame": {
+        "x": 4,
+        "y": 99,
+        "w": 80,
+        "h": 87
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 87
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 87
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Jungle": {
+      "frame": {
+        "x": 4,
+        "y": 194,
+        "w": 80,
+        "h": 87
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 87
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 87
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Ocean": {
+      "frame": {
+        "x": 4,
+        "y": 289,
+        "w": 80,
+        "h": 87
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 87
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 87
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Savannah": {
+      "frame": {
+        "x": 4,
+        "y": 384,
+        "w": 80,
+        "h": 87
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 87
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 87
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "stars.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 88,
+      "h": 475
+    },
+    "scale": 1
+  }
+}
