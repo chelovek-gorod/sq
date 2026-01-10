@@ -15,7 +15,7 @@ export default class BackgroundImage extends Sprite {
             ? screenData.width / this.bgWidth
             : screenData.height / this.bgHeight
         )
-        this.bg.scale.set(scaleBg)
+        this.scale.set(scaleBg)
     }
 
     setTexture(image) {

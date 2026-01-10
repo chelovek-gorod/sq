@@ -1,0 +1,111 @@
+{
+  "frames": {
+    "button": {
+      "frame": {
+        "x": 4,
+        "y": 4,
+        "w": 380,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 14,
+        "w": 380,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 380,
+        "h": 152
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "button_icon": {
+      "frame": {
+        "x": 392,
+        "y": 4,
+        "w": 137,
+        "h": 132
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 19,
+        "w": 137,
+        "h": 132
+      },
+      "sourceSize": {
+        "w": 148,
+        "h": 152
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "button_icon_hover": {
+      "frame": {
+        "x": 392,
+        "y": 144,
+        "w": 119,
+        "h": 113
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 19,
+        "w": 119,
+        "h": 113
+      },
+      "sourceSize": {
+        "w": 148,
+        "h": 152
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "button_hover": {
+      "frame": {
+        "x": 4,
+        "y": 150,
+        "w": 364,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 14,
+        "w": 364,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 380,
+        "h": 152
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "buttons.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 533,
+      "h": 272
+    },
+    "scale": 1
+  }
+}

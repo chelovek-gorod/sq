@@ -151,28 +151,31 @@ export const PLACE_PETS = {
 
 export const PET_DATA = {
     anchor: {x: 0.5, y: 0.62},
-    scale: 1.2,
-    scaleDrag: 1.5,
-    scaleSpeed:0.0012,
+    scale: 1,
+    scaleDrag: 1.2,
+    scalingDuration: 120,
+    scaleSpeed: 0,
 }
+PET_DATA.scaleSpeed = (PET_DATA.scaleDrag - PET_DATA.scale) / PET_DATA.scalingDuration
 
 export const PET_STATE = createEnum(['EMPTY', 'IDLE', 'DRAGGING'])
 
 export const CEIL_DATA = {
-    size: 400,
-    offsetX: 80,
+    height: 300,
+    width: 400,
     alpha: 0.9,
-    scale: 1.2,
-    collideRadius: 200,
+    scale: 1.0,
+    collideRadius: 120,
     collideRadiusSq: 1,
-    highlightScale: 1.4,
+    highlightScale: 1.2,
     highlightAlpha: 1.0,
-    highlightSteps: 1000,
-    highlightScaleStep: -0,
-    highlightAlphaStep: -0,
+    highlightDuration: 120,
+    highlightScaleStep: 0,
+    highlightAlphaStep: 0,
 }
 CEIL_DATA.collideRadiusSq = CEIL_DATA.collideRadius * CEIL_DATA.collideRadius
-CEIL_DATA.highlightScaleStep = (CEIL_DATA.highlightScale - CEIL_DATA.scale) / CEIL_DATA.highlightSteps
-CEIL_DATA.highlightAlphaStep = (CEIL_DATA.highlightAlpha - CEIL_DATA.alpha) / CEIL_DATA.highlightSteps
+CEIL_DATA.highlightScaleStep = (CEIL_DATA.highlightScale - CEIL_DATA.scale) / CEIL_DATA.highlightDuration
+CEIL_DATA.highlightAlphaStep = (CEIL_DATA.highlightAlpha - CEIL_DATA.alpha) / CEIL_DATA.highlightDuration
 
-export const FIELD_OFFSET = 40
+export const FIELD_OFFSET_X = 0
+export const FIELD_OFFSET_Y = 40

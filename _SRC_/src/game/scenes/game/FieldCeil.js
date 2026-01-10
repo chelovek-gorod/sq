@@ -18,6 +18,11 @@ export default class FieldCeil extends Sprite {
         // this.nearestCeils = [] 
 
         this.pet = null
+
+        this.targetScale = CEIL_DATA.scale
+        this.targetAlpha = CEIL_DATA.alpha
+        this.isAnimating = false
+        this.isHighlighted = false
     }
 
     checkAvailable(type) {
@@ -32,27 +37,58 @@ export default class FieldCeil extends Sprite {
     }
 
     highlightOn() {
-        tickerAdd(this)
+        if (this.isHighlighted) return
+        
+        this.isHighlighted = true
+        this.targetScale = CEIL_DATA.highlightScale
+        this.targetAlpha = CEIL_DATA.highlightAlpha
+        
+        if (!this.isAnimating) {
+            this.isAnimating = true
+            tickerAdd(this)
+        }
+    }
+
+    highlightOff() {
+        if (!this.isHighlighted) return
+        
+        this.isHighlighted = false
+        this.targetScale = CEIL_DATA.scale
+        this.targetAlpha = CEIL_DATA.alpha
+        
+        if (!this.isAnimating) {
+            this.isAnimating = true
+            tickerAdd(this)
+        }
     }
 
     tick(time){
-        const scaleStep = CEIL_DATA.highlightScaleStep * time.deltaMS
-        const alphaStep = CEIL_DATA.highlightAlphaStep * time.deltaMS
+        const scaleDone = this.scale.x === this.targetScale
+        const alphaDone = this.alpha === this.targetAlpha
 
-        const isHighlight = this.parent.parent.closestDragCeil === this
+        if (scaleDone && alphaDone) {
+            this.scale.set(this.targetScale)
+            this.alpha = this.targetAlpha
+            this.isAnimating = false
+            tickerRemove(this)
+            return
+        }
 
-        if (isHighlight) {
-            if (this.scale.x === CEIL_DATA.highlightScale) return
-
-            this.scale.set( Math.min(CEIL_DATA.highlightScale, this.scale.x + scaleStep) )
-            this.alpha = Math.min(CEIL_DATA.highlightAlpha, this.alpha + alphaStep)
-            if (this.scale.x === CEIL_DATA.highlightScale) this.alpha = CEIL_DATA.highlightAlpha
-        } else {
-            this.scale.set( Math.max(CEIL_DATA.scale, this.scale.x - scaleStep) )
-            this.alpha = Math.max(CEIL_DATA.alpha, this.alpha - alphaStep)
-            if (this.scale.x === CEIL_DATA.scale) {
-                this.alpha = CEIL_DATA.alpha
-                tickerRemove(this)
+        if (!scaleDone) {
+            const scaleStep = CEIL_DATA.highlightScaleStep * time.deltaMS
+            if (this.scale.x < this.targetScale) {
+                this.scale.set(Math.min(this.targetScale, this.scale.x + scaleStep))
+            } else {
+                this.scale.set(Math.max(this.targetScale, this.scale.x - scaleStep))
+            }
+        }
+        
+        if (!alphaDone) {
+            const alphaStep = CEIL_DATA.highlightAlphaStep * time.deltaMS
+            if (this.alpha < this.targetAlpha) {
+                this.alpha = Math.min(this.targetAlpha, this.alpha + alphaStep)
+            } else {
+                this.alpha = Math.max(this.targetAlpha, this.alpha - alphaStep)
             }
         }
     }

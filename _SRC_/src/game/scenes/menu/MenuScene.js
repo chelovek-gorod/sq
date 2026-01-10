@@ -5,7 +5,7 @@ import { EventHub, events, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { MENU_TEXT } from './constants'
 import { SCENE_NAME } from '../../scenes/constants'
-import BackgroundGradient from '../../BG/BackgroundGradient'
+import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
 import GameTitle from './GameTitle'
 import { getLanguage } from '../../localization'
@@ -20,7 +20,7 @@ export default class Menu extends Container {
 
         this.isMenuActive = true
 
-        this.bg = new BackgroundGradient([0x00ff00, 0x000000])
+        this.bg = new BackgroundImage( images.bg_main )
         this.addChild(this.bg)
 
         this.logo = new Sprite(images.img_logo)
@@ -29,18 +29,19 @@ export default class Menu extends Container {
         this.addChild(this.logo)
 
         
-        this.title = new GameTitle()
+        this.title = new Sprite(images.game_title) // GameTitle()
+        this.title.anchor.set(0.5, 0)
         this.titleStartWidth = this.title.width
         this.titleStartHeight = this.title.height
         this.addChild(this.title)
 
         this.startButton = new Button(
-            'Start', 0, 0, () => {
+            null, 'Start', () => {
                 if (!this.isMenuActive) return
 
                 this.isMenuActive = false
                 startScene(SCENE_NAME.Game)
-            }
+            }, true
         )
         this.addChild(this.startButton)
 
@@ -57,9 +58,11 @@ export default class Menu extends Container {
 
         const titleScaleX = Math.min(1, screenData.width / (this.titleStartWidth + 120))
         const titleScaleY = Math.min(1, screenData.centerY / (this.titleStartHeight + 60))
-        const pointY = screenData.centerY * 0.5
+        const pointY = screenData.centerY * 0.75
         this.title.scale.set( Math.min(titleScaleX, titleScaleY) )
         this.title.position.set(0, -pointY)
+
+        this.startButton.position.set(0, pointY)
     }
 
     updateLanguage(lang) {

@@ -27,7 +27,7 @@ export default class GameField extends Container {
         this.addChild(this.ceils, this.pets, this.sky, this.effects)
 
         this.dragData = { pet: null, isDone: false }
-        this.lastHighlightCell = null
+        this.closestDragCeil = null
 
         this.fill(level)
 
@@ -38,19 +38,17 @@ export default class GameField extends Container {
     fill(level) {
         const ceilsMap = new Map()
     
+        const halfWidth = CEIL_DATA.width * 0.5
+        const halfHeight = CEIL_DATA.height * 0.5
         const xSteps = Math.ceil(level.map[0].length / 3)
-        const halfCeil = CEIL_DATA.size * 0.5
         
-        const stepX = halfCeil + CEIL_DATA.offsetX  // расстояние по X между центрами
-        const stepY = halfCeil                      // расстояние по Y между центрами
-        
-        let yy = 0
+        let yy = 0 // пол клетки добавится в начале цикла
         for(let y = 0; y < level.map.length; y++) {
-            yy += stepY 
+            yy += halfHeight 
             const line = level.map[y]
-            let xx = 0
+            let xx = 0 // пол клетки добавится в начале цикла
             for(let x = 0; x < xSteps; x++) {
-                xx += stepX
+                xx += halfWidth 
                 const i = x * 3
                 // check ceil start
                 if (line[i] === '<') {
@@ -75,10 +73,10 @@ export default class GameField extends Container {
                     ceilsMap.set(Math.round(xx) + "-" + Math.round(yy), ceil)
                     
                     ceil.nearestCeils = [
-                        Math.round(xx - stepX) + "-" + Math.round(yy - stepY),
-                        Math.round(xx + stepX) + "-" + Math.round(yy - stepY),
-                        Math.round(xx - stepX) + "-" + Math.round(yy + stepY),
-                        Math.round(xx + stepX) + "-" + Math.round(yy + stepY),
+                        Math.round(xx - halfWidth) + "-" + Math.round(yy - halfHeight),
+                        Math.round(xx + halfWidth) + "-" + Math.round(yy - halfHeight),
+                        Math.round(xx - halfWidth) + "-" + Math.round(yy + halfHeight),
+                        Math.round(xx + halfWidth) + "-" + Math.round(yy + halfHeight),
                     ]
                 }
             }
@@ -127,33 +125,39 @@ export default class GameField extends Container {
     }
 
     setDraggingPet() {
-        if (this.closestDragCeil === null || this.closestDragCeil.pet === this.dragData.pet) {
-            this.dragData.pet.returnToStart()
-            this.dragData.pet = null
-            this.closestDragCeil = null
-            return
+        const dragPet = this.dragData.pet
+        const targetCeil = this.closestDragCeil
+        
+        this.dragData.pet = null
+        this.closestDragCeil = null
+        
+        if (!dragPet) return
+        
+        if (targetCeil) targetCeil.highlightOff()
+
+        if (targetCeil === null) return dragPet.returnToStart()
+        if (targetCeil.pet === dragPet) return dragPet.returnToStart()
+        if (targetCeil.pet) {
+            targetCeil.nearestCeils.forEach(c => c.checkClouds())
+            kill(targetCeil.pet)
+            dragPet.upgrade()
+            this.effects.addChild( new Splash(targetCeil.x, targetCeil.y) )
         }
         
-        if (this.closestDragCeil.pet) {
-            this.closestDragCeil.nearestCeils.forEach( c => c.checkClouds() )
-            kill(this.closestDragCeil.pet)
-            this.dragData.pet.upgrade()
-            this.effects.addChild( new Splash(this.closestDragCeil.pet.x, this.closestDragCeil.pet.y) )
-        }
-
-        this.dragData.pet.moveToCeil(this.closestDragCeil)
-        this.closestDragCeil = null
-        this.dragData.pet = null
-
-        setTimeout( userDoStep, 0 )
+        dragPet.moveToCeil(targetCeil)
+        setTimeout(userDoStep, 0)
     }
 
     tick( time ) {
         if (!this.dragData.pet) return
 
-        this.closestDragCeil = this.getClosestDragCeil()
-
-        if (this.closestDragCeil) this.closestDragCeil.highlightOn()
+        const newClosestCeil = this.getClosestDragCeil()
+        if (newClosestCeil !== this.closestDragCeil) {
+            if (this.closestDragCeil) this.closestDragCeil.highlightOff()
+            if (newClosestCeil) newClosestCeil.highlightOn()
+            
+            this.closestDragCeil = newClosestCeil
+        }
 
         if (this.dragData.isDone) this.setDraggingPet()
     }

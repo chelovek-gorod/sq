@@ -67,7 +67,7 @@ export default class PetToken extends Container {
         this.rotation *= 0.9
     }
 
-    onDragStart(event) {
+    onDragStart(event) { console.log(this.ceil.place)
         if (this.state === PET_STATE.DRAGGING) return
 
         this.state = PET_STATE.DRAGGING
@@ -78,6 +78,8 @@ export default class PetToken extends Container {
         this.dragOffset.y = mousePos.y - this.y
         
         this.parent.addChild(this)
+
+        dragging({ pet: this, isDone: false })
     }
 
     onDragMove(event) {
@@ -141,7 +143,7 @@ export default class PetToken extends Container {
                 if (this.image.scale.x < PET_DATA.scaleDrag) {
                     this.updateScale(true, delta * PET_DATA.scaleSpeed)
                 }
-                this.rotation = 0  // ← ФИКС!
+                this.rotation = 0
                 break
             
             case PET_STATE.EMPTY:

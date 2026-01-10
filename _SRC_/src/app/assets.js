@@ -26,14 +26,17 @@ export const fonts = {
 export const images = {
     img_finger: 'finger.png',
     img_logo: 'logo.png',
+    bg_main: 'main_bg.png',
+    game_title: 'game_title_width_shadow.png',
 }
 export const atlases = {
-   pets: 'pets.json',
-   places: 'places.json',
-   clouds: 'clouds.json',
-   splash: 'splash.json',
-   splash_2: 'splash_2.json',
-   stars: 'stars.json',
+    buttons: 'buttons.json',
+    pets: 'pets.json',
+    places: 'places.json',
+    clouds: 'clouds.json',
+    splash: 'splash.json',
+    splash_2: 'splash_2.json',
+    stars: 'stars.json',
 }
 export const sounds = {
     se_swipe: 'se_swipe.mp3',

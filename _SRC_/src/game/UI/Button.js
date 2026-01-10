@@ -1,44 +1,50 @@
 import { Container, Text, Sprite } from "pixi.js"
-import { images, sounds } from "../../app/assets"
+import { atlases, images, sounds } from "../../app/assets"
 import { removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
-import { getRRTextureWithShadow, getRRTexture } from "../../utils/textureGenerator"
-import { BUTTON } from "./constants"
 
 export default class Button extends Container {
-    constructor(text, x, y, callback, isActive = true ) {
+    constructor(icon, text, callback, isActive = true ) {
         super()
-        this.position.set(x, y)
 
         this.callback = callback
-        
-        this.shadow = new Sprite()
-        const [texture, padding] = getRRTextureWithShadow(
-            BUTTON.width, BUTTON.height, BUTTON.borderRadius, 0x000000, 0, 6,
+        this.isText = !!text
+
+        this.backImage = new Sprite(
+            atlases.buttons.textures[ icon ? 'button_icon' : 'button' ]
         )
-        this.shadow.texture = texture
-        this.shadow.anchor.set(0.5)
-        this.addChild(this.shadow)
+        this.backImage.anchor.set(0.5)
+        this.frontImage = new Sprite(
+            atlases.buttons.textures[ icon ? 'button_icon_hover' : 'button_hover' ]
+        )
+        this.frontImage.anchor.set(0.5)
+        this.frontImage.alpha = 0
 
-        this.image = new Sprite( getRRTexture(BUTTON.width, BUTTON.height, BUTTON.borderRadius, 0xff00ff) )
-        this.image.anchor.set(0.5)
-        setCursorPointer(this.image)
-        this.image.on('pointerdown', this.click, this)
-        this.image.on('pointerover', this.onHover, this)
-        this.image.on('pointerout', this.onOut, this)
-        this.addChild(this.image)
+        this.value = icon ? new Sprite(icon) : new Text({ text: text, style: styles.button })
+        this.value.anchor.set(0.5)
+        
+        this.addChild(this.backImage, this.frontImage, this.value)
 
-        this.label = new Text({ text: text, style: styles.button })
-        this.label.anchor.set(0.5)
-        this.addChild(this.label)
+        setCursorPointer(this)
+        this.on('pointerdown', this.click, this)
+        this.on('pointerover', this.onHover, this)
+        this.on('pointerout', this.onOut, this)
 
         this.isActive = isActive
         this.setActive(this.isActive)
     }
 
     setLabel(text) {
-        this.label.text = text
+        if (!this.isText) return
+
+        this.value.text = text
+    }
+
+    setIcon(icon) {
+        if (this.isText) return
+
+        this.value.texture = icon
     }
 
     setActive(isActive = true) {
@@ -47,7 +53,7 @@ export default class Button extends Container {
             this.alpha = 1
         } else {
             this.alpha = 0.5
-            this.label.style = styles.button
+            if (this.isText) this.value.style = styles.button
         }
     }
 
@@ -61,18 +67,18 @@ export default class Button extends Container {
     onHover() {
         if (!this.isActive) return
 
-        this.label.style = styles.buttonHover
+        if (this.isText) this.value.style = styles.buttonHover
         soundPlay(sounds.se_swipe)
     }
     onOut() {
-        this.label.style = styles.button
+        if (this.isText) this.value.style = styles.button
     }
 
     deactivate() {
         this.image.off('pointerdown', this.click, this)
         this.image.off('pointerover', this.onHover, this)
         this.image.off('pointerout', this.onOut, this)
-        this.label.style = styles.button
+        if (this.isText) this.value = styles.button
     }
 
     kill() {
