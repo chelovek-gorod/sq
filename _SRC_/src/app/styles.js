@@ -53,17 +53,17 @@ export function initFontStyles() {
     })
 
     styles.button = new TextStyle({
-        fontFamily: fonts.BSRegular,
-        fontSize: 48,
-        fill: '#000000',
+        fontFamily: fonts.BSBold,
+        fontSize: 60,
+        fill: '#ffffff',
     })
     styles.buttonHover = new TextStyle({
-        fontFamily: fonts.BSRegular,
-        fontSize: 48,
-        fill: '#000000',
+        fontFamily: fonts.BSBold,
+        fontSize: 60,
+        fill: '#ffffff',
     
         dropShadow: true,
-        dropShadowColor: '#00ff00',
+        dropShadowColor: '#770077',
         dropShadowBlur: 6,
         dropShadowAngle: 0,
         dropShadowDistance: 0,

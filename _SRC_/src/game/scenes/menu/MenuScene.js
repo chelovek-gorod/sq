@@ -62,7 +62,7 @@ export default class Menu extends Container {
         this.title.scale.set( Math.min(titleScaleX, titleScaleY) )
         this.title.position.set(0, -pointY)
 
-        this.startButton.position.set(0, pointY)
+        this.startButton.position.set(0, screenData.centerY * 0.5)
     }
 
     updateLanguage(lang) {

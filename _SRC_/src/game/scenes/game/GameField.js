@@ -2,16 +2,17 @@ import { Container } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { EventHub, events, userDoStep } from "../../../app/events";
 import Clouds from "./Clouds";
-import { CEIL_DATA, OBSTACLE, PLACE, PLACE_MAP } from "./constants";
+import { CEIL_DATA, OBSTACLE, PLACE_MAP } from "./constants";
 import FieldCeil from "./FieldCeil";
 import PetToken from "./PetToken";
 import Splash from "../../effects/Splash";
+import Lock from "./Lock";
 
 function getMapObject( code ) {
     switch(code) {
         case '[]' : return null
         case 'SS' : return OBSTACLE.Clouds
-        case 'XX' : return null
+        case 'XX' : return OBSTACLE.Lock
         default : return parseInt(code)
     }
 }
@@ -60,7 +61,7 @@ export default class GameField extends Container {
                         this.sky.addChild( ceil.pet )
                     }
                     if (object === OBSTACLE.Lock) {
-                        ceil.pet = new Clouds( ceil )
+                        ceil.pet = new Lock( ceil )
                         this.sky.addChild( ceil.pet )
                     }
                     if (typeof object === 'number') {
@@ -135,8 +136,8 @@ export default class GameField extends Container {
         
         if (targetCeil) targetCeil.highlightOff()
 
-        if (targetCeil === null) return dragPet.returnToStart()
-        if (targetCeil.pet === dragPet) return dragPet.returnToStart()
+        if (targetCeil === null) return dragPet.returnToStart(false)
+        if (targetCeil.pet === dragPet) return dragPet.returnToStart(true)
         if (targetCeil.pet) {
             targetCeil.nearestCeils.forEach(c => c.checkClouds())
             kill(targetCeil.pet)

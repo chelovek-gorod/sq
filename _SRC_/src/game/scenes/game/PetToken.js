@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { atlases } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { dragging } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
 import StarSpark from "../../effects/StarSpark";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
@@ -79,6 +80,8 @@ export default class PetToken extends Container {
         
         this.parent.addChild(this)
 
+        soundPlay( sounds.se_start_drag )
+
         dragging({ pet: this, isDone: false })
     }
 
@@ -99,9 +102,10 @@ export default class PetToken extends Container {
         dragging({ pet: this, isDone: true })
     }
 
-    returnToStart() {
+    returnToStart( isNormalBack = true ) {
         this.position.set(this.ceil.x, this.ceil.y)
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
+        soundPlay( isNormalBack ? sounds.se_end_drag_home : sounds.se_error_move )
     }
     
     moveToCeil(ceil) {
@@ -114,9 +118,13 @@ export default class PetToken extends Container {
             this.isUpgraded = false
             this.type++
             this.image.texture = atlases.pets.textures[LEVEL_PET[this.type]]
+            soundPlay( sounds.se_line )
         }
 
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
+        if (this.isShining) {
+            setTimeout( soundPlay, this.isUpgraded ? 600 : 0, sounds.se_starfall )
+        }
     }
 
     upgrade() {

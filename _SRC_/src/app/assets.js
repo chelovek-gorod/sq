@@ -28,6 +28,15 @@ export const images = {
     img_logo: 'logo.png',
     bg_main: 'main_bg.png',
     game_title: 'game_title_width_shadow.png',
+    Arctic_bg: 'Arctic_bg.png',
+    Farm_bg: 'Farm_bg.png',
+    Jungle_bg: 'Jungle_bg.png',
+    Ocean_bg: 'Ocean_bg.png',
+    Savannah_bg: 'Savannah_bg.png',
+    lock_chain: 'lock_chain.png',
+    lock_place: 'lock_place.png',
+    btn_book: 'book.png',
+    btn_home: 'home.png',
 }
 export const atlases = {
     buttons: 'buttons.json',
@@ -42,6 +51,11 @@ export const sounds = {
     se_swipe: 'se_swipe.mp3',
     se_click: 'se_click.mp3',
     se_bonus: 'se_bonus.mp3',
+    se_error_move: 'se_error_move.mp3',
+    se_start_drag: 'se_start_drag.mp3',
+    se_end_drag_home: 'se_end_drag_home.mp3',
+    se_starfall: 'se_starfall.mp3',
+    se_line: 'se_line.mp3',
 }
 export const music = {
     bgm_0: 'bgm_0.mp3',

@@ -1,8 +1,12 @@
 import { Container, Text, Sprite } from "pixi.js"
-import { atlases, images, sounds } from "../../app/assets"
+import { atlases, sounds } from "../../app/assets"
 import { removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
+import { tickerAdd, tickerRemove } from "../../app/application"
+
+const ALPHA_DURATION = 120
+const ALPHA_STEP = 1 / ALPHA_DURATION
 
 export default class Button extends Container {
     constructor(icon, text, callback, isActive = true ) {
@@ -20,16 +24,17 @@ export default class Button extends Container {
         )
         this.frontImage.anchor.set(0.5)
         this.frontImage.alpha = 0
+        this.isOnHover = false
 
         this.value = icon ? new Sprite(icon) : new Text({ text: text, style: styles.button })
         this.value.anchor.set(0.5)
         
         this.addChild(this.backImage, this.frontImage, this.value)
 
-        setCursorPointer(this)
-        this.on('pointerdown', this.click, this)
-        this.on('pointerover', this.onHover, this)
-        this.on('pointerout', this.onOut, this)
+        setCursorPointer(this.backImage)
+        this.backImage.on('pointerdown', this.click, this)
+        this.backImage.on('pointerover', this.onHover, this)
+        this.backImage.on('pointerout', this.onOut, this)
 
         this.isActive = isActive
         this.setActive(this.isActive)
@@ -65,24 +70,40 @@ export default class Button extends Container {
     }
 
     onHover() {
-        if (!this.isActive) return
+        if (!this.isActive || this.isOnHover) return
 
+        this.isOnHover = true
         if (this.isText) this.value.style = styles.buttonHover
         soundPlay(sounds.se_swipe)
+        tickerAdd(this)
     }
     onOut() {
+        if (!this.isOnHover) return
+
+        this.isOnHover = false
         if (this.isText) this.value.style = styles.button
+        tickerAdd(this)
     }
 
     deactivate() {
-        this.image.off('pointerdown', this.click, this)
-        this.image.off('pointerover', this.onHover, this)
-        this.image.off('pointerout', this.onOut, this)
+        this.backImage.off('pointerdown', this.click, this)
+        this.backImage.off('pointerover', this.onHover, this)
+        this.backImage.off('pointerout', this.onOut, this)
         if (this.isText) this.value = styles.button
     }
 
+    tick(time) {
+        if (this.isOnHover) {
+            this.frontImage.alpha = Math.min(1, this.frontImage.alpha + ALPHA_STEP * time.deltaMS)
+            if (this.frontImage.alpha === 1) tickerRemove(this)
+        } else {
+            this.frontImage.alpha = Math.max(0, this.frontImage.alpha - ALPHA_STEP * time.deltaMS)
+            if (this.frontImage.alpha === 0) tickerRemove(this)
+        }
+    }
+
     kill() {
-        removeCursorPointer(this.image)
+        removeCursorPointer(this.backImage)
         this.deactivate()
     }
 }
