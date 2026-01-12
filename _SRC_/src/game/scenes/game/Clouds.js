@@ -137,8 +137,8 @@ export default class Clouds extends Container {
         this.turnsToStartStorm = 3
     }
     
-    clearClouds() {
-        if (this.state === CLOUDS_STATE.Clouds) {
+    clearClouds( isFull = false ) {
+        if (isFull || this.state === CLOUDS_STATE.Clouds) {
             this.state = CLOUDS_STATE.Open
             this.ceil.pet = null
             return

@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite } from 'pixi.js'
 import { tickerRemove } from '../../../app/application'
-import { images, music } from '../../../app/assets'
+import { atlases, images, music } from '../../../app/assets'
 import { EventHub, events } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import BackgroundImage from '../../BG/BackgroundImage'
@@ -8,6 +8,8 @@ import { getLanguage } from '../../localization'
 import TapIcon from '../../UI/TapIcon'
 import { CEIL_DATA, FIELD_OFFSET_X, FIELD_OFFSET_Y, PLACE } from './constants'
 import GameField from './GameField'
+import ShineBall from './ShineBall'
+import ShineBar from './ShineBar'
 
 export default class Game extends Container {
     constructor() {
@@ -64,11 +66,16 @@ export default class Game extends Container {
         this.field = new GameField(this.level)
         this.addChild(this.field)
 
-        this.homeBtn = new TapIcon( images.btn_home, () => {} )
+        this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, () => {} )
         this.homeBtn.anchor.set(0, 1)
-        this.bookBtn = new TapIcon( images.btn_book, () => {} )
+        this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, () => {} )
         this.bookBtn.anchor.set(1, 1)
-        this.addChild(this.homeBtn, this.bookBtn)
+        this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, () => {} )
+        this.settingsBtn.anchor.set(1, 0)
+        this.shineBar = new ShineBar()
+        this.addChild(this.homeBtn, this.bookBtn, this.settingsBtn, this.shineBar)
+
+        EventHub.on( events.addShineBall, this.addShineBall, this )
 
         setMusicList([music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4])
     }
@@ -81,6 +88,8 @@ export default class Game extends Container {
 
         this.homeBtn.position.set(-screenData.centerX, screenData.centerY)
         this.bookBtn.position.set(screenData.centerX, screenData.centerY)
+        this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
+        this.shineBar.position.set(-screenData.centerX, -screenData.centerY)
 
         const freeWidth = screenData.width - FIELD_OFFSET_X * 2
         const freeHeight = screenData.height - FIELD_OFFSET_Y * 2
@@ -97,6 +106,29 @@ export default class Game extends Container {
 
     userDoStep() {
         this.stepsCount++
+    }
+
+    addShineBall( data ) {
+        if (data.points) {
+            // from merge to bar
+            this.addChild( new ShineBall(
+                this.toLocal( data.globalPoint ),
+                {x: this.shineBar.position.x + 60, y: this.shineBar.position.y + 120},
+                this.shineBar,
+                data.points
+            ))
+        } else {
+            // magic from bar
+            const targetCeilIndex = this.field.getMagicTargetCeilIndex()
+            const targetCeil = this.field.ceils.children[targetCeilIndex]
+
+            this.addChild( new ShineBall(
+                {x: this.shineBar.position.x + 60, y: this.shineBar.position.y + 120},
+                this.toLocal( targetCeil.getGlobalPosition() ),
+                targetCeil,
+                10
+            ))
+        }
     }
 
     updateLanguage(lang) {

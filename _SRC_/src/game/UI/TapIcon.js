@@ -5,9 +5,9 @@ import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
 
-const MIN_SCALE = 0.9
-const MAX_SCALE = 1.0
-const SCALE_DURATION = 900
+const MIN_SCALE = 1.0
+const MAX_SCALE = 1.06
+const SCALE_DURATION = 1200
 const SCALE_STEP = 1 / SCALE_DURATION
 
 export default class TapIcon extends Sprite {

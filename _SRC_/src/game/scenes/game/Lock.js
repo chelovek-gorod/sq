@@ -1,8 +1,7 @@
 import { Container, Sprite } from "pixi.js"
-import { tickerAdd } from "../../../app/application"
+import { kill, tickerAdd } from "../../../app/application"
 import { images } from "../../../app/assets"
-import { OBSTACLE } from "./constants"
-
+import { LOCKS_STATE, OBSTACLE } from "./constants"
 
 export default class Lock extends Container {
     constructor( ceil ) {
@@ -10,6 +9,7 @@ export default class Lock extends Container {
 
         this.type = OBSTACLE.Lock
         this.ceil = ceil
+        this.state = LOCKS_STATE.Lock
 
         this.verticalTime = 0
         this.verticalSpeed = 0.0012
@@ -58,6 +58,11 @@ export default class Lock extends Container {
         tickerAdd(this)
     }
 
+    open() {
+        this.state = LOCKS_STATE.Open
+        this.ceil.pet = null
+    }
+
     tick( time ) {
         this.chainAngleTime += this.chainAngleSpeed * time.deltaMS
         const sinChainValue = Math.sin(this.chainAngleTime) * this.chainAmplitude
@@ -72,5 +77,10 @@ export default class Lock extends Container {
         
         const verticalOffset = sinVerticalValue * this.verticalAmplitude
         this.position.y = this.baseY + verticalOffset
+
+        if (this.state === LOCKS_STATE.Open) {
+            this.alpha -= 0.0006 * time.deltaMS
+            if (this.alpha < 0) kill(this)
+        }
     }
 }

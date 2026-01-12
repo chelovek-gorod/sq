@@ -2,7 +2,7 @@ import { Container } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { EventHub, events, userDoStep } from "../../../app/events";
 import Clouds from "./Clouds";
-import { CEIL_DATA, OBSTACLE, PLACE_MAP } from "./constants";
+import { CEIL_DATA, CLOUDS_STATE, LOCKS_STATE, OBSTACLE, PLACE_MAP } from "./constants";
 import FieldCeil from "./FieldCeil";
 import PetToken from "./PetToken";
 import Splash from "../../effects/Splash";
@@ -140,13 +140,40 @@ export default class GameField extends Container {
         if (targetCeil.pet === dragPet) return dragPet.returnToStart(true)
         if (targetCeil.pet) {
             targetCeil.nearestCeils.forEach(c => c.checkClouds())
+            dragPet.upgrade(targetCeil.pet.isShining)
             kill(targetCeil.pet)
-            dragPet.upgrade()
-            this.effects.addChild( new Splash(targetCeil.x, targetCeil.y) )
+            this.addSplash(targetCeil)
         }
         
         dragPet.moveToCeil(targetCeil)
         setTimeout(userDoStep, 0)
+    }
+
+    addSplash( ceil ) {
+        this.effects.addChild( new Splash(ceil.x, ceil.y) )
+    }
+
+    getMagicTargetCeilIndex() {
+        const locks = []
+        const storms = []
+        const clouds = []
+        const free = []
+
+        this.ceils.children.forEach( (ceil, i) => {
+            if (ceil.pet === null) {
+                free.push(i)
+            } else if (ceil.pet.type === OBSTACLE.Lock && ceil.pet.state !== LOCKS_STATE.Open) {
+                locks.push(i)
+            } else if (ceil.pet.type === OBSTACLE.Clouds && ceil.pet.state !== CLOUDS_STATE.Open) {
+                if (ceil.pet.state === CLOUDS_STATE.Storm) storms.push(i)
+                else clouds.push(i)
+            }
+        })
+
+        if (locks.length) return locks[ Math.floor(Math.random() * locks.length) ]
+        if (storms.length) return storms[ Math.floor(Math.random() * storms.length) ]
+        if (clouds.length) return clouds[ Math.floor(Math.random() * clouds.length) ]
+        return free[ Math.floor(Math.random() * free.length) ]
     }
 
     tick( time ) {

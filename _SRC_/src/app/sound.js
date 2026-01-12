@@ -8,7 +8,7 @@ const state = {
     soundVolume: 1.0, // звук громкость от 0 до 1
 
     isMusicOn: true, // фоновая музыка вкл/откл (true/false)
-    musicVolume: 0.5, // фоновая музыка задать громкость от 0 до 1
+    musicVolume: 0.4, // фоновая музыка задать громкость от 0 до 1
     
     volumeStep: 0.2, // soundVolume и musicVolume конвертируется кратно volumeStep от 0 до 1
 }

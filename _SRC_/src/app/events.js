@@ -15,7 +15,7 @@ export const events = {
 
     dragging: 'dragging',
     userDoStep: 'userDoStep',
-
+    addShineBall: 'addShineBall',
 }
 
 export function screenResize( data ) {
@@ -44,4 +44,7 @@ export function dragging( dragData ) {
 }
 export function userDoStep() {
     EventHub.emit( events.userDoStep )
+}
+export function addShineBall( data ) {
+    EventHub.emit( events.addShineBall, data )
 }

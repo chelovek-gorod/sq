@@ -35,8 +35,6 @@ export const images = {
     Savannah_bg: 'Savannah_bg.png',
     lock_chain: 'lock_chain.png',
     lock_place: 'lock_place.png',
-    btn_book: 'book.png',
-    btn_home: 'home.png',
 }
 export const atlases = {
     buttons: 'buttons.json',
@@ -46,6 +44,8 @@ export const atlases = {
     splash: 'splash.json',
     splash_2: 'splash_2.json',
     stars: 'stars.json',
+    ui: 'ui.json',
+    shine_ui: 'shine_ui.json',
 }
 export const sounds = {
     se_swipe: 'se_swipe.mp3',

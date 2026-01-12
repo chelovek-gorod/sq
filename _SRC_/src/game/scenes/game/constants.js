@@ -11,6 +11,7 @@ export const PLACE_MAP = {
 
 export const OBSTACLE = createEnum(['Clouds', 'Lock'])
 export const CLOUDS_STATE = createEnum(['Clouds', 'Storm', 'Open'])
+export const LOCKS_STATE = createEnum(['Lock', 'Open'])
 
 export const PET_LEVEL = {
     "Zebra": 31,

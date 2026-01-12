@@ -1,9 +1,10 @@
 import { Container, Sprite } from "pixi.js";
-import { tickerAdd, tickerRemove } from "../../../app/application";
+import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
-import { dragging } from "../../../app/events";
+import { addShineBall, dragging } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import StarSpark from "../../effects/StarSpark";
+import { availablePetLevel } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
 export default class PetToken extends Container {
@@ -13,8 +14,10 @@ export default class PetToken extends Container {
         this.type = type
         this.ceil = ceil
         this.isUpgraded = false
+        this.isOtherPetShine = false
 
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
+        
 
         this.eventMode = 'static'
         this.cursor = 'pointer'
@@ -68,7 +71,7 @@ export default class PetToken extends Container {
         this.rotation *= 0.9
     }
 
-    onDragStart(event) { console.log(this.ceil.place)
+    onDragStart(event) {
         if (this.state === PET_STATE.DRAGGING) return
 
         this.state = PET_STATE.DRAGGING
@@ -115,10 +118,28 @@ export default class PetToken extends Container {
         this.position.set(this.ceil.x, this.ceil.y)
 
         if (this.isUpgraded) {
+            addShineBall({
+                globalPoint: this.getGlobalPosition(),
+                points: 1 + +this.isOtherPetShine + +this.isShining
+            })
+
             this.isUpgraded = false
+            this.isOtherPetShine = false
+
             this.type++
             this.image.texture = atlases.pets.textures[LEVEL_PET[this.type]]
+
             soundPlay( sounds.se_line )
+
+            if (this.type > availablePetLevel) {
+                addShineBall({
+                    globalPoint: this.getGlobalPosition(),
+                    points: 2
+                })
+                this.ceil.pet = null
+                kill(this)
+                return
+            }
         }
 
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
@@ -127,8 +148,9 @@ export default class PetToken extends Container {
         }
     }
 
-    upgrade() {
+    upgrade(isOtherPetShine) {
         this.isUpgraded = true
+        this.isOtherPetShine = isOtherPetShine
     }
 
     updateScale(isAdd, value) {

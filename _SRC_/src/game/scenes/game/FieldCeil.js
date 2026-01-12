@@ -1,8 +1,8 @@
 import { Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases } from "../../../app/assets";
-import { getRRTexture } from "../../../utils/textureGenerator";
 import { CEIL_DATA, OBSTACLE } from "./constants";
+import PetToken from "./PetToken";
 
 export default class FieldCeil extends Sprite {
     constructor(x, y, place) {
@@ -59,6 +59,25 @@ export default class FieldCeil extends Sprite {
         if (!this.isAnimating) {
             this.isAnimating = true
             tickerAdd(this)
+        }
+    }
+
+    useMagic() {
+        if (this.pet === null) {
+            this.parent.parent.addSplash( this )
+            this.pet = new PetToken( 1 , this )
+            this.parent.parent.pets.addChild( this.pet )
+            return
+        }
+
+        if (this.pet.type === OBSTACLE.Clouds) {
+            this.pet.clearClouds( true )
+            return
+        }
+
+        if (this.pet.type === OBSTACLE.Lock) {
+            this.pet.open()
+            return
         }
     }
 
