@@ -7,23 +7,34 @@ export default class Lock extends Container {
     constructor( ceil ) {
         super()
 
+        this.position.set(ceil.x, ceil.y)
+
         this.type = OBSTACLE.Lock
         this.ceil = ceil
         this.state = LOCKS_STATE.Lock
 
         this.verticalTime = 0
         this.verticalSpeed = 0.0012
-        this.maxY = 20 
-        this.minY = 0
+        this.maxY = 0 
+        this.minY = -20
         this.centerY = (this.maxY + this.minY) * 0.5
         this.verticalAmplitude = (this.maxY - this.minY) * 0.5
-        this.baseX = ceil.x
-        this.baseY = ceil.y + this.centerY
-        this.position.set(this.baseX, this.baseY)
+        this.baseX = 0
+        this.baseY = this.centerY
 
         this.chainAngleTime = 0
         this.chainAmplitude = 0.5
         this.chainAngleSpeed = 0.0018
+
+        this.shadow = new Sprite( images.pet_shadow )
+        this.shadow.anchor.set(0.5, 0.85)
+        this.shadow.scale.set(0.5)
+        this.shadow.position.set(0, 55)
+        this.addChild(this.shadow)
+
+        this.imagesContainer = new Container()
+        this.imagesContainer.position.set(this.baseX, this.baseY)
+        this.addChild(this.imagesContainer)
 
         this.chainA = new Sprite( images.lock_chain )
         this.chainA.anchor.set(0.2, 0.5)
@@ -52,7 +63,7 @@ export default class Lock extends Container {
         this.lock = new Sprite( images.lock_place )
         this.lock.anchor.set(0.5)
 
-        this.addChild(this.chainA, this.chainB, this.chainC, this.chainD, this.lock)
+        this.imagesContainer.addChild(this.chainA, this.chainB, this.chainC, this.chainD, this.lock)
         this.position.set(ceil.x, ceil.y)
 
         tickerAdd(this)
@@ -73,13 +84,18 @@ export default class Lock extends Container {
         this.chainD.rotation = this.chainD.baseAngle + sinChainValue
         
         this.verticalTime += this.verticalSpeed * time.deltaMS
-        const sinVerticalValue = Math.sin(this.verticalTime)
+        const sinVerticalValue = Math.sin(this.verticalTime) // -1...1
         
         const verticalOffset = sinVerticalValue * this.verticalAmplitude
-        this.position.y = this.baseY + verticalOffset
+        this.imagesContainer.position.y = this.baseY + verticalOffset
+
+
+        this.shadow.scale.set(0.6 - 0.1 * sinVerticalValue) // 0.5...0.7
 
         if (this.state === LOCKS_STATE.Open) {
-            this.alpha -= 0.0006 * time.deltaMS
+            const disappearStep = time.deltaMS * 0.0006
+            this.alpha -= disappearStep
+            this.scale.set( this.scale.x + disappearStep )
             if (this.alpha < 0) kill(this)
         }
     }

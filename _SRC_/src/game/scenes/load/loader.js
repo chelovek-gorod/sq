@@ -1,5 +1,6 @@
 import { Assets } from 'pixi.js'
 import { assets } from '../../../app/assets'
+import { Howl } from 'howler'
 import { initFontStyles, styles } from '../../../app/styles'
 
 function isString( value ) {
@@ -32,6 +33,10 @@ export function preloadAsset( type, key, callback ) {
 function uploadAsset( type, key, callback ) {
     if ( ! isString(assets[type][key]) ) return callback()
 
+    if (type === 'sounds') {
+        return loadHowlSound(type, key, callback)
+    }
+
     Assets.add( {alias: key, src: assets[type][key]} )
     Assets.load( key ).then(data => {
         if ('data' in data && 'meta' in data.data
@@ -41,6 +46,35 @@ function uploadAsset( type, key, callback ) {
         }
         assets[type][key] = data
 
+        callback()
+    })
+}
+
+function loadHowlSound(type, key, callback) {
+    const config = {
+        src: [assets[type][key]],
+        preload: true,
+        html5: false
+    }
+    
+    /*
+    // Можно добавить специфичные настройки по типу звука
+    if (type === 'sounds') {
+        config.volume = 1.0 // По умолчанию для эффектов
+    }
+    // else if (type === 'voice') { ... } // Для будущего расширения
+    */
+    
+    const sound = new Howl(config)
+    
+    sound.on('load', () => {
+        assets[type][key] = sound
+        callback()
+    })
+    
+    sound.on('loaderror', (id, error) => {
+        console.warn(`Не удалось загрузить звуковой эффект: ${key}`, error)
+        assets[type][key] = null
         callback()
     })
 }

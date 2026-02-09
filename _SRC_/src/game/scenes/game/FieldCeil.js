@@ -26,7 +26,12 @@ export default class FieldCeil extends Sprite {
     }
 
     checkAvailable(type) {
-        return (this.pet === null || type === this.pet.type)
+        return (
+            this.pet === null ||
+            type === this.pet.type ||
+            (type === 51 && (this.pet.type > 0 && this.pet.type < 51)) || 
+            (this.pet.type === 51 && (type > 0 && type < 51))
+        )
     }
 
     checkClouds() {
@@ -63,9 +68,9 @@ export default class FieldCeil extends Sprite {
     }
 
     useMagic() {
-        if (this.pet === null) {
+        if (this.pet === true || this.pet === null) {
             this.parent.parent.addSplash( this )
-            this.pet = new PetToken( 1 , this )
+            this.pet = new PetToken( 51 , this )
             this.parent.parent.pets.addChild( this.pet )
             return
         }

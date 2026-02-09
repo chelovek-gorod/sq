@@ -5,5 +5,5 @@ export const SCENE_ALPHA_MIN = 0
 export const SCENE_ALPHA_MAX = 1
 
 export const SCENE_NAME = createEnum(
-    ['Menu', 'Game', 'Load']
+    ['Menu', 'World', 'Game', 'Load']
 )

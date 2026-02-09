@@ -1,7 +1,9 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, Sprite, Text } from "pixi.js";
 import { tickerAdd } from "../../../app/application";
 import { atlases } from "../../../app/assets";
-import StarSpark from "../../effects/StarSpark";
+import { addSpark } from "../../../app/events";
+import { styles } from "../../../app/styles";
+import StarSpark from "../../effects/SparkParticles";
 import { PLACE } from "./constants";
 
 const types = Object.keys(PLACE)
@@ -17,29 +19,51 @@ export default class ShineBar extends Container {
     constructor( level = 0 ) {
         super()
 
-        this.level = level
+        this.level = level * 4
 
         this.base = new Sprite( atlases.shine_ui.textures.base )
         this.yellow = new Sprite( atlases.shine_ui.textures["0"] )
         this.purple = new Sprite( atlases.shine_ui.textures["0"] )
         this.purple.alpha = 0
-        this.sparks = new Container()
-        this.sparks.scale.set(0.5)
-        this.sparks.position.set(60, 90)
-        this.addChild(this.base, this.yellow, this.purple, this.sparks)
+        this.sparksPosition = null
+        this.text = new Text({text: level + '/10', style: styles.shineCounter})
+        this.text.position.set(22, 64)
+        this.addChild(this.base, this.yellow, this.purple, this.text)
 
         this.isUpPurple = true
         this.alphaStep = 1 / 2400
 
+        this.isUpFrame = true
+        this.restPoints = 0
+
+        // this.scale.set(0.5)
+
         tickerAdd(this)
     }
 
+    setPointOnField( point ) {
+        this.sparksPosition = point
+    }
+
     useMagic( points = 1 ) {
-        this.level += points
-        if (this.level >= 10) {
-            this.level -= 10
-            this.parent.addShineBall({color: null})
+        this.restPoints += points * 4
+    }
+
+    convertPoints() {
+        this.isUpFrame = !this.isUpFrame
+        if (!this.isUpFrame) return
+
+        this.restPoints--
+        this.level++
+        if (this.level >= 40) {
+            this.level -= 40
+            this.parent.addShineBall({
+                x: this.sparksPosition ? this.sparksPosition.x : 0,
+                y: this.sparksPosition ? this.sparksPosition.y : 0
+            })
         }
+
+        this.text.text = (this.level / 4).toFixed() + '/10'
 
         if (this.level === 0) {
             this.yellow.texture = atlases.shine_ui.textures["0"]
@@ -48,11 +72,19 @@ export default class ShineBar extends Container {
             this.yellow.texture = atlases.shine_ui.textures[this.level + "Y"]
             this.purple.texture = atlases.shine_ui.textures[this.level + "P"]
         }
+
     }
 
     tick(time) {
-        if (Math.random() > 0.9) this.sparks.addChild( new StarSpark(0, 0, getSparkType()) )
+        if (Math.random() > 0.9 && this.sparksPosition) {
+            addSpark({
+                x: this.sparksPosition.x,
+                y: this.sparksPosition.y,
+                type: getSparkType()
+            })
+        }
 
+        if (this.restPoints) this.convertPoints()
         if (this.level === 0) return
 
         const alphaStep = this.alphaStep * time.deltaMS

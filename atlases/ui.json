@@ -4,20 +4,44 @@
       "frame": {
         "x": 4,
         "y": 4,
-        "w": 152,
-        "h": 134
+        "w": 123,
+        "h": 107
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 19,
-        "y": 20,
-        "w": 152,
-        "h": 134
+        "x": 12,
+        "y": 13,
+        "w": 123,
+        "h": 107
       },
       "sourceSize": {
-        "w": 180,
-        "h": 160
+        "w": 140,
+        "h": 120
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "ui_close_book": {
+      "frame": {
+        "x": 135,
+        "y": 4,
+        "w": 123,
+        "h": 107
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 13,
+        "w": 123,
+        "h": 107
+      },
+      "sourceSize": {
+        "w": 140,
+        "h": 120
       },
       "pivot": {
         "x": 0.5,
@@ -26,22 +50,22 @@
     },
     "ui_settings": {
       "frame": {
-        "x": 164,
+        "x": 266,
         "y": 4,
-        "w": 127,
-        "h": 133
+        "w": 96,
+        "h": 100
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 31,
-        "y": 18,
-        "w": 127,
-        "h": 133
+        "x": 40,
+        "y": 15,
+        "w": 96,
+        "h": 100
       },
       "sourceSize": {
-        "w": 180,
-        "h": 160
+        "w": 140,
+        "h": 120
       },
       "pivot": {
         "x": 0.5,
@@ -50,22 +74,22 @@
     },
     "ui_home": {
       "frame": {
-        "x": 299,
+        "x": 370,
         "y": 4,
-        "w": 174,
-        "h": 120
+        "w": 140,
+        "h": 98
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 4,
-        "y": 27,
-        "w": 174,
-        "h": 120
+        "x": 0,
+        "y": 18,
+        "w": 140,
+        "h": 98
       },
       "sourceSize": {
-        "w": 180,
-        "h": 160
+        "w": 140,
+        "h": 120
       },
       "pivot": {
         "x": 0.5,
@@ -79,8 +103,8 @@
     "image": "ui.png",
     "format": "RGBA8888",
     "size": {
-      "w": 477,
-      "h": 142
+      "w": 514,
+      "h": 115
     },
     "scale": 1
   }

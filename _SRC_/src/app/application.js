@@ -223,7 +223,8 @@ export function kill(element) {
 
 function tick(time) {
     // if (delta = 1) -> FPS = 60 (16.66ms per frame)
-    for (let i = 0, len = tickerArr.length; i < len; i++) {
+    
+    for (let i = tickerArr.length - 1; i >= 0; i--) {
         tickerArr[i].tick(time)
     }
     // time.elapsedMS - milliseconds after start app

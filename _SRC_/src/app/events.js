@@ -13,6 +13,10 @@ export const events = {
 
     updateLanguage: 'updateLanguage',
 
+    addSpark: 'addSpark',
+    showSparksShadow: 'showSparksShadow',
+    addFireworks: 'addFireworks',
+    addFlyText: 'addFlyText',
     dragging: 'dragging',
     userDoStep: 'userDoStep',
     addShineBall: 'addShineBall',
@@ -39,6 +43,18 @@ export function updateLanguage( currentLanguage ) {
     EventHub.emit( events.updateLanguage, currentLanguage )
 }
 
+export function addSpark( data ) {
+    EventHub.emit( events.addSpark, data )
+}
+export function showSparksShadow( isOn ) {
+    EventHub.emit( events.showSparksShadow, isOn )
+}
+export function addFireworks( data ) {
+    EventHub.emit( events.addFireworks, data )
+}
+export function addFlyText( data ) {
+    EventHub.emit( events.addFlyText, data )
+}
 export function dragging( dragData ) {
     EventHub.emit( events.dragging, dragData )
 }

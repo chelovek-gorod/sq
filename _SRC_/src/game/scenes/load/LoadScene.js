@@ -65,7 +65,7 @@ export default class LoadScene extends Container {
 
     setLogo() {
         this.logo = new Sprite(assets.images.img_logo)
-        this.logo.scale.set(0.25)
+        this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
         const screenData = getAppScreen()
         this.logo.position.set(screenData.centerX - 12, screenData.centerY - 12)

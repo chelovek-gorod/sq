@@ -1,9 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
-import { atlases, sounds } from "../../../app/assets";
-import { addShineBall, dragging } from "../../../app/events";
+import { atlases, images, sounds } from "../../../app/assets";
+import { addShineBall, addSpark, addFireworks, dragging, addFlyText } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import StarSpark from "../../effects/StarSpark";
 import { availablePetLevel } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
@@ -18,7 +17,6 @@ export default class PetToken extends Container {
 
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
         
-
         this.eventMode = 'static'
         this.cursor = 'pointer'
 
@@ -34,6 +32,11 @@ export default class PetToken extends Container {
         this.swingSteps = 0
         this.swingSpeed = 0.001
         this.swingAmplitude = 0.05
+
+        this.shadow = new Sprite(images.pet_shadow)
+        this.shadow.anchor.set(PET_DATA.anchor.x, PET_DATA.anchor.y)
+        this.shadow.scale.set(PET_DATA.scale * 0.8)
+        this.addChild(this.shadow)
         
         this.image = new Sprite(atlases.pets.textures[LEVEL_PET[this.type]])
         this.image.anchor.set(PET_DATA.anchor.x, PET_DATA.anchor.y)
@@ -61,14 +64,14 @@ export default class PetToken extends Container {
     }
 
     returnToNeutral() {
-        if (Math.abs(this.rotation) < 0.001) {
-            this.rotation = 0
+        if (Math.abs(this.image.rotation) < 0.001) {
+            this.image.rotation = 0
             this.state = PET_STATE.EMPTY
             this.swingSteps = 0
             return
         }
         
-        this.rotation *= 0.9
+        this.image.rotation *= 0.9
     }
 
     onDragStart(event) {
@@ -81,7 +84,10 @@ export default class PetToken extends Container {
         this.dragOffset.x = mousePos.x - this.x
         this.dragOffset.y = mousePos.y - this.y
         
-        this.parent.addChild(this)
+        this.parent.parent.draggingPets.addChild(this)
+
+        this.shadow.position.set(0, 25)
+        this.shadow.scale.set(PET_DATA.scale)
 
         soundPlay( sounds.se_start_drag )
 
@@ -101,8 +107,13 @@ export default class PetToken extends Container {
     onDragEnd() {
         if (this.state !== PET_STATE.DRAGGING) return
 
+        this.parent.parent.pets.addChild(this)
+
         this.state = PET_STATE.EMPTY
         dragging({ pet: this, isDone: true })
+
+        this.shadow.position.set(0, 0)
+        this.shadow.scale.set(PET_DATA.scale * 0.8)
     }
 
     returnToStart( isNormalBack = true ) {
@@ -117,10 +128,13 @@ export default class PetToken extends Container {
         this.ceil.pet = this
         this.position.set(this.ceil.x, this.ceil.y)
 
+        let score = 1 + +this.isOtherPetShine + +this.isShining
+
         if (this.isUpgraded) {
             addShineBall({
-                globalPoint: this.getGlobalPosition(),
-                points: 1 + +this.isOtherPetShine + +this.isShining
+                x: this.x,
+                y: this.y,
+                points: score
             })
 
             this.isUpgraded = false
@@ -131,12 +145,17 @@ export default class PetToken extends Container {
 
             soundPlay( sounds.se_line )
 
+            score += this.type > availablePetLevel ? 2 : 0
+            addFlyText({text: "+" + score, x: this.x, y: this.y})
+
             if (this.type > availablePetLevel) {
                 addShineBall({
-                    globalPoint: this.getGlobalPosition(),
+                    x: this.x,
+                    y: this.y,
                     points: 2
                 })
                 this.ceil.pet = null
+                addFireworks({x: this.x, y: this.y})
                 kill(this)
                 return
             }
@@ -148,7 +167,8 @@ export default class PetToken extends Container {
         }
     }
 
-    upgrade(isOtherPetShine) {
+    upgrade(isOtherPetShine, otherType) {
+        if ( this.type === 51 ) this.type = otherType
         this.isUpgraded = true
         this.isOtherPetShine = isOtherPetShine
     }
@@ -165,7 +185,7 @@ export default class PetToken extends Container {
         const delta = time.deltaMS
 
         if(this.isShining && Math.random() > 0.9) {
-            this.addChild( new StarSpark(0, 0, this.ceil.place) )
+            addSpark({x: this.x, y: this.y, type: this.ceil.place})
         }
         
         switch(this.state) {
@@ -173,7 +193,7 @@ export default class PetToken extends Container {
                 if (this.image.scale.x < PET_DATA.scaleDrag) {
                     this.updateScale(true, delta * PET_DATA.scaleSpeed)
                 }
-                this.rotation = 0
+                this.image.rotation = 0
                 break
             
             case PET_STATE.EMPTY:
@@ -201,7 +221,7 @@ export default class PetToken extends Container {
                     }
                     
                     const angle = this.swingAmplitude * this.swingDirection
-                    this.rotation = Math.sin(this.swingProgress * Math.PI) * angle
+                    this.image.rotation = Math.sin(this.swingProgress * Math.PI) * angle
                 } else {
                     this.returnToNeutral()
                 }

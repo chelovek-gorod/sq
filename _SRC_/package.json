@@ -12,7 +12,7 @@
         "vite": "^6.2.6"
     },
     "dependencies": {
-        "@pixi/sound": "^6.0.1",
+        "howler": "^2.2.4",
         "pixi-filters": "^6.1.2",
         "pixi.js": "^8.9.1"
     }

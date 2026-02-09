@@ -1,16 +1,14 @@
-import { Sound } from '@pixi/sound'
+import { Howl, Howler } from 'howler';
 import { STORED_KEYS, updateStoredData } from '../game/storage'
 import { EventHub, events } from './events'
 
 // начальное состояние музыки и звуков
 const state = {
-    isSoundOn: true, // звук вкл/откл (true/false)
-    soundVolume: 1.0, // звук громкость от 0 до 1
-
-    isMusicOn: true, // фоновая музыка вкл/откл (true/false)
-    musicVolume: 0.4, // фоновая музыка задать громкость от 0 до 1
-    
-    volumeStep: 0.2, // soundVolume и musicVolume конвертируется кратно volumeStep от 0 до 1
+    isSoundOn: true,
+    soundVolume: 1.0,
+    isMusicOn: true,
+    musicVolume: 0.4,
+    volumeStep: 0.2,
 }
 
 let isGamePaused = false
@@ -18,7 +16,7 @@ EventHub.on( events.gamePause, gamePause )
 EventHub.on( events.gameResume, gameResume )
 function gamePause() {
     isGamePaused = true
-    musicStop()
+    Howler.stop()
 }
 function gameResume() {
     isGamePaused = false
@@ -35,13 +33,11 @@ export function getSoundData() {
     return { ...state }
 }
 
-let musicInstance = null
-let musicAudio = null
+// 🔄 ОДИН объект Howl для музыки
+let musicHowl = null
 let musicList = null
 let musicIndex = 0
-let musicToken = 0 // use for remove unused music
-let musicSavedPosition = 0 // click-save in onFocus
-let currentLoadingMusic = null
+let musicToken = 0
 
 export function musicGetState() {
     return state.isMusicOn
@@ -49,13 +45,11 @@ export function musicGetState() {
 export function musicOn() {
     state.isMusicOn = true
     updateStoredData( STORED_KEYS.sound )
-
     musicPlay()
 }
 export function musicOff() {
     state.isMusicOn = false
     updateStoredData( STORED_KEYS.sound )
-
     musicStop()
 }
 export function musicGetVolume() { return state.musicVolume }
@@ -76,20 +70,16 @@ function setVolume(type = "music", value, isNeedUpdateStorage = true) {
     }
 
     if (type === "music") {
-        if (musicInstance) musicInstance.volume = state.musicVolume
-
+        if (musicHowl) musicHowl.volume(state.musicVolume)
         if (state.musicVolume === 0) musicStop()
         else musicPlay()
-
         return state.musicVolume
     }
-
     return state.soundVolume
 }
 
-let isSoundAvailable = false // is game in focus
+let isSoundAvailable = false
 export function getFirstUserAction() {
-
     isSoundAvailable = true
     setTimeout( () => musicPlay(), 500 )
 }
@@ -97,8 +87,13 @@ export function getFirstUserAction() {
 EventHub.on( events.changeFocus, changeFocus )
 function changeFocus( isOnFocus ) {
     isSoundAvailable = isOnFocus
-    if (isOnFocus) musicPlay()
-    else musicStop()
+    if (isOnFocus) {
+        Howler.mute(false)
+        musicPlay()
+    } else {
+        Howler.mute(true)
+        musicStop()
+    }
 }
 
 // sounds controller
@@ -121,8 +116,8 @@ export function soundSetVolume(value) {return setVolume("sound", value)}
 
 export function soundPlay( se ) {
     if (!state.isSoundOn || !isSoundAvailable) return
-    // se.stop()
-    se.play({ volume: state.soundVolume })
+    se.volume(state.soundVolume)
+    se.play()
 }
 export function soundStop( se ) {
     se.stop()
@@ -152,67 +147,54 @@ export function setMusicList(music, startIndex = null) {
 }
 
 export function musicStop() {
-    if (!musicAudio) return
-
-    if (musicInstance && musicInstance.progress) {
-        musicSavedPosition = musicInstance.progress * musicAudio.duration
-    }
-    musicAudio.stop()
+    if (!musicHowl) return
+    musicHowl.pause() // ⚡ ВСЕГДА только пауза
 }
 
 export function musicPlay() {
-    if (!state.isMusicOn || !isSoundAvailable || isGamePaused || !musicAudio) return
-    if (musicAudio.isPlaying) return
+    if (!state.isMusicOn || !isSoundAvailable || isGamePaused || !musicHowl) return
+    if (musicHowl.playing()) return
 
-    const duration = musicAudio.duration || 0
-    const startPos = musicSavedPosition > 0 && musicSavedPosition < duration - 0.05
-        ? musicSavedPosition
-        : 0
-
-    musicInstance = musicAudio.play({
-        volume: state.musicVolume,
-        start: startPos
-    })
-
-    musicInstance.on('end', nextBgMusic)
+    // ♻️ FADE IN 0.5s
+    const soundId = musicHowl.play()
+    musicHowl.volume(0, soundId)
+    musicHowl.fade(0, state.musicVolume, 500, soundId)
+    
+    musicHowl.once('end', nextBgMusic)
 }
 
 function loadBgMusic() {
     const token = musicToken
 
-    if (currentLoadingMusic) {
-        currentLoadingMusic.destroy()
-        currentLoadingMusic = null
+    // 🔥 УНИЧТОЖАЕМ старый трек полностью
+    if (musicHowl) {
+        musicHowl.stop()
+        musicHowl.unload()
+        musicHowl = null
     }
 
-    if (musicAudio) {
-        musicAudio.stop()
-        musicAudio.destroy()
-        musicAudio = null
-        musicInstance = null
-    }
-
-    currentLoadingMusic = Sound.from({
-        url: musicList[musicIndex],
+    // 🆕 СОЗДАЁМ новый трек
+    musicHowl = new Howl({
+        src: [musicList[musicIndex]],
         preload: true,
-        loaded(err, music) {
-            if (token !== musicToken) {
-                music?.destroy()
-                return
-            }
+        loop: true,
+        html5: false,
+        volume: 0 // Начальный volume 0 для fade in
+    })
 
-            if (err) {
-                console.error('Music load error')
-                setTimeout(() => {
-                    if (token === musicToken) nextBgMusic()
-                }, 0)
-                return
-            }
+    musicHowl.on('load', () => {
+        if (token !== musicToken) {
+            musicHowl.unload()
+            musicHowl = null
+            return
+        }
+        musicPlay()
+    })
 
-            currentLoadingMusic = null
-            musicAudio = music
-
-            musicPlay()
+    musicHowl.on('loaderror', () => {
+        console.error('Music load error')
+        if (token === musicToken) {
+            setTimeout(nextBgMusic, 1000)
         }
     })
 }
@@ -220,7 +202,6 @@ function loadBgMusic() {
 function nextBgMusic() {
     if (!musicList || !musicList.length) return
   
-    musicSavedPosition = 0
     musicIndex = (musicIndex + 1) % musicList.length
     musicToken++
     loadBgMusic()

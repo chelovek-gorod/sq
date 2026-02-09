@@ -1,6 +1,6 @@
 import { Container, Sprite } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
-import { atlases } from "../../../app/assets";
+import { atlases, images } from "../../../app/assets";
 import { EventHub, events } from "../../../app/events";
 import { CLOUDS_STATE, OBSTACLE } from "./constants";
 
@@ -90,12 +90,19 @@ export default class Clouds extends Container {
             cloud.lightningTime = this.lightningTimes[index]
         })
 
+        this.shadow = new Sprite( images.pet_shadow )
+        this.shadow.anchor.set(0.5, 0.85)
+        this.shadow.position.set(0, 75)
+        this.addChildAt(this.shadow, 0)
+
         this.position.set(ceil.x, ceil.y)
         tickerAdd(this)
     }
 
     fillClouds() {
         this.children.forEach( (container, index) => {
+            if (container instanceof Sprite) return
+
             container.lightning = new Sprite()
             container.lightningTextureIndex = index
             container.lightning.texture = atlases.clouds.textures["lightning_" + container.lightningTextureIndex]
@@ -129,6 +136,8 @@ export default class Clouds extends Container {
 
         this.state = CLOUDS_STATE.Storm
         this.children.forEach( container => {
+            if (container instanceof Sprite) return
+
             container.cloudDark.texture = atlases.clouds.textures.cloud_dark
             container.cloudDark.alpha = 1
             container.cloudWhite.alpha = 0
@@ -148,6 +157,8 @@ export default class Clouds extends Container {
             this.state = CLOUDS_STATE.Clouds
 
             this.children.forEach( container => {
+                if (container instanceof Sprite) return
+                
                 container.cloudDark.texture = atlases.clouds.textures.cloud_dark
                 container.cloudDark.alpha = 0
                 container.lightning.alpha = 0
@@ -194,7 +205,9 @@ export default class Clouds extends Container {
 
         // === исчезновение ===
         if (this.state === CLOUDS_STATE.Open) {
-            this.alpha -= delta * 0.0006
+            const disappearStep = delta * 0.0006
+            this.alpha -= disappearStep
+            this.scale.set( this.scale.x + disappearStep )
             if (this.alpha < 0) kill(this)
         }
     }

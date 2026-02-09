@@ -72,6 +72,7 @@ export const PET_LEVEL = {
     "Dragon": 51,
 }
 export const LEVEL_PET = Object.fromEntries(
+    // {51: "Dragon", 50: "WhiteTiger", ... , "1": "Jerboa"}
     Object.entries(PET_LEVEL).map(([pet, level]) => [level, pet])
 )
 
@@ -164,11 +165,11 @@ export const PET_STATE = createEnum(['EMPTY', 'IDLE', 'DRAGGING'])
 export const CEIL_DATA = {
     height: 300,
     width: 400,
-    alpha: 0.9,
-    scale: 1.0,
-    collideRadius: 120,
+    alpha: 0.95,
+    scale: 0.9,
+    collideRadius: 150,
     collideRadiusSq: 1,
-    highlightScale: 1.2,
+    highlightScale: 1.0,
     highlightAlpha: 1.0,
     highlightDuration: 120,
     highlightScaleStep: 0,
@@ -180,3 +181,19 @@ CEIL_DATA.highlightAlphaStep = (CEIL_DATA.highlightAlpha - CEIL_DATA.alpha) / CE
 
 export const FIELD_OFFSET_X = 0
 export const FIELD_OFFSET_Y = 40
+
+export const BG_GRADIENT_NAME = createEnum([
+    'Glam', 'Pink',  'Indigo', 'lilac', 'Green', 'Blue', 'Sky', 'Snow', 'Gold',
+])
+
+export const BG_GRADIENT_COLORS = {
+    [BG_GRADIENT_NAME.Indigo] :  [0xb4ffff, 0x5feaec, 0x750085],
+    [BG_GRADIENT_NAME.Snow] : [0x3fc3c6, 0x89ecea, 0xe8e8e8],
+    [BG_GRADIENT_NAME.lilac] :    [0xffffff, 0xfe62f9, 0xa8007b],
+    [BG_GRADIENT_NAME.Green] :  [0x5cffc9, 0x44f399, 0x008a35],
+    [BG_GRADIENT_NAME.Blue] :   [0xaaeeec, 0x83d2ec, 0x038c71],
+    [BG_GRADIENT_NAME.Sky] :  [0xbdbec2, 0xbdeeff, 0x3d46bd],
+    [BG_GRADIENT_NAME.Gold]: [0x5c2000, 0x986a1b, 0xe0b000],
+    [BG_GRADIENT_NAME.Pink] :    [0xffb3f5, 0xec4bd7, 0x610990],
+    [BG_GRADIENT_NAME.Glam] :    [0x2ffeb9, 0x0fae79, 0x8f00b3],
+}

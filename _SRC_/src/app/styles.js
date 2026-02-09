@@ -21,6 +21,7 @@ export let styles = {
     gameSubtitle: null,
     button: null,
     buttonHover: null,
+    shineCounter: null,
 }
 
 export function initFontStyles() {
@@ -61,6 +62,19 @@ export function initFontStyles() {
         fontFamily: fonts.BSBold,
         fontSize: 60,
         fill: '#ffffff',
+    
+        dropShadow: true,
+        dropShadowColor: '#770077',
+        dropShadowBlur: 6,
+        dropShadowAngle: 0,
+        dropShadowDistance: 0,
+    })
+
+    styles.shineCounter = new TextStyle({
+        fontFamily: fonts.BSRegular,
+        fontSize: 32,
+        fill: '#ffffff',
+        align: 'center',
     
         dropShadow: true,
         dropShadowColor: '#770077',

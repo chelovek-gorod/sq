@@ -9,6 +9,7 @@ export default class Splash extends AnimatedSprite {
         this.animationSpeed = 0.5
         this.position.set(x, y)
         this.alpha = 1
+        this.blendMode = 'add'
         this.scale.set(2)
         this.loop = false
         this.onComplete = () => kill(this)

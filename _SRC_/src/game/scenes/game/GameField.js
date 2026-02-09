@@ -7,6 +7,8 @@ import FieldCeil from "./FieldCeil";
 import PetToken from "./PetToken";
 import Splash from "../../effects/Splash";
 import Lock from "./Lock";
+import SparkParticles from "../../effects/SparkParticles";
+import Fireworks from "../../effects/Fireworks";
 
 function getMapObject( code ) {
     switch(code) {
@@ -25,14 +27,22 @@ export default class GameField extends Container {
         this.pets = new Container()
         this.sky = new Container()
         this.effects = new Container()
-        this.addChild(this.ceils, this.pets, this.sky, this.effects)
+        this.sparks = new SparkParticles()
+        this.draggingPets = new Container()
+
+        this.addChild(
+            this.ceils, this.pets, this.sky, 
+            this.sparks.container, this.effects,
+            this.draggingPets
+        )
 
         this.dragData = { pet: null, isDone: false }
         this.closestDragCeil = null
 
         this.fill(level)
 
-        EventHub.on( events.dragging, this.dragging.bind(this) )
+        EventHub.on( events.dragging, this.dragging, this )
+        EventHub.on( events.addFireworks, this.addFireworks, this )
         tickerAdd(this)
     }
 
@@ -140,7 +150,7 @@ export default class GameField extends Container {
         if (targetCeil.pet === dragPet) return dragPet.returnToStart(true)
         if (targetCeil.pet) {
             targetCeil.nearestCeils.forEach(c => c.checkClouds())
-            dragPet.upgrade(targetCeil.pet.isShining)
+            dragPet.upgrade(targetCeil.pet.isShining, targetCeil.pet.type)
             kill(targetCeil.pet)
             this.addSplash(targetCeil)
         }
@@ -151,6 +161,14 @@ export default class GameField extends Container {
 
     addSplash( ceil ) {
         this.effects.addChild( new Splash(ceil.x, ceil.y) )
+    }
+
+    addEffect( effect ) {
+        this.effects.addChild( effect )
+    }
+
+    addFireworks( data ) {
+        this.effects.addChild( new Fireworks( data.x, data.y ) )
     }
 
     getMagicTargetCeilIndex() {
@@ -191,6 +209,7 @@ export default class GameField extends Container {
     }
 
     kill() {
+        this.sparks.kill()
         tickerRemove(this)
         EventHub.off( events.dragging, this.dragging.bind(this) )
     }

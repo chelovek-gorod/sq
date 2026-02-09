@@ -9,6 +9,7 @@ import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
 import GameTitle from './GameTitle'
 import { getLanguage } from '../../localization'
+import FirefliesContainer from '../../effects/Fireflies'
 
 export default class Menu extends Container {
     constructor() {
@@ -24,10 +25,9 @@ export default class Menu extends Container {
         this.addChild(this.bg)
 
         this.logo = new Sprite(images.img_logo)
-        this.logo.scale.set(0.25)
+        this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
         this.addChild(this.logo)
-
         
         this.title = new Sprite(images.game_title) // GameTitle()
         this.title.anchor.set(0.5, 0)
@@ -40,10 +40,13 @@ export default class Menu extends Container {
                 if (!this.isMenuActive) return
 
                 this.isMenuActive = false
-                startScene(SCENE_NAME.Game)
+                startScene(SCENE_NAME.World)
             }, true
         )
         this.addChild(this.startButton)
+
+        this.fireflies = new FirefliesContainer()
+        this.addChild(this.fireflies)
 
         setMusicList([music.bgm_0])
     }
