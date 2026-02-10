@@ -97,6 +97,12 @@ class Pet extends Sprite {
     onClickEnd() {
 
     }
+
+    kill() {
+        this.cursor = 'none'
+        this.off('pointerdown', this.onClick, this)
+        this.off('pointerup', this.onClickEnd, this)
+    }
 }
 
 export default class Collection extends Container {

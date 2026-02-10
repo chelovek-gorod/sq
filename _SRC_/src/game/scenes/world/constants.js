@@ -1,4 +1,5 @@
 import { createEnum } from "../../../utils/functions"
+import { BG_GRADIENT_NAME } from "../game/constants"
 
 export const MAP_WIDTH = 2048
 export const MAP_HEIGHT = 1366
@@ -14,84 +15,133 @@ export const POINTS = [
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 468, y: -MAP_HALF_HEIGHT + 439,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 325, y: -MAP_HALF_HEIGHT + 526,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 688, y: -MAP_HALF_HEIGHT + 579,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 549, y: -MAP_HALF_HEIGHT + 721,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 292, y: -MAP_HALF_HEIGHT + 804,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 792, y: -MAP_HALF_HEIGHT + 1035,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 967, y: -MAP_HALF_HEIGHT + 1103,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 1148, y: -MAP_HALF_HEIGHT + 1144,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 1295, y: -MAP_HALF_HEIGHT + 1075,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 1229, y: -MAP_HALF_HEIGHT + 913,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 1119, y: -MAP_HALF_HEIGHT + 580,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 912, y: -MAP_HALF_HEIGHT + 439,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1078, y: -MAP_HALF_HEIGHT + 338,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1252, y: -MAP_HALF_HEIGHT + 450,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1432, y: -MAP_HALF_HEIGHT + 562,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1595, y: -MAP_HALF_HEIGHT + 726,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1664, y: -MAP_HALF_HEIGHT + 562,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1515, y: -MAP_HALF_HEIGHT + 435,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+        ]
+    },
+    {
+        color: POINT_COLORS.BLUE,
+        x: -MAP_HALF_WIDTH + 1672, y: -MAP_HALF_HEIGHT + 347,
+        tasks: [
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     }
 ]

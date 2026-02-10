@@ -76,7 +76,7 @@ export default class TapIcon extends Sprite {
     }
 
     kill() {
-        removeCursorPointer(this.backImage)
+        removeCursorPointer(this)
         this.deactivate()
     }
 }

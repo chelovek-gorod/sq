@@ -26,6 +26,8 @@ export default class World extends Container {
         this.collection.visible = false
         this.addChild(this.collection)
 
+        this.searchBtn = new TapIcon( atlases.ui.textures.ui_search, this.clickSearch.bind(this) )
+        this.searchBtn.anchor.set(0, 0)
         this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, () => {} )
         this.homeBtn.anchor.set(0, 1)
         this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, this.clickBook.bind(this) )
@@ -33,7 +35,7 @@ export default class World extends Container {
         this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, () => {} )
         this.settingsBtn.anchor.set(1, 0)
         
-        this.addChild(this.homeBtn, this.bookBtn, this.settingsBtn)
+        this.addChild(this.searchBtn, this.homeBtn, this.bookBtn, this.settingsBtn)
 
         setMusicList([ music.bgm_0 ])
     }
@@ -46,9 +48,14 @@ export default class World extends Container {
 
         this.collection.screenResize(screenData)
 
+        this.searchBtn.position.set(-screenData.centerX, -screenData.centerY)
         this.homeBtn.position.set(-screenData.centerX, screenData.centerY)
         this.bookBtn.position.set(screenData.centerX, screenData.centerY)
         this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
+    }
+
+    clickSearch() {
+        this.worldMap.setFocusPoint()
     }
 
     clickBook() {

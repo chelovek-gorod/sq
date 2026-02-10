@@ -1,5 +1,11 @@
 export let availablePetLevel = 50
 export let dragonPointIndex = 0
+export let levelIndex = 0
+
+export function setLevelIndex(index) {
+    levelIndex = index
+}
+
 export let world = [
     // only opened tasks
     // [0 / 1 / 2] - index -> point index;
