@@ -60,6 +60,9 @@ export const atlases = {
     fireflies: 'fireflies.json',
     ui: 'ui.json',
     shine_ui: 'shine_ui.json',
+    map_points: 'map_points.json',
+    map_dots: 'map_dots.json',
+    task: 'task.json',
 }
 export const sounds = {
     se_swipe: 'se_swipe.mp3',

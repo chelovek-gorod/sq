@@ -1,27 +1,25 @@
 import { Container, Sprite, DisplacementFilter } from 'pixi.js'
 import { tickerAdd } from '../../../app/application'
-import { images } from '../../../app/assets'
-
-// ==================== CONSTANTS ====================
+import { atlases, images } from '../../../app/assets'
+import { dragonPointIndex } from '../../state'
+import { PET } from '../game/constants'
+import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT } from './constants'
+import MapDot from './MapDot'
+import MapPoint from './MapPoint'
 
 const DP_FILTER_SPEED = 0.03
 
-const DRAG_SENSITIVITY = 0.45
+const DRAG_SENSITIVITY = 0.7
 const EDGE_PAN_SPEED = 700
 const EDGE_PAN_ZONE = 200
 const RETURN_LERP = 0.03
 const IDLE_RETURN_DELAY = 2000
-
-const MAP_WIDTH = 2048
-const MAP_HEIGHT = 1366
 
 const FOCUS_EPSILON = 0.06
 
 export default class WorldMap extends Container {
     constructor() {
         super()
-
-        // ==================== MAP ====================
 
         this.staticImage = new Sprite(images.map_static)
         this.staticImage.anchor.set(0.5)
@@ -41,23 +39,20 @@ export default class WorldMap extends Container {
         this.actionImage.filters = [this.DPFilter]
         this.actionContainer.addChild(this.actionImage)
 
-        // ==================== CAMERA STATE ====================
-
         this.isDragging = false
         this.dragStart = null
 
         this.edgePan = { x: 0, y: 0 }
 
-        // focusPoint В КООРДИНАТАХ КАРТЫ
-        this.focusPoint = { x: MAP_WIDTH, y: MAP_HEIGHT }
+        // focusPoint на дракона на карте
+        this.focusPoint = {x:0, y:0}
+        this.calculateBounds()
+        this.setFocusPoint(true)
 
         this.isReturning = false
         this.idleTimer = 0
 
-        // флаг активности ввода (КЛЮЧЕВОЙ момент)
         this.inputActive = false
-
-        // ==================== BOUNDS ====================
 
         this.mapWidth = MAP_WIDTH
         this.mapHeight = MAP_HEIGHT
@@ -70,7 +65,16 @@ export default class WorldMap extends Container {
         this.minY = 0
         this.maxY = 0
 
-        // ==================== EVENTS ====================
+        this.points = new Container()
+        this.addChild(this.points)
+        for(let d = 1; d < 83; d++) this.points.addChild( new MapDot(d) )
+        for(let i = 0; i < POINTS.length; i++) this.points.addChild( new MapPoint(i) )
+
+        this.dragon = new Sprite( atlases.pets.textures[PET.Dragon] )
+        this.dragon.scale.set(0.4)
+        this.dragon.anchor.set(0.5, 0.75)
+        this.addChild(this.dragon)
+        this.setDragon()
 
         this.eventMode = 'static'
         this.on('pointerdown', this.onPointerDown.bind(this))
@@ -81,8 +85,6 @@ export default class WorldMap extends Container {
         tickerAdd(this)
     }
 
-    // ==================== RESIZE ====================
-
     screenResize({ width, height }) {
         const scale = Math.max(width / this.mapWidth, height / this.mapHeight, 1)
         this.scale.set(scale)
@@ -92,9 +94,9 @@ export default class WorldMap extends Container {
 
         this.calculateBounds()
         this.clampPosition()
-    }
 
-    // ==================== TICK ====================
+        this.setFocusPoint(true)
+    }
 
     tick({ deltaMS }) {
         const dt = deltaMS / 1000
@@ -103,8 +105,7 @@ export default class WorldMap extends Container {
         this.DPFilterSprite.x += deltaMS * DP_FILTER_SPEED
         this.DPFilterSprite.y += deltaMS * DP_FILTER_SPEED
 
-        // ==================== EDGE PAN ====================
-
+        // edges
         if (!this.isDragging && !this.isReturning) {
             this.position.x += this.edgePan.x * EDGE_PAN_SPEED * dt / this.scale.x
             this.position.y += this.edgePan.y * EDGE_PAN_SPEED * dt / this.scale.y
@@ -112,8 +113,7 @@ export default class WorldMap extends Container {
             this.clampPosition()
         }
 
-        // ==================== IDLE TIMER ====================
-
+        // idle
         if (this.inputActive || this.isDragging) {
             this.idleTimer = 0
             this.isReturning = false
@@ -125,8 +125,7 @@ export default class WorldMap extends Container {
             this.isReturning = true
         }
 
-        // ==================== RETURN TO FOCUS ====================
-
+        // return to focus
         if (this.isReturning) {
             // целевая позиция камеры из focusPoint
             let targetX = this.mapWidth / 2 - this.focusPoint.x
@@ -154,8 +153,6 @@ export default class WorldMap extends Container {
         this.inputActive = false
     }
 
-    // ==================== POINTER ====================
-
     onPointerDown(e) {
         this.inputActive = true
         this.isDragging = true
@@ -181,8 +178,8 @@ export default class WorldMap extends Container {
             const dx = (p.x - this.dragStart.x) * DRAG_SENSITIVITY
             const dy = (p.y - this.dragStart.y) * DRAG_SENSITIVITY
 
-            this.position.x = this.dragStart.camX - dx
-            this.position.y = this.dragStart.camY - dy
+            this.position.x = this.dragStart.camX + dx
+            this.position.y = this.dragStart.camY + dy
 
             this.clampPosition()
             return
@@ -195,8 +192,6 @@ export default class WorldMap extends Container {
         this.isDragging = false
         this.dragStart = null
     }
-
-    // ==================== EDGE PAN ====================
 
     updateEdgePan({ x, y }) {
         const z = EDGE_PAN_ZONE
@@ -211,8 +206,6 @@ export default class WorldMap extends Container {
             y < z ? (z - y) / z :
             y > h - z ? -(y - (h - z)) / z : 0
     }
-
-    // ==================== BOUNDS ====================
 
     calculateBounds() {
         const vw = this.screenWidth / this.scale.x
@@ -233,10 +226,28 @@ export default class WorldMap extends Container {
         this.position.y = Math.max(this.minY, Math.min(this.maxY, this.position.y))
     }
 
-    // ==================== API ====================
+    setFocusPoint(instant = false) {
+        this.focusPoint.x = POINTS[dragonPointIndex].x + MAP_HALF_WIDTH
+        this.focusPoint.y = POINTS[dragonPointIndex].y + MAP_HALF_HEIGHT
+        
+        // Если instant = true, сразу устанавливаем позицию камеры
+        if (instant) {
+            let targetX = this.mapWidth / 2 - this.focusPoint.x
+            let targetY = this.mapHeight / 2 - this.focusPoint.y
+            
+            // Clamp мгновенной позиции
+            targetX = Math.max(this.minX, Math.min(this.maxX, targetX))
+            targetY = Math.max(this.minY, Math.min(this.maxY, targetY))
+            
+            this.position.set(targetX, targetY)
+            
+            // Отключаем возвращение, чтобы не началось в следующем тике
+            this.isReturning = false
+            this.idleTimer = 0
+        }
+    }
 
-    setFocusPoint(x, y) {
-        this.focusPoint.x = x
-        this.focusPoint.y = y
+    setDragon() {
+        this.dragon.position.set(POINTS[dragonPointIndex].x, POINTS[dragonPointIndex].y)
     }
 }
