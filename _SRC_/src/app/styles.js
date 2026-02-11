@@ -12,6 +12,15 @@ const fillSubtitleGradient = new FillGradient({
     ],
 });
 
+const popupTitleGradient = new FillGradient({
+    type: 'linear',
+    colorStops: [
+      { offset: 0,    color: '#0000aa' },
+      { offset: 0.5,  color: '#aa00aa' },
+      { offset: 1,    color: '#0000aa' },
+    ],
+});
+
 export let styles = {
     isReady: false, /* if true -> fonts is already loaded */
 
@@ -22,6 +31,9 @@ export let styles = {
     button: null,
     buttonHover: null,
     shineCounter: null,
+    taskCount: null,
+    cardCount: null,
+    popupTitle: null,
 }
 
 export function initFontStyles() {
@@ -81,6 +93,42 @@ export function initFontStyles() {
         dropShadowBlur: 6,
         dropShadowAngle: 0,
         dropShadowDistance: 0,
+    })
+
+    styles.cardCount = new TextStyle({
+        fontFamily: fonts.BSBold,
+        fontSize: 36,
+        fill: '#ffffff',
+        align: 'center',
+    
+        dropShadow: true,
+        dropShadowColor: '#000000',
+        dropShadowBlur: 6,
+        dropShadowAngle: 0,
+        dropShadowDistance: 0,
+    })
+
+    styles.taskCount = new TextStyle({
+        fontFamily: fonts.BSBold,
+        fontSize: 48,
+        fill: '#ffffff',
+        //align: 'center',
+    
+        dropShadow: true,
+        dropShadowColor: '#000000',
+        dropShadowBlur: 9,
+        dropShadowAngle: 0,
+        dropShadowDistance: 0,
+    })
+
+    styles.popupTitle = new TextStyle({
+        fontFamily: fonts.BSBold,
+        fontSize: 72,
+        fill: popupTitleGradient,
+        align: 'center',
+        wordWrap: true,
+        wordWrapWidth: 800,
+        lineHeight: 70,
     })
 
     styles.isReady = true

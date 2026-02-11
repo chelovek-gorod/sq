@@ -2,19 +2,20 @@ import { Container } from 'pixi.js'
 import { atlases, music } from '../../../app/assets'
 import { EventHub, events, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
-import BackgroundImage from '../../BG/BackgroundImage'
 import BackgroundGradient from '../../BG/BackgroundGradient'
 import { getLanguage } from '../../localization'
 import TapIcon from '../../UI/TapIcon'
-import { BG_GRADIENT_COLORS, CEIL_DATA, FIELD_OFFSET_X, FIELD_OFFSET_Y, PLACE } from './constants'
+import { BG_GRADIENT_COLORS, CEIL_DATA, FIELD_OFFSET_X, FIELD_OFFSET_Y } from './constants'
 import GameField from './GameField'
 import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
 import Collection from '../../popup/Collection'
 import FlyText from '../../effects/FlyText'
-import { levelIndex } from '../../state'
+import { levelTask } from '../../state'
 import { LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
+import GameTask from './GameTask'
+import Popup from '../../popup/Popup'
 
 export default class Game extends Container {
     constructor() {
@@ -27,7 +28,7 @@ export default class Game extends Container {
         this.stepsCount = 0
         EventHub.on( events.userDoStep, this.userDoStep, this )
 
-        this.level = LEVELS_LIST[ levelIndex ]
+        this.level = LEVELS_LIST[ levelTask.levelIndex ]
 
         const levelCeilsInWidth = this.level.map[0].length / 6
         const levelCeilsInHeight = (this.level.map.length + 1) / 2
@@ -44,6 +45,9 @@ export default class Game extends Container {
         this.field = new GameField(this.level)
         this.addChild(this.field)
 
+        this.task = new GameTask(levelTask)
+        this.addChild(this.task)
+
         this.collection = new Collection()
         this.collection.visible = false
         this.addChild(this.collection)
@@ -56,6 +60,9 @@ export default class Game extends Container {
         this.settingsBtn.anchor.set(1, 0)
         
         this.addChild(this.homeBtn, this.bookBtn, this.settingsBtn)
+
+        this.popup = new Popup()
+        this.addChild(this.popup)
 
         EventHub.on( events.addShineBall, this.addShineBall, this )
         EventHub.on( events.addFlyText, this.addFlyText, this )
@@ -79,8 +86,10 @@ export default class Game extends Container {
         this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
         this.shineBar.position.set(-screenData.centerX, -screenData.centerY)
 
-        const freeWidth = screenData.width - FIELD_OFFSET_X * 2
-        const freeHeight = screenData.height - FIELD_OFFSET_Y * 2
+        this.task.position.set(0, -screenData.centerY)
+
+        const freeWidth = screenData.width
+        const freeHeight = screenData.height - FIELD_OFFSET_Y
         const fieldScaleX = Math.min(1, freeWidth / this.fieldWidth)
         const fieldScaleY = Math.min(1, freeHeight / this.fieldHeight)
         const fieldScale = Math.min(fieldScaleX, fieldScaleY)
@@ -88,12 +97,14 @@ export default class Game extends Container {
         const fieldScaledWidth = this.fieldWidth * fieldScale
         const fieldScaledHeight = this.fieldHeight * fieldScale
         const fieldX = -fieldScaledWidth * 0.5
-        const fieldY = -fieldScaledHeight * 0.5
+        const fieldY = -fieldScaledHeight * 0.5 + FIELD_OFFSET_Y * fieldScale * 0.75
         this.field.position.set(fieldX, fieldY)
 
         // 120 x 150
         const shineBarCenter = {x: this.shineBar.position.x + 55, y: this.shineBar.position.y + 65}
         this.shineBar.setPointOnField( this.field.toLocal(shineBarCenter, this) )
+
+        this.popup.screenResize(screenData)
     }
 
     userDoStep() {
@@ -148,6 +159,7 @@ export default class Game extends Container {
     kill() {
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.userDoStep, this.userDoStep, this )
+        EventHub.off( events.addShineBall, this.addShineBall, this )
         EventHub.off( events.addFlyText, this.addFlyText, this )
     }
 }

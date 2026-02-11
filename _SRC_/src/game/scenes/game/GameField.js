@@ -164,6 +164,7 @@ export default class GameField extends Container {
     }
 
     addEffect( effect ) {
+        if (!this.effects) return console.error(`this.effects = ${this.effects}`)
         this.effects.addChild( effect )
     }
 

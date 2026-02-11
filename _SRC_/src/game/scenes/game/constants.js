@@ -180,7 +180,7 @@ CEIL_DATA.highlightScaleStep = (CEIL_DATA.highlightScale - CEIL_DATA.scale) / CE
 CEIL_DATA.highlightAlphaStep = (CEIL_DATA.highlightAlpha - CEIL_DATA.alpha) / CEIL_DATA.highlightDuration
 
 export const FIELD_OFFSET_X = 0
-export const FIELD_OFFSET_Y = 40
+export const FIELD_OFFSET_Y = 120
 
 export const BG_GRADIENT_NAME = createEnum([
     'Glam', 'Pink',  'Indigo', 'lilac', 'Green', 'Blue', 'Sky', 'Snow', 'Gold',

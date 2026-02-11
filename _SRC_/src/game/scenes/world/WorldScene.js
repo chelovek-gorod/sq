@@ -1,12 +1,14 @@
 import { Container } from 'pixi.js'
 import { atlases, music } from '../../../app/assets'
-import { EventHub, events } from '../../../app/events'
+import { EventHub, events, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import TapIcon from '../../UI/TapIcon'
 import Collection from '../../popup/Collection'
 import WorldMap from './WorldMap'
 import FirefliesContainer from '../../effects/Fireflies'
+import LevelCards from '../../popup/LevelCards'
+import { SCENE_NAME } from '../constants'
 
 export default class World extends Container {
     constructor() {
@@ -28,14 +30,17 @@ export default class World extends Container {
 
         this.searchBtn = new TapIcon( atlases.ui.textures.ui_search, this.clickSearch.bind(this) )
         this.searchBtn.anchor.set(0, 0)
-        this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, () => {} )
+        this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, this.clickHome.bind(this) )
         this.homeBtn.anchor.set(0, 1)
         this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, this.clickBook.bind(this) )
         this.bookBtn.anchor.set(1, 1)
-        this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, () => {} )
+        this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, this.clickSettings.bind(this) )
         this.settingsBtn.anchor.set(1, 0)
         
         this.addChild(this.searchBtn, this.homeBtn, this.bookBtn, this.settingsBtn)
+
+        this.levelCards = new LevelCards()
+        this.addChild(this.levelCards)
 
         setMusicList([ music.bgm_0 ])
     }
@@ -45,6 +50,8 @@ export default class World extends Container {
         this.position.set( screenData.centerX, screenData.centerY )
 
         this.worldMap.screenResize(screenData)
+
+        this.levelCards.screenResize(screenData)
 
         this.collection.screenResize(screenData)
 
@@ -62,6 +69,14 @@ export default class World extends Container {
         this.collection.visible = !this.collection.visible
         if (this.collection.visible) this.bookBtn.texture = atlases.ui.textures.ui_close_book
         else this.bookBtn.texture = atlases.ui.textures.ui_book
+    }
+
+    clickHome() {
+        startScene( SCENE_NAME.Menu )
+    }
+
+    clickSettings() {
+
     }
 
     updateLanguage(lang) {

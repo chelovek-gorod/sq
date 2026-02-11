@@ -33,6 +33,10 @@ export const images = {
     lock_place: 'lock_place.png',
     pet_shadow: 'shadow.png',
 
+    button_icon_close: 'button_icon_close.png',
+
+    popup_bg: 'popup_bg.png',
+
     map_static: 'map_static.png',
     map_action: 'map_action.png',
     map_point_blue: 'map_point_blue.png',

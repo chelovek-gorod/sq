@@ -74,6 +74,7 @@ export default class Button extends Container {
 
         this.isOnHover = true
         if (this.isText) this.value.style = styles.buttonHover
+        else this.value.blendMode = 'add'
         soundPlay(sounds.se_swipe)
         tickerAdd(this)
     }
@@ -82,6 +83,7 @@ export default class Button extends Container {
 
         this.isOnHover = false
         if (this.isText) this.value.style = styles.button
+        else this.value.blendMode = 'normal'
         tickerAdd(this)
     }
 
@@ -90,6 +92,7 @@ export default class Button extends Container {
         this.backImage.off('pointerover', this.onHover, this)
         this.backImage.off('pointerout', this.onOut, this)
         if (this.isText) this.value = styles.button
+        else this.value.blendMode = 'normal'
     }
 
     tick(time) {

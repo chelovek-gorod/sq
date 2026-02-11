@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite } from "pixi.js";
 import { images, atlases } from "../../app/assets";
-import { FIELD_OFFSET_Y, LEVEL_PET, PET_DATA, PLACE_PETS } from "../scenes/game/constants";
+import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PET_DATA, PLACE_PETS } from "../scenes/game/constants";
 import { availablePetLevel } from "../state";
 
 const BG = {
@@ -125,13 +125,11 @@ export default class Collection extends Container {
     }
 
     screenResize(screenData) {
-        this.container.position.set( screenData.centerX, screenData.centerY )
-
         this.overlay.clear()
         this.overlay.rect(
-            -screenData.centerX - FIELD_OFFSET_Y,
+            -screenData.centerX - FIELD_OFFSET_X,
             -screenData.centerY - FIELD_OFFSET_Y,
-            screenData.width + FIELD_OFFSET_Y * 2,
+            screenData.width + FIELD_OFFSET_X * 2,
             screenData.height + FIELD_OFFSET_Y * 2
         )
         this.overlay.fill({ color: 0x000000, alpha: 0.5 })
@@ -142,8 +140,8 @@ export default class Collection extends Container {
         this.container.scale.set(scale)
 
         const x = -BG.width * scale * 0.5
-        const y = -BG.width * scale * 0.5
-        this.container.position.set( x, y + FIELD_OFFSET_Y )
+        const y = -BG.height * scale * 0.5
+        this.container.position.set( x, y)
     }
 
     addPet(i) {

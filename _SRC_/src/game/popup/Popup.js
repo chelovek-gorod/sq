@@ -1,15 +1,11 @@
-import { Container, Graphics } from "pixi.js"
+import { Container, Graphics, Sprite, Text } from "pixi.js"
 import { EventHub, events } from "../../app/events"
 import { BUTTON_TEXT } from "../UI/constants"
-import { POPUP, POPUP_TYPE } from "./constants"
+import { POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
-import Bet from "./Bet"
-import Logs from "./Logs"
-import GameSettings from "./GameSettings"
-import MoneyAdd from "./MoneyAdd"
-import RulesR from "./RulesR"
-import RulesS from "./RulesS"
 import { getLanguage } from "../localization"
+import { images } from "../../app/assets"
+import { styles } from "../../app/styles"
 
 export default class Popup extends Container {
     constructor() {
@@ -18,31 +14,27 @@ export default class Popup extends Container {
         this.currentLanguage = getLanguage()
         EventHub.on(events.updateLanguage, this.updateLanguage, this)
 
+        this.visible = false
+
         this.shell = new Graphics()
         this.shell.eventMode = 'static'
-
-        this.box = new Container()
-
-        this.bg = new Graphics()
-        this.bg.roundRect(POPUP.x, POPUP.y, POPUP.width, POPUP.height, POPUP.borderRadius)
-        this.bg.fill(POPUP.bg)
-        this.bg.stroke({width: POPUP.borderWidth, color: POPUP.borderColor})
+        this.addChild(this.shell)
         
-        this.closeButton = new Button(
-            BUTTON_TEXT.done[ this.currentLanguage ],
-            POPUP.closeButton.x, POPUP.closeButton.y, this.close.bind(this)
-        )
-        this.closeButton.scale.set(POPUP.closeButton.scale)
+        this.box = new Container()
+        this.addChild(this.box)
 
-        this.box.addChild(this.bg, this.closeButton)
+        this.bg = new Sprite( images.popup_bg )
+        this.bg.anchor.set(0.5)
+        this.box.addChild(this.bg)
 
-        this.type = POPUP_TYPE.EMPTY
-        this[POPUP_TYPE.bet] = new Bet()
-        this[POPUP_TYPE.logs] = new Logs()
-        this[POPUP_TYPE.settings] = new GameSettings()
-        this[POPUP_TYPE.addMoney] = new MoneyAdd()
-        this[POPUP_TYPE.rulesR] = new RulesR()
-        this[POPUP_TYPE.rulesS] = new RulesS()
+        this.title = new Text({text: 'Открой нового Сквинки', style: styles.popupTitle})
+        this.title.anchor.set(0.5)
+        this.title.position.set(0, -280)
+        this.box.addChild(this.title)
+        
+        this.closeButton = new Button(null, 'Хорошо', () => this.close())
+        this.closeButton.position.set(0, 325)
+        this.box.addChild(this.closeButton)
 
         EventHub.on(events.showPopup, this.show, this)
     }
@@ -50,29 +42,29 @@ export default class Popup extends Container {
     screenResize(screenData) {
         this.shell.clear()
         this.shell.rect(-screenData.centerX, -screenData.centerY, screenData.width, screenData.height)
-        this.shell.fill(POPUP.sellColor)
-        this.shell.alpha = POPUP.sellAlpha
+        this.shell.fill(0x000000)
+        this.shell.alpha = 0.5
 
         const screenSize = screenData.isLandscape ? screenData.height : screenData.width
-        const scale = Math.min(1, screenSize / POPUP.size)
+        const scale = Math.min(1, screenSize / 960)
         this.box.scale.set(scale)
     }
 
-    show(type) {
+    show(data) {
+        // data = {type: POPUP_TYPE.TASK, data: this.task}
+        this.visible = true
+        /*
         this.addChild(this.shell, this.box)
         if (type && type in this) {
             this.box.addChild(this[type])
             this.type = type
         }
+        */
     }
 
     close() {
         this.closeButton.onOut()
-        if (this.type) {
-            this.box.removeChild(this[this.type])
-            this.type = POPUP_TYPE.EMPTY
-        }
-        this.removeChildren()
+        this.visible = false
     }
 
     updateLanguage(lang) {

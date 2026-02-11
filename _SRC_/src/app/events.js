@@ -20,6 +20,8 @@ export const events = {
     dragging: 'dragging',
     userDoStep: 'userDoStep',
     addShineBall: 'addShineBall',
+    showLevelCards: 'showLevelCards',
+    showPopup: 'showPopup',
 }
 
 export function screenResize( data ) {
@@ -63,4 +65,10 @@ export function userDoStep() {
 }
 export function addShineBall( data ) {
     EventHub.emit( events.addShineBall, data )
+}
+export function showLevelCards( pointIndex ) {
+    EventHub.emit( events.showLevelCards, pointIndex )
+}
+export function showPopup( data ) {
+    EventHub.emit( events.showPopup, data )
 }

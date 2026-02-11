@@ -1,7 +1,7 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases } from "../../../app/assets";
-import { startScene } from "../../../app/events";
+import { showLevelCards, startScene } from "../../../app/events";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
 import { world } from "../../state";
 import { SCENE_NAME } from "../constants";
@@ -58,7 +58,8 @@ export default class MapPoint extends Container {
     }
 
     click() {
-        startScene( SCENE_NAME.Game )
+        showLevelCards( this.index )
+        // startScene( SCENE_NAME.Game )
     }
 
     onHover() {

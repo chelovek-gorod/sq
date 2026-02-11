@@ -8,32 +8,34 @@ export const MAP_HALF_WIDTH = Math.ceil(MAP_WIDTH * 0.5)
 export const MAP_HALF_HEIGHT = Math.ceil(MAP_HEIGHT * 0.5)
 
 export const POINT_COLORS = createEnum(["RED", "PURPLE", "GREEN", "BLUE", "GRAY"])
-export const TASK = createEnum(["CLOUD", "LOCK", "NEW"])
+export const TASK = createEnum(["CLOUD", "LOCK", "NEW", "TIME"])
 
 export const POINTS = [
     {
         color: POINT_COLORS.BLUE,
         x: -MAP_HALF_WIDTH + 468, y: -MAP_HALF_HEIGHT + 439,
         tasks: [
-            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
+            {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0},
+            {type: TASK.LOCK, value: 4, turns: 0, levelIndex: 0},
+            {type: TASK.CLOUD, value: 12, turns: 12, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.GREEN,
         x: -MAP_HALF_WIDTH + 325, y: -MAP_HALF_HEIGHT + 526,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.RED,
         x: -MAP_HALF_WIDTH + 688, y: -MAP_HALF_HEIGHT + 579,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.PURPLE,
         x: -MAP_HALF_WIDTH + 549, y: -MAP_HALF_HEIGHT + 721,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
@@ -47,21 +49,21 @@ export const POINTS = [
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.GREEN,
         x: -MAP_HALF_WIDTH + 792, y: -MAP_HALF_HEIGHT + 1035,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.RED,
         x: -MAP_HALF_WIDTH + 967, y: -MAP_HALF_HEIGHT + 1103,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.PURPLE,
         x: -MAP_HALF_WIDTH + 1148, y: -MAP_HALF_HEIGHT + 1144,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
@@ -75,21 +77,21 @@ export const POINTS = [
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.GREEN,
         x: -MAP_HALF_WIDTH + 1229, y: -MAP_HALF_HEIGHT + 913,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.RED,
         x: -MAP_HALF_WIDTH + 1119, y: -MAP_HALF_HEIGHT + 580,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.PURPLE,
         x: -MAP_HALF_WIDTH + 912, y: -MAP_HALF_HEIGHT + 439,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
@@ -103,21 +105,21 @@ export const POINTS = [
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.GREEN,
         x: -MAP_HALF_WIDTH + 1252, y: -MAP_HALF_HEIGHT + 450,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.RED,
         x: -MAP_HALF_WIDTH + 1432, y: -MAP_HALF_HEIGHT + 562,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.PURPLE,
         x: -MAP_HALF_WIDTH + 1595, y: -MAP_HALF_HEIGHT + 726,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
@@ -131,14 +133,14 @@ export const POINTS = [
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.GREEN,
         x: -MAP_HALF_WIDTH + 1515, y: -MAP_HALF_HEIGHT + 435,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
         ]
     },
     {
-        color: POINT_COLORS.BLUE,
+        color: POINT_COLORS.RED,
         x: -MAP_HALF_WIDTH + 1672, y: -MAP_HALF_HEIGHT + 347,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}

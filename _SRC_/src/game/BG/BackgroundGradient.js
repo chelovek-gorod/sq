@@ -11,10 +11,10 @@ const colorKeys = Object.keys( BG_GRADIENT_NAME )
 export default class BackgroundGradient extends Sprite {
     constructor(colors) {
         super()
-        this.colors = BG_GRADIENT_COLORS[ colorKeys[bgColorsIndex] ] // colors
+        this.colors = colors
         this.anchor.set(0.5)
 
-        /* color piker */
+        /* color piker 
         bg = this
         dx = document.createElement('div')
         dx.style = `position: absolute; top: 10px; left: 10px; width: 100%; text-align: center;`
@@ -45,7 +45,7 @@ export default class BackgroundGradient extends Sprite {
             colors[index] = color
             bg.setColors(colors)
         }
-        /* */
+        */
     }
 
     screenResize(screenData) {
