@@ -16,8 +16,8 @@ export const POINTS = [
         x: -MAP_HALF_WIDTH + 468, y: -MAP_HALF_HEIGHT + 439,
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0},
-            {type: TASK.LOCK, value: 4, turns: 0, levelIndex: 0},
-            {type: TASK.CLOUD, value: 12, turns: 12, levelIndex: 0}
+            {type: TASK.LOCK, value: 4, turns: 0, levelIndex: 1},
+            {type: TASK.CLOUD, value: 12, turns: 12, levelIndex: 2}
         ]
     },
     {

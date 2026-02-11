@@ -1,6 +1,7 @@
 import { Container, Sprite, DisplacementFilter } from 'pixi.js'
 import { tickerAdd } from '../../../app/application'
 import { atlases, images } from '../../../app/assets'
+import { EventHub, events } from '../../../app/events'
 import { dragonPointIndex } from '../../state'
 import { PET } from '../game/constants'
 import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT } from './constants'
@@ -18,6 +19,8 @@ const FOCUS_EPSILON = 0.06
 export default class WorldMap extends Container {
     constructor() {
         super()
+
+        this.isOn = true
 
         // ================= MAP =================
 
@@ -79,10 +82,12 @@ export default class WorldMap extends Container {
         // ================= EVENTS =================
 
         this.eventMode = 'static'
-        this.on('pointerdown', this.onPointerDown.bind(this))
-        this.on('pointermove', this.onPointerMove.bind(this))
-        this.on('pointerup', this.onPointerUp.bind(this))
-        this.on('pointerupoutside', this.onPointerUp.bind(this))
+        this.on('pointerdown', this.onPointerDown, this)
+        this.on('pointermove', this.onPointerMove, this)
+        this.on('pointerup', this.onPointerUp, this)
+        this.on('pointerupoutside', this.onPointerUp, this)
+
+        EventHub.on( events.setMapCameraInteractive, this.setOnOff, this )
 
         tickerAdd(this)
     }
@@ -150,7 +155,7 @@ export default class WorldMap extends Container {
     // ================= POINTER =================
 
     onPointerDown(e) {
-        if (this.autoFocus) return
+        if (this.autoFocus || !this.isOn) return
 
         this.isDragging = true
 
@@ -164,9 +169,9 @@ export default class WorldMap extends Container {
     }
 
     onPointerMove(e) {
-        if (this.autoFocus) return
+        if (this.autoFocus || !this.isOn || !this.isDragging) return
 
-        if (this.isDragging && this.dragStart) {
+        if (this.dragStart) {
             const p = this.toLocal(e.global)
 
             const dx = (p.x - this.dragStart.x) * DRAG_SENSITIVITY
@@ -255,5 +260,18 @@ export default class WorldMap extends Container {
             POINTS[dragonPointIndex].x,
             POINTS[dragonPointIndex].y
         )
+    }
+
+    setOnOff( isOn ) {
+        this.isOn = isOn
+    }
+
+    kill() {
+        this.off('pointerdown', this.onPointerDown, this)
+        this.off('pointermove', this.onPointerMove, this)
+        this.off('pointerup', this.onPointerUp, this)
+        this.off('pointerupoutside', this.onPointerUp, this)
+
+        EventHub.off( events.setMapCameraInteractive, this.setOnOff, this )
     }
 }

@@ -22,6 +22,7 @@ export const events = {
     addShineBall: 'addShineBall',
     showLevelCards: 'showLevelCards',
     showPopup: 'showPopup',
+    setMapCameraInteractive: 'setMapCameraInteractive',
 }
 
 export function screenResize( data ) {
@@ -71,4 +72,7 @@ export function showLevelCards( pointIndex ) {
 }
 export function showPopup( data ) {
     EventHub.emit( events.showPopup, data )
+}
+export function setMapCameraInteractive( isActive ) {
+    EventHub.emit( events.setMapCameraInteractive, isActive )
 }

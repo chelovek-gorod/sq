@@ -1,7 +1,7 @@
 import { Container, Graphics, Sprite, Text, Texture } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../app/application";
 import { images, atlases } from "../../app/assets";
-import { EventHub, events, startScene } from "../../app/events";
+import { EventHub, events, setMapCameraInteractive, startScene } from "../../app/events";
 import { styles } from "../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../utils/functions";
 import { SCENE_NAME } from "../scenes/constants";
@@ -149,6 +149,7 @@ export default class LevelCards extends Container {
     }
 
     showLevelCards(mapPointIndex) {
+        setMapCameraInteractive( false )
         const tasksCount = POINTS[mapPointIndex].tasks.length
 
         for(let i = 0; i < tasksCount; i++) {
@@ -168,8 +169,9 @@ export default class LevelCards extends Container {
     }
 
     closeCards() {
-        this.visible = false
         this.cards.children.forEach( card => kill(card) )
+        this.visible = false
+        setMapCameraInteractive( true )
     }
 
     kill() {

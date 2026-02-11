@@ -62,9 +62,11 @@ export default class Button extends Container {
         }
     }
 
-    click() {
+    click(event) {
         if (!this.isActive) return
 
+        event.stopPropagation()
+        
         soundPlay(sounds.se_click)
         this.callback()
     }
