@@ -12,7 +12,7 @@ export const PROGRESS_BAR = {
     height: 36,
     borderLineWidth: 6,
     progressOffset: 10,
-    color: 0x00ff00,
+    color: 0x4000ff,
     borderRadius: 18,
     progressRadius: 8,
 }

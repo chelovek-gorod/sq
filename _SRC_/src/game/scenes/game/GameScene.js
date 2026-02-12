@@ -56,7 +56,7 @@ export default class Game extends Container {
         this.homeBtn.anchor.set(0, 1)
         this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, this.clickBook.bind(this) )
         this.bookBtn.anchor.set(1, 1)
-        this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, () => {} )
+        this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, this.clickSettings.bind(this) )
         this.settingsBtn.anchor.set(1, 0)
         
         this.addChild(this.homeBtn, this.bookBtn, this.settingsBtn)
@@ -143,6 +143,11 @@ export default class Game extends Container {
     }
 
     clickHome() {
+        if (this.collection.visible) {
+            this.clickBook()
+            return
+        }
+
         startScene( SCENE_NAME.World )
     }
 
@@ -150,6 +155,10 @@ export default class Game extends Container {
         this.collection.visible = !this.collection.visible
         if (this.collection.visible) this.bookBtn.texture = atlases.ui.textures.ui_close_book
         else this.bookBtn.texture = atlases.ui.textures.ui_book
+    }
+
+    clickSettings() {
+
     }
 
     updateLanguage(lang) {

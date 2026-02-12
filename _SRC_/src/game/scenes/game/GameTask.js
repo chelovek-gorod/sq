@@ -78,6 +78,8 @@ export default class GameTask extends Container {
         this.on('pointerdown', this.click, this)
         this.on('pointerover', this.onHover, this)
         this.on('pointerout', this.onOut, this)
+
+        setTimeout( () => showPopup( {type: POPUP_TYPE.TASK, data: this.task} ), 0 )
     }
 
     click() {

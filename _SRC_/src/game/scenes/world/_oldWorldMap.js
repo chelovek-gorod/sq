@@ -10,11 +10,11 @@ import MapPoint from './MapPoint'
 
 const DP_FILTER_SPEED = 0.03
 
-const DRAG_SENSITIVITY = 1.2
-const EDGE_PAN_SPEED = 600
-const EDGE_PAN_ZONE = 120
-const RETURN_LERP = 0.12 //  коэффициент плавности позиция += (цель - позиция) * RETURN_LERP
-const FOCUS_TOLERANCE = 0.3 // пикселей — если до цели меньше, прыгаем сразу
+const DRAG_SENSITIVITY = 0.7
+const EDGE_PAN_SPEED = 700
+const EDGE_PAN_ZONE = 150
+const RETURN_LERP = 0.03
+const FOCUS_EPSILON = 0.06
 
 export default class WorldMap extends Container {
     constructor() {
@@ -46,15 +46,15 @@ export default class WorldMap extends Container {
 
         this.isDragging = false
         this.dragStart = null
-        this.dragCoefficient = 1
-
-        this.isIgnoringPointerMove = false
 
         this.edgePan = { x: 0, y: 0 }
 
         this.focusPoint = { x: 0, y: 0 }
 
         this.autoFocus = false
+
+        this.mapWidth = MAP_WIDTH
+        this.mapHeight = MAP_HEIGHT
 
         this.screenWidth = 0
         this.screenHeight = 0
@@ -63,9 +63,6 @@ export default class WorldMap extends Container {
         this.maxX = 0
         this.minY = 0
         this.maxY = 0
-
-        this.edgeSpeedX = 0
-        this.edgeSpeedY = 0
 
         // ================= CONTENT =================
 
@@ -98,27 +95,17 @@ export default class WorldMap extends Container {
     // ================= RESIZE =================
 
     screenResize({ width, height }) {
-        const widthRatio = width / MAP_WIDTH
-        const heightRatio = height / MAP_HEIGHT
+        const widthRatio = width / this.mapWidth
+        const heightRatio = height / this.mapHeight
 
         const scale = Math.max(widthRatio, heightRatio, 0.75)
         this.scale.set(scale)
-
-        this.dragCoefficient = this.scale.x * DRAG_SENSITIVITY
-
-        this.edgeSpeedX = EDGE_PAN_SPEED / this.scale.x
-        this.edgeSpeedY = EDGE_PAN_SPEED / this.scale.y
 
         this.screenWidth = width
         this.screenHeight = height
 
         this.calculateBounds()
         this.clampPosition()
-
-        if (this.isDragging) {
-            this.isDragging = false
-            this.dragStart = null
-        }
 
         // мгновенно центрируем
         this.setFocusPoint(true)
@@ -136,17 +123,19 @@ export default class WorldMap extends Container {
         // ================= AUTO FOCUS =================
 
         if (this.autoFocus) {
-            let targetX = (MAP_HALF_WIDTH - this.focusPoint.x) * this.scale.x
-            let targetY = (MAP_HALF_HEIGHT - this.focusPoint.y) * this.scale.y
+            let targetX = (this.mapWidth * 0.5 - this.focusPoint.x) * this.scale.x
+            let targetY = (this.mapHeight * 0.5 - this.focusPoint.y) * this.scale.y
 
             targetX = Math.max(this.minX, Math.min(this.maxX, targetX))
             targetY = Math.max(this.minY, Math.min(this.maxY, targetY))
 
             this.position.x += (targetX - this.position.x) * RETURN_LERP
             this.position.y += (targetY - this.position.y) * RETURN_LERP
-            
-            if ( Math.abs(targetX - this.position.x) < FOCUS_TOLERANCE
-            && Math.abs(targetY - this.position.y) < FOCUS_TOLERANCE ) {
+
+            if (
+                Math.abs(targetX - this.position.x) < FOCUS_EPSILON &&
+                Math.abs(targetY - this.position.y) < FOCUS_EPSILON
+            ) {
                 this.position.set(targetX, targetY)
                 this.autoFocus = false
             }
@@ -157,8 +146,8 @@ export default class WorldMap extends Container {
         // ================= EDGE PAN =================
 
         if (!this.isDragging) {
-            this.position.x += this.edgePan.x * this.edgeSpeedX * dt
-            this.position.y += this.edgePan.y * this.edgeSpeedY * dt
+            this.position.x += this.edgePan.x * EDGE_PAN_SPEED * dt / this.scale.x
+            this.position.y += this.edgePan.y * EDGE_PAN_SPEED * dt / this.scale.y
             this.clampPosition()
         }
     }
@@ -168,48 +157,39 @@ export default class WorldMap extends Container {
     onPointerDown(e) {
         if (this.autoFocus || !this.isOn) return
 
-        this.isIgnoringPointerMove = false
         this.isDragging = true
-        this.edgePan.x = 0
-        this.edgePan.y = 0
 
+        const p = this.toLocal(e.global)
         this.dragStart = {
-            globalX: e.global.x,
-            globalY: e.global.y,
+            x: p.x,
+            y: p.y,
             camX: this.position.x,
             camY: this.position.y
         }
     }
 
     onPointerMove(e) {
-        if (this.autoFocus || !this.isOn || this.isIgnoringPointerMove) return
-
-        if (!this.isDragging) this.updateEdgePan(e.global)
+        if (this.autoFocus || !this.isOn || !this.isDragging) return
 
         if (this.dragStart) {
-            const dx = (e.global.x - this.dragStart.globalX) * this.dragCoefficient
-            const dy = (e.global.y - this.dragStart.globalY) * this.dragCoefficient
+            const p = this.toLocal(e.global)
+
+            const dx = (p.x - this.dragStart.x) * DRAG_SENSITIVITY
+            const dy = (p.y - this.dragStart.y) * DRAG_SENSITIVITY
 
             this.position.x = this.dragStart.camX + dx
             this.position.y = this.dragStart.camY + dy
 
             this.clampPosition()
+            return
         }
+
+        this.updateEdgePan(e.global)
     }
 
     onPointerUp() {
-        this.isIgnoringPointerMove = false
-
-        if (!this.isDragging) {
-            this.edgePan.x = 0
-            this.edgePan.y = 0
-            return
-        }
-    
         this.isDragging = false
         this.dragStart = null
-        this.edgePan.x = 0
-        this.edgePan.y = 0
     }
 
     // ================= EDGE PAN =================
@@ -231,8 +211,8 @@ export default class WorldMap extends Container {
     // ================= BOUNDS =================
 
     calculateBounds() {
-        const mapWorldW = MAP_WIDTH * this.scale.x
-        const mapWorldH = MAP_HEIGHT * this.scale.y
+        const mapWorldW = this.mapWidth * this.scale.x
+        const mapWorldH = this.mapHeight * this.scale.y
 
         const halfMapW = mapWorldW / 2
         const halfMapH = mapWorldH / 2
@@ -261,13 +241,15 @@ export default class WorldMap extends Container {
         this.focusPoint.y = POINTS[dragonPointIndex].y + MAP_HALF_HEIGHT
 
         if (instant) {
-            let targetX = (MAP_HALF_WIDTH - this.focusPoint.x) * this.scale.x
-            let targetY = (MAP_HALF_HEIGHT - this.focusPoint.y) * this.scale.y
+            let targetX = (this.mapWidth * 0.5 - this.focusPoint.x) * this.scale.x
+            let targetY = (this.mapHeight * 0.5 - this.focusPoint.y) * this.scale.y
 
             targetX = Math.max(this.minX, Math.min(this.maxX, targetX))
             targetY = Math.max(this.minY, Math.min(this.maxY, targetY))
 
             this.position.set(targetX, targetY)
+            this.isReturning = false
+            this.idleTimer = 0
         } else {
             this.autoFocus = true
         }
@@ -282,14 +264,6 @@ export default class WorldMap extends Container {
 
     setOnOff( isOn ) {
         this.isOn = isOn
-
-        if (isOn) {
-            this.isDragging = false
-            this.dragStart = null
-            this.edgePan.x = 0
-            this.edgePan.y = 0
-            this.isIgnoringPointerMove = true
-        }
     }
 
     kill() {

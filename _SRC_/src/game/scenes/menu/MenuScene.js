@@ -43,6 +43,7 @@ export default class Menu extends Container {
                 startScene(SCENE_NAME.World)
             }, true
         )
+        this.startButton.scale.set(0.75)
         this.addChild(this.startButton)
 
         this.fireflies = new FirefliesContainer()

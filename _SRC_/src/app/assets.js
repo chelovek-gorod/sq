@@ -67,6 +67,7 @@ export const atlases = {
     map_points: 'map_points.json',
     map_dots: 'map_dots.json',
     task: 'task.json',
+    popup_images: 'popup_images.json',
 }
 export const sounds = {
     se_swipe: 'se_swipe.mp3',

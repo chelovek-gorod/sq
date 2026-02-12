@@ -72,6 +72,11 @@ export default class World extends Container {
     }
 
     clickHome() {
+        if (this.collection.visible) {
+            this.clickBook()
+            return
+        }
+        
         startScene( SCENE_NAME.Menu )
     }
 

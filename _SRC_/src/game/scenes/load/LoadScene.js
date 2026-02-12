@@ -10,6 +10,7 @@ import { EventHub, startScene, events } from '../../../app/events'
 import { SCENE_NAME } from '../constants'
 import { getFirstUserAction, soundPlay } from '../../../app/sound'
 import { getLanguage } from '../../localization'
+import { BG_GRADIENT_COLORS, BG_GRADIENT_NAME } from '../game/constants'
 
 let isFirstLoading = true
 
@@ -48,7 +49,7 @@ export default class LoadScene extends Container {
     }
 
     setBg() {
-        this.bg = new BackgroundGradient([0xff00ff, 0x777777])
+        this.bg = new BackgroundGradient( BG_GRADIENT_COLORS[ BG_GRADIENT_NAME.Pink ] )
         this.bg.screenResize( getAppScreen() )
         this.addChildAt(this.bg, 0)
 

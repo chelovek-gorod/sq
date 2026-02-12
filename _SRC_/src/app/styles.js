@@ -34,6 +34,8 @@ export let styles = {
     taskCount: null,
     cardCount: null,
     popupTitle: null,
+    popupDescription: null,
+    popupTurnsText: null,
 }
 
 export function initFontStyles() {
@@ -43,8 +45,8 @@ export function initFontStyles() {
         fill: '#ffffff',
     
         dropShadow: true,
-        dropShadowColor: '#00ff00',
-        dropShadowBlur: 4,
+        dropShadowColor: '#4000ff',
+        dropShadowBlur: 6,
         dropShadowAngle: 0,
         dropShadowDistance: 0,
     })
@@ -127,8 +129,24 @@ export function initFontStyles() {
         fill: popupTitleGradient,
         align: 'center',
         wordWrap: true,
-        wordWrapWidth: 800,
-        lineHeight: 70,
+        wordWrapWidth: 700,
+        lineHeight: 72,
+    })
+
+    styles.popupDescription = new TextStyle({
+        fontFamily: fonts.BSItalic,
+        fontSize: 32,
+        fill: 0xcc00cc,
+        align: 'center',
+        wordWrap: true,
+        wordWrapWidth: 700,
+        lineHeight: 32,
+    })
+
+    styles.popupTurnsText = new TextStyle({
+        fontFamily: fonts.BSBoldItalic,
+        fontSize: 40,
+        fill: 0xee0000,
     })
 
     styles.isReady = true
