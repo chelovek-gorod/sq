@@ -1,7 +1,7 @@
 import { updateLanguage } from "../app/events"
 import { STORED_KEYS, updateStoredData } from "./storage"
 
-const SUPPORTED_LANGUAGES = ['en', 'ru', 'tr', 'es', 'de', 'pt', 'fr', 'pl', 'id', 'ms']
+const SUPPORTED_LANGUAGES = ['en', 'ru', 'tr', 'es', 'de', 'pt', 'fr', 'pl', 'it', 'nl', 'cs']
 
 const LANGUAGE_NAMES = {
     en: {
@@ -13,8 +13,9 @@ const LANGUAGE_NAMES = {
         pt: 'Inglês',
         fr: 'Anglais',
         pl: 'Angielski',
-        id: 'Inggris',
-        ms: 'Inggeris'
+        it: 'Inglese',
+        nl: 'Engels',
+        cs: 'Angličtina'
     },
     ru: {
         en: 'Russian',
@@ -25,8 +26,9 @@ const LANGUAGE_NAMES = {
         pt: 'Russo',
         fr: 'Russe',
         pl: 'Rosyjski',
-        id: 'Rusia',
-        ms: 'Rusia'
+        it: 'Russo',
+        nl: 'Russisch',
+        cs: 'Ruština'
     },
     tr: {
         en: 'Turkish',
@@ -37,8 +39,9 @@ const LANGUAGE_NAMES = {
         pt: 'Turco',
         fr: 'Turc',
         pl: 'Turecki',
-        id: 'Turki',
-        ms: 'Turki'
+        it: 'Turco',
+        nl: 'Turks',
+        cs: 'Turečtina'
     },
     es: {
         en: 'Spanish',
@@ -49,8 +52,9 @@ const LANGUAGE_NAMES = {
         pt: 'Espanhol',
         fr: 'Espagnol',
         pl: 'Hiszpański',
-        id: 'Spanyol',
-        ms: 'Sepanyol'
+        it: 'Spagnolo',
+        nl: 'Spaans',
+        cs: 'Španělština'
     },
     de: {
         en: 'German',
@@ -61,8 +65,9 @@ const LANGUAGE_NAMES = {
         pt: 'Alemão',
         fr: 'Allemand',
         pl: 'Niemiecki',
-        id: 'Jerman',
-        ms: 'Jerman'
+        it: 'Tedesco',
+        nl: 'Duits',
+        cs: 'Němčina'
     },
     pt: {
         en: 'Portuguese',
@@ -73,8 +78,9 @@ const LANGUAGE_NAMES = {
         pt: 'Português',
         fr: 'Portugais',
         pl: 'Portugalski',
-        id: 'Portugis',
-        ms: 'Portugis'
+        it: 'Portoghese',
+        nl: 'Portugees',
+        cs: 'Portugalština'
     },
     fr: {
         en: 'French',
@@ -85,8 +91,9 @@ const LANGUAGE_NAMES = {
         pt: 'Francês',
         fr: 'Français',
         pl: 'Francuski',
-        id: 'Prancis',
-        ms: 'Perancis'
+        it: 'Francese',
+        nl: 'Frans',
+        cs: 'Francouzština'
     },
     pl: {
         en: 'Polish',
@@ -97,102 +104,86 @@ const LANGUAGE_NAMES = {
         pt: 'Polonês',
         fr: 'Polonais',
         pl: 'Polski',
-        id: 'Polandia',
-        ms: 'Poland'
+        it: 'Polacco',
+        nl: 'Pools',
+        cs: 'Polština'
     },
-    id: {
-        en: 'Indonesian',
-        ru: 'Индонезийский',
-        tr: 'Endonezce',
-        es: 'Indonesio',
-        de: 'Indonesisch',
-        pt: 'Indonésio',
-        fr: 'Indonésien',
-        pl: 'Indonezyjski',
-        id: 'Indonesia',
-        ms: 'Indonesia'
+    it: {
+        en: 'Italian',
+        ru: 'Итальянский',
+        tr: 'İtalyanca',
+        es: 'Italiano',
+        de: 'Italienisch',
+        pt: 'Italiano',
+        fr: 'Italien',
+        pl: 'Włoski',
+        it: 'Italiano',
+        nl: 'Italiaans',
+        cs: 'Italština'
     },
-    ms: {
-        en: 'Malay',
-        ru: 'Малайский',
-        tr: 'Malayca',
-        es: 'Malayo',
-        de: 'Malaiisch',
-        pt: 'Malaio',
-        fr: 'Malais',
-        pl: 'Malajski',
-        id: 'Melayu',
-        ms: 'Melayu'
+    nl: {
+        en: 'Dutch',
+        ru: 'Нидерландский',
+        tr: 'Felemenkçe',
+        es: 'Neerlandés',
+        de: 'Niederländisch',
+        pt: 'Neerlandês',
+        fr: 'Néerlandais',
+        pl: 'Niderlandzki',
+        it: 'Olandese',
+        nl: 'Nederlands',
+        cs: 'Nizozemština'
+    },
+    cs: {
+        en: 'Czech',
+        ru: 'Чешский',
+        tr: 'Çekçe',
+        es: 'Checo',
+        de: 'Tschechisch',
+        pt: 'Tcheco',
+        fr: 'Tchèque',
+        pl: 'Czeski',
+        it: 'Ceco',
+        nl: 'Tsjechisch',
+        cs: 'Čeština'
     }
 }
 
 const LANGUAGE_MAP = {
-    // --- Русский (ru) ---
-    ru: 'ru', by: 'ru', ua: 'ru', md: 'ru', kz: 'ru', kg: 'ru', tj: 'ru', uz: 'ru',
-    am: 'ru', ge: 'ru', az: 'ru', ee: 'ru', lv: 'ru', lt: 'ru',
-
-    // --- Турецкий (tr) ---
-    tr: 'tr', cy: 'tr', // Северный Кипр
-    // Туркменистан ближе к турецкому, чем к русскому сейчас
-    tm: 'tr',
-
-    // --- Испанский (es) ---
-    es: 'es', mx: 'es', ar: 'es', cl: 'es', co: 'es', pe: 'es', ve: 'es', uy: 'es', py: 'es', ec: 'es',
-    bo: 'es', gt: 'es', hn: 'es', sv: 'es', ni: 'es', cr: 'es', pa: 'es', do: 'es', pr: 'es', gq: 'es',
-
-    // --- Немецкий (de) ---
-    de: 'de', at: 'de', ch: 'de', li: 'de', lu: 'de', be: 'de' /* Бельгия частично → но DE лучше для игр */,
-
-    // --- Португальский (pt) ---
-    pt: 'pt', br: 'pt', ao: 'pt', mz: 'pt', cv: 'pt', gw: 'pt', st: 'pt', tl: 'pt',
-
-    // --- Французский (fr) ---
-    fr: 'fr', mc: 'fr', ca: 'fr', bf: 'fr', bj: 'fr', cd: 'fr', cg: 'fr', ci: 'fr', cm: 'fr',
-    dj: 'fr', ga: 'fr', gn: 'fr', mg: 'fr', ml: 'fr', mr: 'fr', ne: 'fr', rw: 'fr',
-    sc: 'fr', sn: 'fr', td: 'fr', tg: 'fr', km: 'fr', bi: 'fr', cf: 'fr',
-
-    // --- Польский (pl) ---
+    // --- Русский ---
+    ru: 'ru', by: 'ru', ua: 'ru', kz: 'ru', kg: 'ru', md: 'ru',
+  
+    // --- Турецкий ---
+    tr: 'tr', cy: 'tr',
+  
+    // --- Испанский ---
+    es: 'es', mx: 'es', ar: 'es', cl: 'es', co: 'es', pe: 'es', ve: 'es',
+  
+    // --- Немецкий ---
+    de: 'de', at: 'de', ch: 'de', li: 'de',
+  
+    // --- Португальский (BR-first) ---
+    pt: 'pt', br: 'pt',
+  
+    // --- Французский ---
+    fr: 'fr', mc: 'fr', ca: 'fr',
+  
+    // --- Польский ---
     pl: 'pl',
-
-    // --- Индонезийский (id) ---
-    id: 'id', // Индонезия
-    tl: 'id', // Тимор-Лесте – частично
-    // NOTE: Малайзия/Бруней – другой язык → ms
-
-    // --- Малайский (ms) ---
-    ms: 'ms', my: 'ms', bn: 'ms', sg: 'ms', // Сингапур частично малайский официальный
-
-    // --- Английский (en) — default для всех остальных ---
-    en: 'en', us: 'en', gb: 'en', au: 'en', nz: 'en', ie: 'en', mt: 'en',
-    in: 'en', pk: 'en', bd: 'en', ph: 'en', ng: 'en', za: 'en', gh: 'en', ke: 'en', tz: 'en', ug: 'en', 
-    jm: 'en', tt: 'en', bs: 'en', bb: 'en',
-    il: 'en', sa: 'en', ae: 'en', kw: 'en', qa: 'en', bh: 'en', om: 'en', jo: 'en', lb: 'en', iq: 'en', sy: 'en',
-    ir: 'en', af: 'en',
-    cn: 'en', jp: 'en', kr: 'en', kp: 'en', mn: 'en',
-
-    // Юго-Восточная Азия
-    th: 'en', vn: 'en', la: 'en', kh: 'en', mm: 'en',
-
-    // Европа (оставшиеся)
-    it: 'en', sm: 'en', va: 'en',
-    nl: 'en', dk: 'en', no: 'en', se: 'en', fi: 'en', is: 'en',
-    cz: 'en', sk: 'en', hu: 'en', ro: 'en', bg: 'en', hr: 'en', rs: 'en', ba: 'en', mk: 'en', al: 'en', si: 'en', 
-    md: 'en',
-
-    // Америка (остальные)
-    ca: 'en', // англоязычная часть
-    ht: 'fr', // Гаити
-    gf: 'fr',
-    sr: 'en',
-    gy: 'en',
-
-    // Африка (остальные)
-    eg: 'en', ly: 'en', tn: 'en', dz: 'en', ma: 'en',
-    sd: 'en', ss: 'en', et: 'en', er: 'en', so: 'en', zm: 'en', zw: 'en', bw: 'en', na: 'en',
-    ls: 'en', sz: 'en',
-
-    // Океания
-    fk: 'en', pg: 'en', fj: 'en', ws: 'en', to: 'en', tv: 'en', ki: 'en', nr: 'en', vu: 'en',
+  
+    // --- Итальянский ---
+    it: 'it', sm: 'it', va: 'it',
+  
+    // --- Нидерландский ---
+    nl: 'nl', be: 'nl',
+  
+    // --- Чешский ---
+    cs: 'cs', cz: 'cs',
+  
+    // --- Английский (fallback) ---
+    en: 'en', us: 'en', gb: 'en', au: 'en', nz: 'en', ie: 'en',
+    se: 'en', no: 'en', fi: 'en', dk: 'en',
+    jp: 'en', kr: 'en', cn: 'en', in: 'en'
 }
 
 const browserLang = navigator.language || 'en'

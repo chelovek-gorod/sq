@@ -7,12 +7,20 @@ import { getLanguage } from "../localization"
 import { atlases, images } from "../../app/assets"
 import { styles } from "../../app/styles"
 import { TASK } from "../scenes/world/constants"
-import { LEVEL_PET } from "../scenes/game/constants"
+import { LEVEL_PET, PLACE_PETS } from "../scenes/game/constants"
 import { availablePetLevel } from "../state"
+import { kill } from "../../app/application"
 
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
 const BG_SIZE = BG_SIDE_SIZE + BG_SIDE_OFFSET * 2
+
+function findPetPlace(petName) {
+    for (const [place, pets] of Object.entries(PLACE_PETS)) {
+        if (pets.includes(petName)) return place
+    }
+    return null
+}
 
 export default class Popup extends Container {
     constructor() {
@@ -48,6 +56,7 @@ export default class Popup extends Container {
         this.box.addChild(this.closeButton)
 
         EventHub.on(events.showPopup, this.show, this)
+        EventHub.on(events.startScene, this.kill, this)
     }
 
     screenResize(screenData) {
@@ -65,6 +74,7 @@ export default class Popup extends Container {
         // data = {type: POPUP_TYPE.TASK, data: this.task}
 
         if (data.type === POPUP_TYPE.TASK) this.fillTask(data.data)
+        else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
 
         this.visible = true
     }
@@ -147,12 +157,42 @@ export default class Popup extends Container {
         this.content.addChild(imageA, imageB, imageC)
     }
 
+    fillInfo(type) {
+        this.title.text = LEVEL_PET[type]
+
+        const level = `Уровень ${type}`
+        const levelText = new Text({text: level, style: styles.popupTurnsText})
+        levelText.anchor.set(0.5)
+        levelText.position.set(0, -180)
+        this.content.addChild(levelText)
+
+        const place = findPetPlace( LEVEL_PET[type] )
+        const placeImage = new Sprite( atlases.places.textures[place] )
+        placeImage.scale.set(0.7)
+        placeImage.anchor.set(0.5)
+        placeImage.position.set(0, 10)
+        this.content.addChild(placeImage)
+
+        const petImage = new Sprite( atlases.pets.textures[ LEVEL_PET[type] ] )
+        petImage.scale.set(0.8)
+        petImage.anchor.set(0.5)
+        petImage.position.set(0, -30)
+        this.content.addChild(petImage)
+
+        const description = `Родной биом: ${place.toUpperCase()}`
+        const descriptionText = new Text({text: description, style: styles.popupDescription})
+        descriptionText.anchor.set(0.5)
+        descriptionText.position.set(0, 185)
+        this.content.addChild(descriptionText)
+    }
+
     updateLanguage(lang) {
         this.currentLanguage = lang
         this.closeButton.setLabel( BUTTON_TEXT.done[ this.currentLanguage ] )
     }
 
     kill() {
+        EventHub.off(events.startScene, this.kill, this)
         EventHub.off(events.updateLanguage, this.updateLanguage, this)
         EventHub.off(events.showPopup, this.show, this)
     }

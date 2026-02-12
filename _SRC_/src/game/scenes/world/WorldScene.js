@@ -9,6 +9,7 @@ import WorldMap from './WorldMap'
 import FirefliesContainer from '../../effects/Fireflies'
 import LevelCards from '../../popup/LevelCards'
 import { SCENE_NAME } from '../constants'
+import Popup from '../../popup/Popup'
 
 export default class World extends Container {
     constructor() {
@@ -42,6 +43,9 @@ export default class World extends Container {
         this.levelCards = new LevelCards()
         this.addChild(this.levelCards)
 
+        this.popup = new Popup()
+        this.addChild(this.popup)
+
         setMusicList([ music.bgm_0 ])
     }
 
@@ -54,6 +58,8 @@ export default class World extends Container {
         this.levelCards.screenResize(screenData)
 
         this.collection.screenResize(screenData)
+
+        this.popup.screenResize(screenData)
 
         this.searchBtn.position.set(-screenData.centerX, -screenData.centerY)
         this.homeBtn.position.set(-screenData.centerX, screenData.centerY)

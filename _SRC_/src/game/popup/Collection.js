@@ -1,7 +1,10 @@
 import { Container, Graphics, Sprite } from "pixi.js";
+import { tickerAdd, tickerRemove } from "../../app/application";
 import { images, atlases } from "../../app/assets";
+import { showPopup } from "../../app/events";
 import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PET_DATA, PLACE_PETS } from "../scenes/game/constants";
 import { availablePetLevel } from "../state";
+import { POPUP_TYPE } from "./constants";
 
 const BG = {
     width: 1400,
@@ -9,9 +12,13 @@ const BG = {
     offset: 36,
 }
 
-const psx = 30 // pet start x
-const pdx = 126 // pet offset x
-const psy = 1020 // pets start y
+const PET_MIN_SCALE = 0.6
+const PET_MAX_SCALE = 0.7
+const PET_SCALE_STEP = 0.0006
+
+const psx = 120 // pet start x
+const pdx = 128 // pet offset x
+const psy = 1220 // pets start y
 const pdy = 244 // pets offset y
 const POINTS = [
     {x: psx + pdx * 0, y: psy - pdy * 0},
@@ -73,8 +80,10 @@ const POINTS = [
 class Pet extends Sprite {
     constructor(type) {
         super( atlases.pets.textures[LEVEL_PET[type]] )
+        this.anchor.set(0.5, 0.8)
+        this.scale.set(PET_MIN_SCALE)
 
-        this.scale.set(0.7)
+        this.isOnHover = false
 
         this.type = type
         this.name = LEVEL_PET[this.type]
@@ -83,25 +92,51 @@ class Pet extends Sprite {
         this.eventMode = 'static'
         this.cursor = 'pointer'
 
-        this.on('pointerdown', this.onClick, this)
-        this.on('pointerup', this.onClickEnd, this)
+        this.on('pointerdown', this.click, this)
+        this.on('pointerover', this.onHover, this)
+        this.on('pointerout', this.onOut, this)
 
         const x = POINTS[type - 1] ? POINTS[type - 1].x : 0
         const y = POINTS[type - 1] ? POINTS[type - 1].y : 0
         this.position.set(x, y)
     }
 
-    onClick() {
-
+    click() {
+        showPopup({type: POPUP_TYPE.INFO, data: this.type})
     }
-    onClickEnd() {
+    
+    onHover() {
+        if (this.isOnHover) return
 
+        this.isOnHover = true
+        tickerAdd(this)
+    }
+
+    onOut() {
+        if (!this.isOnHover) return
+
+        this.isOnHover = false
+        tickerAdd(this)
+    }
+
+    tick(time) {
+        const scaleStep = PET_SCALE_STEP * time.deltaMS
+        if (this.isOnHover) {
+            this.scale.set( Math.min(PET_MAX_SCALE, this.scale.x + scaleStep) )
+            if (this.scale.x === PET_MAX_SCALE) tickerRemove(this)
+        } else {
+            this.scale.set( Math.max(PET_MIN_SCALE, this.scale.x - scaleStep) )
+            if (this.scale.x === PET_MIN_SCALE) tickerRemove(this)
+        }
     }
 
     kill() {
+        tickerRemove(this)
         this.cursor = 'none'
-        this.off('pointerdown', this.onClick, this)
-        this.off('pointerup', this.onClickEnd, this)
+        this.eventMode = 'none'
+        this.off('pointerdown', this.click, this)
+        this.off('pointerover', this.onHover, this)
+        this.off('pointerout', this.onOut, this)
     }
 }
 
