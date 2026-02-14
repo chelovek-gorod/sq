@@ -9,7 +9,7 @@ import { POPUP_TYPE } from "./constants";
 const BG = {
     width: 1400,
     height: 1280,
-    offset: 36,
+    offset: 24,
 }
 
 const PET_MIN_SCALE = 0.6

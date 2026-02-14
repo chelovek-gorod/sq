@@ -9,7 +9,7 @@ const startScales = [1, 0.5, 0.75]
 
 export default class WinDisc extends Container {
     constructor() {
-        super()
+        super() 
 
         this.DPFSprite = new Sprite(images.dpf_radial)
         this.DPFSprite.anchor.set(0.5)
