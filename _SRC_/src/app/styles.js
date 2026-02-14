@@ -69,12 +69,12 @@ export function initFontStyles() {
 
     styles.button = new TextStyle({
         fontFamily: fonts.BSBold,
-        fontSize: 60,
+        fontSize: 56,
         fill: '#ffffff',
     })
     styles.buttonHover = new TextStyle({
         fontFamily: fonts.BSBold,
-        fontSize: 60,
+        fontSize: 56,
         fill: '#ffffff',
     
         dropShadow: true,

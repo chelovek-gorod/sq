@@ -31,8 +31,8 @@ class Firefly extends Sprite {
     constructor(minX, maxX, minY, maxY) {
         super(atlases.fireflies.textures[getFfName()])
         this.anchor.set(0.5)
-        this.alpha = 0.9
-        this.blendMode = 'add'
+        this.alpha = 1
+        this.blendMode = 'screen'
         this.velocity = { x: 0, y: 0 }
         this.target = null
         this.targetTimeout = 0

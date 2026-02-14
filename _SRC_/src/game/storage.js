@@ -1,78 +1,75 @@
-import { EventHub, events } from '../app/events'
-import { setStoredSoundData } from '../app/sound'
+import { EventHub, events, gamePause, gameResume } from '../app/events'
+import { getSoundData, setStoredSoundData } from '../app/sound'
 import LocalMockSDK from '../sdk/LocalMock'
-import { decode, encode } from '../utils/decoder'
-import { setLanguage } from './localization'
+import YaGamesSDK from '../sdk/YaGamesSDK'
+import { setLanguage, getLanguage } from './localization'
+import { getStateData, setStoredState } from './state'
 
-export const STORED_KEYS = {
-    language: 'language',
-    sound: 'sound',
-    game: 'game'
+export let isReadySDK = false
+
+let SDK = new LocalMockSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
+// let SDK = new YaGamesSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
+
+EventHub.on( events.updateMoney, () => updateStoredData() )
+
+export function updateStoredData() {
+    if (!isReadySDK) return
+
+    SDK.save()
 }
 
-let SDK = new LocalMockSDK()
+function SDKReadyCallback() {
+    const sdkLang = SDK.getLanguageCode()
+    if (sdkLang) setLanguage( sdkLang, false)
 
-EventHub.on( events.updateMoney, () => updateStoredData(STORED_KEYS.game) )
-
-export function setStoredGameData( gameData ) {
-    /*
-    if ('money' in gameData && typeof gameData.money === 'number'
-    && gameData.money >= 0 && gameData.money < Infinity ) {
-        setStoredMoney(gameData.money)
-    }
-
-    if ('slotCoins' in gameData && typeof gameData.slotCoins === 'number'
-    && gameData.slotCoins >= 0 && gameData.slotCoins < Infinity ) {
-        setStoredSlotCoins(gameData.slotCoins)
-    }
-    */
+    SDK.getSavedData()
 }
 
-export function getStoredGameData() {
-    /*
-    const storedString = JSON.stringify({
-        money: money,
-        slotCoins: slotCoins,
+function SDKgetStateForSave() {
+    const soundState = getSoundData()
+    const gameState = getStateData()
+
+    const currentState = {
+        language: getLanguage(),
+
+        // sound
+        isSoundOn: soundState.isSoundOn,
+        soundVolume: soundState.soundVolume,
+        isMusicOn: soundState.isMusicOn,
+        musicVolume: soundState.musicVolume,
+
+        // game
+        availablePetLevel: gameState.availablePetLevel,
+        dragonPointIndex: gameState.dragonPointIndex,
+        world: gameState.world,
+    }
+
+    return currentState
+}
+
+function SDKsetSavedState( savedState ) {
+    isReadySDK = true
+    
+    if ( Object.keys( savedState ).length === 0 ) return
+
+    setLanguage( savedState.language, false)
+    setStoredSoundData(savedState)
+    setStoredState(savedState)
+}
+
+export function GameReadySDK() {
+    SDK.gameReady()
+}
+export function showFullScreenAdSDK() {
+    gamePause()
+    SDK.showFullScreenAd( () => gameResume() )
+}
+export function showRewardAdSDK() {
+    gamePause()
+    SDK.showRewardAd( (isOk) => {
+        gameResume()
+        /*
+        if (isOk) { логика получения награды }
+        */
     })
-    const encodedString = encode( storedString )
-    return encodedString
-    */
-}
-
-export function updateStoredData(key) {
-    if (!SDK) throw new Error('Need SDK')
-
-    SDK.save(key)
-}
-
-export function updateLanguageFromStorage(languageCode) {
-    if (languageCode && typeof languageCode === 'string') {
-        setLanguage( languageCode, false )
-    }
-}
-
-export function updateSoundDataFromStorage(soundDataString) {
-    if (soundDataString && typeof soundDataString === 'string') {
-        try {
-            const soundData = JSON.parse(soundDataString)
-            if (soundData && typeof soundData === 'object') {
-                setStoredSoundData(soundData)
-            }
-        } catch(e) {
-            console.warn('wrong sound stored data')
-        }
-    }
-}
-
-export function updateGameDataFromStorage(gameDataString) {
-    if (gameDataString && typeof gameDataString === 'string') {
-        try {
-            const gameData = JSON.parse( decode(gameDataString) )
-            if (gameData && typeof gameData === 'object') {
-                setStoredGameData(gameData)
-            }
-        } catch(e) {
-            console.warn('wrong game stored data')
-        }
-    }
 }

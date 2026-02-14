@@ -1,30 +1,76 @@
-import { getSoundData } from "../app/sound";
-import { getLanguage } from "../game/localization";
-import { getStoredGameData, STORED_KEYS, updateGameDataFromStorage,
-    updateLanguageFromStorage, updateSoundDataFromStorage } from "../game/storage";
+const MOCK_LANGUAGE = 'ru'
+const MOCK_STORAGE_KEY = 'test-04'
 
-export default class LocalMockSDK {
-    constructor() {
-        setTimeout( this.init.bind(this), 0 )
-    }
+/**
+ * Моковый Yandex SDK для тестирования
+ * @class
+ * @param {function} readyCallback - вызывается сразу
+ * @param {function} getStateForSaveCallback - возвращает данные для сохранения
+ * @param {function} setSavedStateCallback - принимает загруженные данные
+ * @param {Array} leaderboardNames - не используется
+ */
+export default class YaGamesSDK {
+    constructor(
+            readyCallback = null,
+            getStateForSaveCallback = null,
+            setSavedStateCallback = null,
+            leaderboardNames = []
+        ) {
 
-    init() {
-        updateLanguageFromStorage( localStorage.getItem(STORED_KEYS.language) )
-        updateSoundDataFromStorage( localStorage.getItem(STORED_KEYS.sound) )
-        updateGameDataFromStorage( localStorage.getItem(STORED_KEYS.game) )
-    }
+        this._getStateForSaveCallback = getStateForSaveCallback
+        this._setSavedStateCallback = setSavedStateCallback
 
-    save(key) {
-        switch(key) {
-            case STORED_KEYS.sound:
-                localStorage.setItem( STORED_KEYS.sound, JSON.stringify( getSoundData() ) )
-            break
-            case STORED_KEYS.language:
-                localStorage.setItem( STORED_KEYS.language, getLanguage() )
-            break
-            case STORED_KEYS.game:
-                localStorage.setItem( STORED_KEYS.game, getStoredGameData() )
-            break
+        // Сохранение при закрытии окна
+        if (getStateForSaveCallback) {
+            window.addEventListener('beforeunload', () => {
+                const data = getStateForSaveCallback()
+                localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(data))
+            })
+            
+            // Потеря фокуса (для iOS)
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    const data = getStateForSaveCallback()
+                    localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(data))
+                }
+            })
         }
+
+        // Вызываем readyCallback сразу
+        if (readyCallback) setTimeout( () => readyCallback(), 0 )
+    }
+
+    // ===== ПУБЛИЧНЫЕ МЕТОДЫ =====
+
+    gameReady() {
+        // Пустышка
+    }
+
+    getLanguageCode() {
+        return MOCK_LANGUAGE
+    }
+
+    getSavedData() {
+        if (!this._setSavedStateCallback) return
+        
+        const savedData = localStorage.getItem(MOCK_STORAGE_KEY)
+        this._setSavedStateCallback(savedData ? JSON.parse(savedData) : {})
+    }
+
+    save() {
+        if (!this._getStateForSaveCallback) return
+        
+        const data = this._getStateForSaveCallback()
+        localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(data))
+    }
+
+    showFullScreenAd(callback = null) {
+        alert('showFullScreenAd')
+        if (callback) callback()
+    }
+
+    showRewardAd(callback = null) {
+        alert('showRewardAd')
+        if (callback) callback(true)
     }
 }

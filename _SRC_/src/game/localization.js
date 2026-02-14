@@ -1,5 +1,5 @@
 import { updateLanguage } from "../app/events"
-import { STORED_KEYS, updateStoredData } from "./storage"
+import { updateStoredData } from "./storage"
 
 const SUPPORTED_LANGUAGES = ['en', 'ru', 'tr', 'es', 'de', 'pt', 'fr', 'pl', 'it', 'nl', 'cs']
 
@@ -212,7 +212,7 @@ export function setLanguage(langCode, isNeedUpdateStorage = true) {
 
     updateLanguage(currentLanguage)
     
-    if (isNeedUpdateStorage) updateStoredData( STORED_KEYS.language )
+    if (isNeedUpdateStorage) updateStoredData()
 
     return currentLanguage 
 }

@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js'
 import { atlases, music } from '../../../app/assets'
-import { EventHub, events, startScene } from '../../../app/events'
+import { EventHub, events, showPopup, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import TapIcon from '../../UI/TapIcon'
@@ -10,6 +10,7 @@ import FirefliesContainer from '../../effects/Fireflies'
 import LevelCards from '../../popup/LevelCards'
 import { SCENE_NAME } from '../constants'
 import Popup from '../../popup/Popup'
+import { POPUP_TYPE } from '../../popup/constants'
 
 export default class World extends Container {
     constructor() {
@@ -45,6 +46,8 @@ export default class World extends Container {
 
         this.popup = new Popup()
         this.addChild(this.popup)
+
+        setTimeout( showPopup({type: POPUP_TYPE.NEW, data: 7}) ,1000)
 
         setMusicList([ music.bgm_0 ])
     }

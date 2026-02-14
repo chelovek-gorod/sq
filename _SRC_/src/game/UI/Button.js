@@ -4,16 +4,25 @@ import { removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
+import { TEXT_BUTTON } from "../localText"
+import { getLanguage } from "../localization"
+import { EventHub, events } from "../../app/events"
 
 const ALPHA_DURATION = 120
 const ALPHA_STEP = 1 / ALPHA_DURATION
 
 export default class Button extends Container {
-    constructor(icon, text, callback, isActive = true ) {
+    constructor(icon = null, textKey = null, callback = null, isActive = true ) {
         super()
 
         this.callback = callback
-        this.isText = !!text
+        this.isText = !!textKey
+        
+        if (this.isText) {
+            this.textKey = textKey
+            EventHub.on( events.updateLanguage, this.updateLanguage, this )
+        }
+        
 
         this.backImage = new Sprite(
             atlases.buttons.textures[ icon ? 'button_icon' : 'button' ]
@@ -26,8 +35,10 @@ export default class Button extends Container {
         this.frontImage.alpha = 0
         this.isOnHover = false
 
-        this.value = icon ? new Sprite(icon) : new Text({ text: text, style: styles.button })
-        this.value.anchor.set(0.5)
+        this.value = icon
+            ? new Sprite(icon)
+            : new Text({ text: TEXT_BUTTON[ textKey ][ getLanguage() ], style: styles.button })
+        this.value.anchor.set(0.5, icon ? 0.52 : 0.6)
         
         this.addChild(this.backImage, this.frontImage, this.value)
 
@@ -40,10 +51,11 @@ export default class Button extends Container {
         this.setActive(this.isActive)
     }
 
-    setLabel(text) {
+    setTextKey( textKey ) {
         if (!this.isText) return
-
-        this.value.text = text
+        
+        this.textKey = textKey
+        this.updateLanguage( getLanguage() )
     }
 
     setIcon(icon) {
@@ -107,7 +119,12 @@ export default class Button extends Container {
         }
     }
 
+    updateLanguage(lang) {
+        this.value.text = TEXT_BUTTON[ this.textKey ][ lang ]
+    }
+
     kill() {
+        if (this.isText) EventHub.off( events.updateLanguage, this.updateLanguage, this )
         removeCursorPointer(this.backImage)
         this.deactivate()
     }

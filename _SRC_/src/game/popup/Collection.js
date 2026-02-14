@@ -86,8 +86,9 @@ class Pet extends Sprite {
         this.isOnHover = false
 
         this.type = type
-        this.name = LEVEL_PET[this.type]
-        this.place = Object.entries(PLACE_PETS).find(([place, pets]) => pets.includes(this.name))
+        this.place = Object.entries(PLACE_PETS).find(
+            ([place, pets]) => pets.includes( LEVEL_PET[this.type] )
+        )
         
         this.eventMode = 'static'
         this.cursor = 'pointer'

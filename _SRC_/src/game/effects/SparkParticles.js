@@ -51,7 +51,11 @@ const COLORS = {
 }
 
 export default class SparkParticles {
-    constructor() {
+    constructor(isAutoFilling = false) {
+        this.isAutoFilling = isAutoFilling
+        this.fillingTimeout = 30
+        this.fillingTime = 0
+
         this.container = new ParticleContainer({
             dynamicProperties: {
                 position: true,
@@ -61,7 +65,7 @@ export default class SparkParticles {
                 color: false,
             }
         })
-        this.container.blendMode = 'add'
+        this.container.blendMode = isAutoFilling ? 'normal' : 'add'
 
         this.pull = []
         this.sparks = []
@@ -180,11 +184,22 @@ export default class SparkParticles {
                 }
             }
         }
+
+        if (!this.isAutoFilling) return
+
+        //this.fillingTime -= time.deltaMS
+        //if (this.fillingTime > 0) return
+
+        this.fillingTime += this.fillingTimeout
+        const x = -500 + Math.random() * 1000
+        const y = -500 + Math.random() * 1000
+        this.addSpark({x: x, y: y, type: 'multi'})
     }
 
     kill() {
         EventHub.off( events.addSpark, this.addSpark, this )
 
+        this.isAutoFilling = false
         tickerRemove(this)
 
         if (this.container) {

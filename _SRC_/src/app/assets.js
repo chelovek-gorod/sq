@@ -36,6 +36,8 @@ export const images = {
     button_icon_close: 'button_icon_close.png',
 
     popup_bg: 'popup_bg.png',
+    result_LOSE: 'result_LOSE.png',
+    result_WIN: 'result_WIN.png',
 
     map_static: 'map_static.png',
     map_action: 'map_action.png',
@@ -44,13 +46,12 @@ export const images = {
     map_point_purple: 'map_point_purple.png',
     map_point_dot: 'map_point_dot.png',
 
-    dpf_1: 'dpf_1.png',
-    dpf_2: 'dpf_2.png',
-    dpf_3: 'dpf_3.png',
-    dpf_4: 'dpf_4.png',
-    dpf_5: 'dpf_5.png',
-    dpf_6: 'dpf_6.png',
-    dpf_7: 'dpf_7.png',
+    dpf: 'dpf.png',
+
+    star_radial_1: 'star_radial_a.png',
+    star_radial_2: 'star_radial_b.png',
+    star_radial_3: 'star_radial_c.png',
+    dpf_radial: 'dpf_radial_4.png',
 }
 export const atlases = {
     buttons: 'buttons.json',

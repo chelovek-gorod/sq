@@ -11,8 +11,8 @@ import MapPoint from './MapPoint'
 const DP_FILTER_SPEED = 0.03
 
 const DRAG_SENSITIVITY = 1.2
-const EDGE_PAN_SPEED = 600
-const EDGE_PAN_ZONE = 120
+const EDGE_PAN_SPEED = 6 // 0.6px в миллисекунду или 600px в секунду
+const EDGE_PAN_ZONE = 60
 const RETURN_LERP = 0.12 //  коэффициент плавности позиция += (цель - позиция) * RETURN_LERP
 const FOCUS_TOLERANCE = 0.3 // пикселей — если до цели меньше, прыгаем сразу
 
@@ -34,7 +34,7 @@ export default class WorldMap extends Container {
         this.actionImage = new Sprite(images.map_action)
         this.actionImage.anchor.set(0.5)
 
-        this.DPFilterSprite = new Sprite(images.dpf_1)
+        this.DPFilterSprite = new Sprite(images.dpf)
         this.DPFilterSprite.texture.source.style.addressMode = 'repeat'
         this.actionContainer.addChild(this.DPFilterSprite)
 
@@ -127,7 +127,7 @@ export default class WorldMap extends Container {
     // ================= TICK =================
 
     tick({ deltaMS }) {
-        const dt = deltaMS / 1000
+        const dt = deltaMS
 
         // displacement
         this.DPFilterSprite.x += deltaMS * DP_FILTER_SPEED
@@ -157,8 +157,8 @@ export default class WorldMap extends Container {
         // ================= EDGE PAN =================
 
         if (!this.isDragging) {
-            this.position.x += this.edgePan.x * this.edgeSpeedX * dt
-            this.position.y += this.edgePan.y * this.edgeSpeedY * dt
+            this.position.x += this.edgePan.x * this.edgeSpeedX
+            this.position.y += this.edgePan.y * this.edgeSpeedY
             this.clampPosition()
         }
     }

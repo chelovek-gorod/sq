@@ -16,6 +16,7 @@ import { LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
 import GameTask from './GameTask'
 import Popup from '../../popup/Popup'
+import { kill } from '../../../app/application'
 
 export default class Game extends Container {
     constructor() {
@@ -148,6 +149,7 @@ export default class Game extends Container {
             return
         }
 
+        kill(this.popup)
         startScene( SCENE_NAME.World )
     }
 

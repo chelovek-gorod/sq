@@ -6,6 +6,8 @@ import { soundPlay } from "../../../app/sound";
 import { availablePetLevel } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
+let isOnDrag = false
+
 export default class PetToken extends Container {
     constructor(type, ceil) {
         super()
@@ -75,7 +77,9 @@ export default class PetToken extends Container {
     }
 
     onDragStart(event) {
-        if (this.state === PET_STATE.DRAGGING) return
+        if (this.state === PET_STATE.DRAGGING || isOnDrag) return
+
+        isOnDrag = true
 
         this.state = PET_STATE.DRAGGING
         this.swingSteps = 0
@@ -106,6 +110,8 @@ export default class PetToken extends Container {
 
     onDragEnd() {
         if (this.state !== PET_STATE.DRAGGING) return
+
+        isOnDrag = false
 
         this.parent.parent.pets.addChild(this)
 

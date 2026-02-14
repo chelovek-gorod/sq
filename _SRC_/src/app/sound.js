@@ -1,5 +1,5 @@
 import { Howl, Howler } from 'howler';
-import { STORED_KEYS, updateStoredData } from '../game/storage'
+import { updateStoredData } from '../game/storage'
 import { EventHub, events } from './events'
 
 // начальное состояние музыки и звуков
@@ -44,12 +44,12 @@ export function musicGetState() {
 }
 export function musicOn() {
     state.isMusicOn = true
-    updateStoredData( STORED_KEYS.sound )
+    updateStoredData()
     musicPlay()
 }
 export function musicOff() {
     state.isMusicOn = false
-    updateStoredData( STORED_KEYS.sound )
+    updateStoredData()
     musicStop()
 }
 export function musicGetVolume() { return state.musicVolume }
@@ -66,7 +66,7 @@ function setVolume(type = "music", value, isNeedUpdateStorage = true) {
         if (type === "music") state.musicVolume = fixedVolume
         else state.soundVolume = fixedVolume
 
-        if (isNeedUpdateStorage) updateStoredData( STORED_KEYS.sound )
+        if (isNeedUpdateStorage) updateStoredData()
     }
 
     if (type === "music") {
@@ -99,11 +99,11 @@ function changeFocus( isOnFocus ) {
 // sounds controller
 export function soundOn() {
     state.isSoundOn = true
-    updateStoredData( STORED_KEYS.sound )
+    updateStoredData()
 }
 export function soundOff() {
     state.isSoundOn = false
-    updateStoredData( STORED_KEYS.sound )
+    updateStoredData()
 }
 export function soundGetState() {
     return state.isSoundOn

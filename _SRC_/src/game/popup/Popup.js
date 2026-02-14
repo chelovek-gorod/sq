@@ -1,6 +1,5 @@
 import { Container, Graphics, Sprite, Text } from "pixi.js"
 import { EventHub, events } from "../../app/events"
-import { BUTTON_TEXT } from "../UI/constants"
 import { POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
 import { getLanguage } from "../localization"
@@ -10,6 +9,9 @@ import { TASK } from "../scenes/world/constants"
 import { LEVEL_PET, PLACE_PETS } from "../scenes/game/constants"
 import { availablePetLevel } from "../state"
 import { kill } from "../../app/application"
+import WinDisc from "../effects/WinDisc"
+import SparkParticles from "../effects/SparkParticles"
+import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME, TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
 
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
@@ -31,6 +33,8 @@ export default class Popup extends Container {
 
         this.visible = false
 
+        this.sparks = null
+
         this.shell = new Graphics()
         this.shell.eventMode = 'static'
         this.addChild(this.shell)
@@ -45,12 +49,12 @@ export default class Popup extends Container {
         this.content = new Container()
         this.box.addChild(this.content)
 
-        this.title = new Text({text: '???', style: styles.popupTitle})
+        this.title = new Text({text: '', style: styles.popupTitle})
         this.title.anchor.set(0.5)
         this.title.position.set(0, -240)
         this.box.addChild(this.title)
         
-        this.closeButton = new Button(null, 'Хорошо', () => this.close())
+        this.closeButton = new Button(null, TEXT_BUTTON_TYPE.OK, () => this.close())
         this.closeButton.position.set(0, 285)
         this.closeButton.scale.set(0.75)
         this.box.addChild(this.closeButton)
@@ -75,6 +79,8 @@ export default class Popup extends Container {
 
         if (data.type === POPUP_TYPE.TASK) this.fillTask(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
+        else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
+        else if (data.type === POPUP_TYPE.NEW) this.fillNew(data.data)
 
         this.visible = true
     }
@@ -83,44 +89,46 @@ export default class Popup extends Container {
         this.closeButton.onOut()
         this.visible = false
 
+        if (this.sparks) {
+            this.content.removeChild(this.sparks.container)
+            this.sparks.kill()
+            this.sparks = null
+        }
+
         this.content.children.forEach( c => kill(c) )
     }
 
     fillTask(data) {
         // data = {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
 
-        if (data.type === TASK.NEW) {
-            this.title.text = 'Открой нового Сквинки'
+        this.title.text = TEXT_TASK_TITLE[data.type][this.currentLanguage]
 
+        if (data.type === TASK.NEW) {
             this.setTaskImageNEW()
 
-            const description = 'Соедини Сквинки последнего уровня для открытия нового Сквинки'
+            const description = TEXT_TASK_DESCRIPTION[TASK.NEW][this.currentLanguage]
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
         } else if (data.type === TASK.CLOUD) {
-            this.title.text = 'Разгони все тучи'
-
             const image = new Sprite( atlases.popup_images.textures[TASK.CLOUD] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
             this.content.addChild(image)
 
-            const description = 'Соединяй Сквинки в соседней клетки с Облоками, что бы облока исчезли'
+            const description = TEXT_TASK_DESCRIPTION[TASK.CLOUD][this.currentLanguage]
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
         } else {
-            this.title.text = 'Открой все замки'
-
             const image = new Sprite( atlases.popup_images.textures[TASK.LOCK] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
             this.content.addChild(image)
 
-            const description = 'За каждые 10 собранных Сияний открывается 1 случайный замок'
+            const description = TEXT_TASK_DESCRIPTION[TASK.LOCK][this.currentLanguage]
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
@@ -128,7 +136,7 @@ export default class Popup extends Container {
         }
 
         if (data.turns > 0) {
-            const turnsDescription = `За ${data.turns} ходов!`
+            const turnsDescription = TEXT_TASK_TURNS[this.currentLanguage](data.turns)
             const turnsText = new Text({text: turnsDescription, style: styles.popupTurnsText})
             this.content.addChild(turnsText)
 
@@ -140,6 +148,8 @@ export default class Popup extends Container {
             turnsIcon.position.set(-turnsInfoWidth - 40, 140)
             turnsText.position.set(-turnsInfoWidth + 50, 170)
         }
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
     }
 
     setTaskImageNEW() {
@@ -158,9 +168,9 @@ export default class Popup extends Container {
     }
 
     fillInfo(type) {
-        this.title.text = LEVEL_PET[type]
+        this.title.text = TEXT_SQUINKI_NAME[ LEVEL_PET[type] ][ this.currentLanguage ]
 
-        const level = `Уровень ${type}`
+        const level = TEXT_SQUINKI_LEVEL[this.currentLanguage] + ' ' + type
         const levelText = new Text({text: level, style: styles.popupTurnsText})
         levelText.anchor.set(0.5)
         levelText.position.set(0, -180)
@@ -179,19 +189,75 @@ export default class Popup extends Container {
         petImage.position.set(0, -30)
         this.content.addChild(petImage)
 
-        const description = `Родной биом: ${place.toUpperCase()}`
+        const description = TEXT_SQUINKI_BIOM[this.currentLanguage] 
+            + ' ' + TEXT_PLACE[place][this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5)
         descriptionText.position.set(0, 185)
         this.content.addChild(descriptionText)
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+    }
+
+    fillResult( isWin ) {
+        this.title.text = isWin
+            ? TEXT_RESULT_WIN[this.currentLanguage]
+            : TEXT_RESULT_LOSE[this.currentLanguage]
+
+        const image = new Sprite( isWin ? images.result_WIN : images.result_LOSE )
+        image.scale.set(0.8)
+        image.anchor.set(0.5)
+        image.position.set(0, 30)
+        this.content.addChild(image)
+
+        if (isWin) {
+            this.sparks = new SparkParticles(true)
+            this.sparks.container.scale.set(0.5)
+            this.content.addChild( this.sparks.container )
+            this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+        } else {
+            this.closeButton.setTextKey( TEXT_BUTTON_TYPE.RETRY )
+        }
+    }
+
+    fillNew( type = 1 ) {
+        this.title.text = TEXT_RESULT_NEW[this.currentLanguage]
+
+        const effect = new WinDisc()
+        this.content.addChild( effect )
+
+        const petImage = new Sprite( atlases.pets.textures[ LEVEL_PET[type]] )
+        petImage.scale.set(0.8)
+        petImage.anchor.set(0.5)
+        petImage.position.set(0, -30)
+        this.content.addChild(petImage)
+
+        const petName = TEXT_SQUINKI_NAME[ LEVEL_PET[type] ][ this.currentLanguage ]
+        const petNameText = new Text({text: petName, style: styles.popupTitle})
+        petNameText.anchor.set(0.5)
+        petNameText.position.set(0, 140)
+        this.content.addChild(petNameText)
+
+        const level = TEXT_SQUINKI_LEVEL[this.currentLanguage] + ' ' + type
+        const levelText = new Text({text: level, style: styles.popupTurnsText})
+        levelText.anchor.set(0.5)
+        levelText.position.set(0, 200)
+        this.content.addChild(levelText)
+
+        this.sparks = new SparkParticles(true)
+        this.sparks.container.scale.set(0.5)
+        this.content.addChild( this.sparks.container )
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
     }
 
     updateLanguage(lang) {
+        // only in SETTINGS popup
         this.currentLanguage = lang
-        this.closeButton.setLabel( BUTTON_TEXT.done[ this.currentLanguage ] )
     }
 
     kill() {
+        if (this.sparks) this.sparks.kill()
         EventHub.off(events.startScene, this.kill, this)
         EventHub.off(events.updateLanguage, this.updateLanguage, this)
         EventHub.off(events.showPopup, this.show, this)

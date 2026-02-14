@@ -2,7 +2,6 @@ import { Container, Text, Sprite, Graphics } from 'pixi.js'
 import { assetType, assets, sounds } from '../../../app/assets'
 import { styles } from '../../../app/styles'
 import { getAppScreen, tickerAdd, tickerRemove } from '../../../app/application'
-import { ALPHA_STEP, PROGRESS_TEXT, PROGRESS_BAR, DONE_TEXT } from './constants'
 import { loadAssets, preloadAsset, preloadFonts } from './Loader'
 import BackgroundGradient from '../../BG/BackgroundGradient'
 import { removeCursorPointer, setCursorPointer } from '../../../utils/functions'
@@ -11,6 +10,26 @@ import { SCENE_NAME } from '../constants'
 import { getFirstUserAction, soundPlay } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import { BG_GRADIENT_COLORS, BG_GRADIENT_NAME } from '../game/constants'
+import { TEXT_GET_FIRST_CLICK } from '../../localText'
+
+export const ALPHA_STEP = 0.003
+
+export const PROGRESS_TEXT = {
+    y: -18,
+    anchor: 0.5,
+}
+
+export const PROGRESS_BAR = {
+    x: -135,
+    y: 18,
+    width: 270,
+    height: 36,
+    borderLineWidth: 6,
+    progressOffset: 10,
+    color: 0x4000ff,
+    borderRadius: 18,
+    progressRadius: 8,
+}
 
 let isFirstLoading = true
 
@@ -87,7 +106,7 @@ export default class LoadScene extends Container {
 
     loadingDone() {
         this.doneText = new Text({
-            text: DONE_TEXT[ this.currentLanguage ],
+            text: TEXT_GET_FIRST_CLICK[ this.currentLanguage ],
             style: styles.loading
         })
         this.doneText.alpha = 0
@@ -104,7 +123,7 @@ export default class LoadScene extends Container {
 
     updateLanguage(lang) {
         this.currentLanguage = lang
-        if (this.doneText) this.doneText.text = DONE_TEXT[ this.currentLanguage ]
+        if (this.doneText) this.doneText.text = TEXT_GET_FIRST_CLICK[ this.currentLanguage ]
         const screenData = getAppScreen()
         this.resizeDoneText( screenData.width )
     }

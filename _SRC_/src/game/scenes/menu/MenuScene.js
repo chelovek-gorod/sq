@@ -1,23 +1,18 @@
 import { Container, Sprite } from 'pixi.js'
-import { tickerRemove } from '../../../app/application'
+import { kill } from '../../../app/application'
 import { images, music } from '../../../app/assets'
-import { EventHub, events, startScene } from '../../../app/events'
+import { startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
-import { MENU_TEXT } from './constants'
 import { SCENE_NAME } from '../../scenes/constants'
 import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
-import GameTitle from './GameTitle'
-import { getLanguage } from '../../localization'
 import FirefliesContainer from '../../effects/Fireflies'
+import { TEXT_BUTTON_TYPE } from '../../localText'
 
 export default class Menu extends Container {
     constructor() {
         super()
         this.alpha = 0
-
-        this.currentLanguage = getLanguage()
-        EventHub.on( events.updateLanguage, this.updateLanguage, this )
 
         this.isMenuActive = true
 
@@ -36,7 +31,7 @@ export default class Menu extends Container {
         this.addChild(this.title)
 
         this.startButton = new Button(
-            null, 'Start', () => {
+            null, TEXT_BUTTON_TYPE.START, () => {
                 if (!this.isMenuActive) return
 
                 this.isMenuActive = false
@@ -69,13 +64,7 @@ export default class Menu extends Container {
         this.startButton.position.set(0, screenData.centerY * 0.5)
     }
 
-    updateLanguage(lang) {
-        this.currentLanguage = lang
-        this.rouletteButton.setLabel( MENU_TEXT.rouletteButton[this.currentLanguage] )
-        this.slotsButton.setLabel( MENU_TEXT.slotsButton[this.currentLanguage] )
-    }
-
     kill() {
-        EventHub.off( events.updateLanguage, this.updateLanguage, this )
+        kill(this.fireflies)
     }
 }
