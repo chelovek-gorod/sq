@@ -2,6 +2,10 @@ import { Application } from 'pixi.js'
 import { changeFocus, EventHub, events, screenResize } from './events'
 
 // app settings
+let isAutoFoolScreen = true
+// Флаг, чтобы не навесить сто обработчиков
+let isFullscreenListenerActive = false
+
 let isGlobalAppCursor = false // NEED DEPRECIATED
 export let appPointer = null
 
@@ -48,6 +52,8 @@ export default function initApp(container, callback) {
 function appReady() {
     app.ticker.add( time => tick(time) )
     appContainer.append( app.canvas )
+
+    if (isAutoFoolScreen) startFullScreen()
 
     // cancel screenshot on right mouse button click
     app.canvas.oncontextmenu = (event) => event.preventDefault()
@@ -156,6 +162,53 @@ export function getDeviceType() {
 
 export function getInputCapabilities() {
     return deviceInfo.capabilities
+}
+
+function startFullScreen() {
+    if (!isAutoFoolScreen) return
+    
+    function onCanvasClick() {
+        // Запускаем FoolScreen
+        if (app.canvas.requestFullscreen) {
+            app.canvas.requestFullscreen()
+        } else if (app.canvas.mozRequestFullScreen) {
+            app.canvas.mozRequestFullScreen()
+        } else if (app.canvas.webkitRequestFullscreen) {
+            app.canvas.webkitRequestFullscreen()
+        } else if (app.canvas.msRequestFullscreen) {
+            app.canvas.msRequestFullscreen()
+        }
+        
+        // Отписываемся от клика
+        app.canvas.removeEventListener('click', onCanvasClick)
+        
+        // Подписываемся на выход
+        document.addEventListener('fullscreenchange', onFullscreenChange)
+        document.addEventListener('mozfullscreenchange', onFullscreenChange)
+        document.addEventListener('webkitfullscreenchange', onFullscreenChange)
+        document.addEventListener('msfullscreenchange', onFullscreenChange)
+    }
+    
+    function onFullscreenChange() {
+        // Проверяем, что вышли из fullscreen
+        if (!document.fullscreenElement && 
+            !document.mozFullScreenElement && 
+            !document.webkitFullscreenElement && 
+            !document.msFullscreenElement) {
+            
+            // Отписываемся от выхода
+            document.removeEventListener('fullscreenchange', onFullscreenChange)
+            document.removeEventListener('mozfullscreenchange', onFullscreenChange)
+            document.removeEventListener('webkitfullscreenchange', onFullscreenChange)
+            document.removeEventListener('msfullscreenchange', onFullscreenChange)
+            
+            // Снова подписываемся на клик
+            if (isAutoFoolScreen) app.canvas.addEventListener('click', onCanvasClick)
+        }
+    }
+    
+    // Подписываемся на клик
+    app.canvas.addEventListener('click', onCanvasClick)
 }
 
 // ticker

@@ -4,7 +4,7 @@ import { images } from "../../app/assets";
 
 const minScale = 0.5
 const maxScale = 1
-const scaleSpeed = 0.0003
+const scaleSpeed = 0.00006
 const startScales = [1, 0.5, 0.75]
 
 export default class WinDisc extends Container {

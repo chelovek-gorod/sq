@@ -164,11 +164,12 @@ export default class GameField extends Container {
     }
 
     addEffect( effect ) {
-        if (!this.effects) return console.error(`this.effects = ${this.effects}`)
+        if (!this.effects) return console.error(`this.effects = ${this}`)
         this.effects.addChild( effect )
     }
 
     addFireworks( data ) {
+        if (!this.effects) return console.error(`this.effects = ${this}`)
         this.effects.addChild( new Fireworks( data.x, data.y ) )
     }
 
