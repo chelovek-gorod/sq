@@ -1017,18 +1017,73 @@ export const TEXT_RESULT_NEW = {
     cs: 'Objeven nový Squinki!'
 }
 
-export const TEXT_SETTINGS_TITLE = {
-    en: 'Settings',
-    ru: 'Настройки',
-    tr: 'Ayarlar',
-    es: 'Ajustes',
-    de: 'Einstellungen',
-    pt: 'Configurações',
-    fr: 'Paramètres',
-    pl: 'Ustawienia',
-    it: 'Impostazioni',
-    nl: 'Instellingen',
-    cs: 'Nastavení'
+export const TEXT_SETTING_TYPE = createEnum(['TITLE', 'MUSIC', 'SOUND', 'LANGUAGE', 'RESET'])
+export const TEXT_SETTINGS = {
+    [TEXT_SETTING_TYPE.TITLE]: {
+        en: 'Settings',
+        ru: 'Настройки',
+        tr: 'Ayarlar',
+        es: 'Ajustes',
+        de: 'Einstellungen',
+        pt: 'Configurações',
+        fr: 'Paramètres',
+        pl: 'Ustawienia',
+        it: 'Impostazioni',
+        nl: 'Instellingen',
+        cs: 'Nastavení'
+    },
+    [TEXT_SETTING_TYPE.MUSIC]:{
+        en: 'Music',
+        ru: 'Музыка',
+        tr: 'Müzik',
+        es: 'Música',
+        de: 'Musik',
+        pt: 'Música',
+        fr: 'Musique',
+        pl: 'Muzyka',
+        it: 'Musica',
+        nl: 'Muziek',
+        cs: 'Hudba'
+    },
+    [TEXT_SETTING_TYPE.SOUND]:{
+        en: 'Sound',
+        ru: 'Звуки',
+        tr: 'Ses',
+        es: 'Sonido',
+        de: 'Sound',
+        pt: 'Som',
+        fr: 'Son',
+        pl: 'Dźwięk',
+        it: 'Suono',
+        nl: 'Geluid',
+        cs: 'Zvuk'
+    },
+    [TEXT_SETTING_TYPE.LANGUAGE]:{
+        en: 'Language:',
+        ru: 'Язык:',
+        tr: 'Dil:',
+        es: 'Idioma:',
+        de: 'Sprache:',
+        pt: 'Idioma:',
+        fr: 'Langue:',
+        pl: 'Język:',
+        it: 'Lingua:',
+        nl: 'Taal:',
+        cs: 'Jazyk:'
+    },
+    [TEXT_SETTING_TYPE.RESET]:{
+        en: 'Reset all progress',
+        ru: 'Сбросить весь прогресс',
+        tr: 'Tüm ilerlemeyi sıfırla',
+        es: 'Reiniciar todo el progreso',
+        de: 'Gesamten Fortschritt zurücksetzen',
+        pt: 'Redefinir todo o progresso',
+        fr: 'Réinitialiser toute la progression',
+        pl: 'Zresetuj cały postęp',
+        it: 'Ripristina tutti i progressi',
+        nl: 'Reset alle voortgang',
+        cs: 'Resetovat veškerý postup'
+    }
 }
 
 export const TEXT_EMPTY = {

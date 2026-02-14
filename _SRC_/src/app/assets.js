@@ -34,10 +34,13 @@ export const images = {
     pet_shadow: 'shadow.png',
 
     button_icon_close: 'button_icon_close.png',
+    button_icon_left: 'button_icon_left.png',
+    button_icon_right: 'button_icon_right.png',
 
     popup_bg: 'popup_bg.png',
     result_LOSE: 'result_LOSE.png',
     result_WIN: 'result_WIN.png',
+    result_drop: 'drop.png',
 
     map_static: 'map_static.png',
     map_action: 'map_action.png',
@@ -69,6 +72,7 @@ export const atlases = {
     map_dots: 'map_dots.json',
     task: 'task.json',
     popup_images: 'popup_images.json',
+    sound_music: 'sound_music.json',
 }
 export const sounds = {
     se_swipe: 'se_swipe.mp3',

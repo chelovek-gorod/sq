@@ -2,7 +2,8 @@ import { Container, Graphics, Sprite, Text } from "pixi.js"
 import { EventHub, events } from "../../app/events"
 import { POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
-import { getLanguage } from "../localization"
+import TapIcon from "../UI/TapIcon"
+import { getAvailableLanguages, getLanguage, getLanguageName, setLanguage } from "../localization"
 import { atlases, images } from "../../app/assets"
 import { styles } from "../../app/styles"
 import { TASK } from "../scenes/world/constants"
@@ -11,7 +12,11 @@ import { availablePetLevel } from "../state"
 import { kill } from "../../app/application"
 import WinDisc from "../effects/WinDisc"
 import SparkParticles from "../effects/SparkParticles"
-import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME, TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
+import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
+    TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
+    TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
+import LoseRain from "../effects/LoseRain"
+import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, soundGetState, soundGetVolume, soundOff, soundOn, soundSetVolume } from "../../app/sound"
 
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
@@ -24,6 +29,16 @@ function findPetPlace(petName) {
     return null
 }
 
+function findSoundMusic(isMusic = true) {
+    const isOn = isMusic ? musicGetState() : soundGetState()
+    if (!isOn) return 0
+
+    const volume = isMusic ? musicGetVolume() : soundGetVolume()
+    if (volume > 0.7 ) return 3
+    if (volume > 0.4 ) return 2
+    return 1
+}
+
 const dataQueue = []
 
 export default class Popup extends Container {
@@ -31,7 +46,6 @@ export default class Popup extends Container {
         super()
 
         this.currentLanguage = getLanguage()
-        EventHub.on(events.updateLanguage, this.updateLanguage, this)
 
         this.visible = false
 
@@ -61,6 +75,8 @@ export default class Popup extends Container {
         this.closeButton.scale.set(0.75)
         this.box.addChild(this.closeButton)
 
+        this.settingsUI = null
+
         EventHub.on(events.showPopup, this.show, this)
         EventHub.on(events.startScene, this.kill, this)
 
@@ -87,6 +103,7 @@ export default class Popup extends Container {
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
         else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
         else if (data.type === POPUP_TYPE.NEW) this.fillNew(data.data)
+        else if (data.type === POPUP_TYPE.SETTINGS) this.fillSettings()
 
         this.visible = true
     }
@@ -111,6 +128,8 @@ export default class Popup extends Container {
             this.content.removeChild( obj )
             kill( obj )
         }
+
+        if (this.settingsUI) this.settingsUI = null
     }
 
     fillTask(data) {
@@ -231,6 +250,7 @@ export default class Popup extends Container {
             this.content.addChild( this.sparks.container )
             this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
         } else {
+            this.content.addChild( new LoseRain() )
             this.closeButton.setTextKey( TEXT_BUTTON_TYPE.RETRY )
         }
     }
@@ -266,15 +286,147 @@ export default class Popup extends Container {
         this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
     }
 
-    updateLanguage(lang) {
-        // only in SETTINGS popup
-        this.currentLanguage = lang
+    fillSettings() {
+        this.title.text = TEXT_SETTINGS[TEXT_SETTING_TYPE.TITLE][this.currentLanguage]
+
+        this.settingsUI = {}
+        // music
+        const musicLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.MUSIC][this.currentLanguage]
+        this.settingsUI.musicLabel = new Text({text: musicLabelText, style: styles.popupDescription})
+        this.settingsUI.musicLabel.anchor.set(0.5)
+        this.settingsUI.musicLabel.position.set(-200, -170)
+        this.content.addChild( this.settingsUI.musicLabel )
+
+        const musicTexture = atlases.sound_music.textures[ 'music_' + findSoundMusic(true) ]
+        this.settingsUI.musicBtn = new TapIcon( musicTexture, this.changeMusic.bind(this) )
+        this.settingsUI.musicBtn.anchor.set(0.5)
+        this.settingsUI.musicBtn.position.set(-200, -80)
+        this.content.addChild( this.settingsUI.musicBtn )
+
+        // sound
+        const soundLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.SOUND][this.currentLanguage]
+        this.settingsUI.soundLabel = new Text({text: soundLabelText, style: styles.popupDescription})
+        this.settingsUI.soundLabel.anchor.set(0.5)
+        this.settingsUI.soundLabel.position.set(200, -170)
+        this.content.addChild( this.settingsUI.soundLabel )
+
+        const soundTexture = atlases.sound_music.textures[ 'sound_' + findSoundMusic(false) ]
+        this.settingsUI.soundBtn = new TapIcon( soundTexture, this.changeSound.bind(this) )
+        this.settingsUI.soundBtn.anchor.set(0.5)
+        this.settingsUI.soundBtn.position.set(200, -80)
+        this.content.addChild( this.settingsUI.soundBtn )
+
+        // language
+        this.settingsUI.langСodes = getAvailableLanguages().map(item => item.code)
+        this.settingsUI.langIndex = this.settingsUI.langСodes.indexOf(this.currentLanguage)
+
+        const langLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.LANGUAGE][this.currentLanguage]
+            + ' ' + getLanguageName()
+        this.settingsUI.langLabel = new Text({text: langLabelText, style: styles.popupDescription})
+        this.settingsUI.langLabel.anchor.set(0.5)
+        this.settingsUI.langLabel.position.set(0, 50)
+        this.content.addChild( this.settingsUI.langLabel )
+
+        this.settingsUI.leftBtn = new Button( images.button_icon_left, null, this.prevLang.bind(this) )
+        this.settingsUI.leftBtn.scale.set(0.75)
+        this.settingsUI.leftBtn.position.set(-120, 120)
+        this.content.addChild( this.settingsUI.leftBtn )
+
+        const langCodeText = this.currentLanguage.toUpperCase()
+        this.settingsUI.langCode = new Text({text: langCodeText, style: styles.popupTitle})
+        this.settingsUI.langCode.anchor.set(0.5)
+        this.settingsUI.langCode.position.set(0, 120)
+        this.content.addChild( this.settingsUI.langCode )
+
+        this.settingsUI.rightBtn = new Button( images.button_icon_right, null, this.nextLang.bind(this) )
+        this.settingsUI.rightBtn.scale.set(0.75)
+        this.settingsUI.rightBtn.position.set(120, 120)
+        this.content.addChild( this.settingsUI.rightBtn )
+    }
+
+    changeMusic() {
+        const volume = musicGetVolume()
+        let iconIndex = 0
+        if (volume > 0.7) {
+            musicSetVolume(0)
+            musicOff()
+        } else if (volume > 0.4) {
+            musicSetVolume(1)
+            iconIndex = 3
+        } else if (volume > 0.1) {
+            musicSetVolume(0.5)
+            iconIndex = 2
+        } else {
+            musicSetVolume(0.25)
+            musicOn()
+            iconIndex = 1
+        }
+        const musicTexture = atlases.sound_music.textures[ 'music_' + iconIndex ]
+        this.settingsUI.musicBtn.setIcon( musicTexture )
+    }
+
+    changeSound() {
+        const volume = soundGetVolume()
+        let iconIndex = 0
+        if (volume > 0.7) {
+            soundSetVolume(0)
+            soundOff()
+        } else if (volume > 0.4) {
+            soundSetVolume(1)
+            iconIndex = 3
+        } else if (volume > 0.1) {
+            soundSetVolume(0.5)
+            iconIndex = 2
+        } else {
+            soundSetVolume(0.25)
+            soundOn()
+            iconIndex = 1
+        }
+        const soundTexture = atlases.sound_music.textures[ 'sound_' + iconIndex ]
+        this.settingsUI.soundBtn.setIcon( soundTexture )
+    }
+
+    prevLang() {
+        this.settingsUI.langIndex--
+        if (this.settingsUI.langIndex < 0) {
+            this.settingsUI.langIndex = this.settingsUI.langСodes.length - 1
+        }
+        this.currentLanguage = this.settingsUI.langСodes[this.settingsUI.langIndex]
+        setLanguage(this.currentLanguage)
+
+        this.updateSettingsLabels()
+    }
+
+    nextLang() {
+        this.settingsUI.langIndex++
+        if (this.settingsUI.langIndex === this.settingsUI.langСodes.length) {
+            this.settingsUI.langIndex = 0
+        }
+        this.currentLanguage = this.settingsUI.langСodes[this.settingsUI.langIndex]
+        setLanguage(this.currentLanguage)
+
+        this.updateSettingsLabels()
+    }
+
+    updateSettingsLabels() {
+        this.title.text = TEXT_SETTINGS[TEXT_SETTING_TYPE.TITLE][this.currentLanguage]
+
+        const musicLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.MUSIC][this.currentLanguage]
+        this.settingsUI.musicLabel.text = musicLabelText
+
+        const soundLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.SOUND][this.currentLanguage]
+        this.settingsUI.soundLabel.text = soundLabelText
+
+        const langLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.LANGUAGE][this.currentLanguage]
+            + ' ' + getLanguageName()
+        this.settingsUI.langLabel.text = langLabelText
+
+        this.settingsUI.langCode.text = this.currentLanguage.toUpperCase()
     }
 
     kill() {
         if (this.sparks) this.sparks.kill()
         EventHub.off(events.startScene, this.kill, this)
-        EventHub.off(events.updateLanguage, this.updateLanguage, this)
         EventHub.off(events.showPopup, this.show, this)
     }
 }

@@ -35,6 +35,10 @@ export default class TapIcon extends Sprite {
         else this.alpha = 0.5
     }
 
+    setIcon( icon ) {
+        this.texture = icon
+    }
+
     click() {
         if (!this.isActive) return
 

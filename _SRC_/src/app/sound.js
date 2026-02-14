@@ -33,7 +33,6 @@ export function getSoundData() {
     return { ...state }
 }
 
-// 🔄 ОДИН объект Howl для музыки
 let musicHowl = null
 let musicList = null
 let musicIndex = 0

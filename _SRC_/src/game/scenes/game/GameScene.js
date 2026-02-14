@@ -17,6 +17,7 @@ import { SCENE_NAME } from '../constants'
 import GameTask from './GameTask'
 import Popup from '../../popup/Popup'
 import { kill } from '../../../app/application'
+import { POPUP_TYPE } from '../../popup/constants'
 
 export default class Game extends Container {
     constructor() {
@@ -168,7 +169,7 @@ export default class Game extends Container {
     }
 
     clickSettings() {
-
+        showPopup({type: POPUP_TYPE.SETTINGS, data: null})
     }
 
     updateLanguage(lang) {

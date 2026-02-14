@@ -91,7 +91,7 @@ export default class World extends Container {
     }
 
     clickSettings() {
-
+        showPopup({type: POPUP_TYPE.SETTINGS, data: null})
     }
 
     updateLanguage(lang) {
