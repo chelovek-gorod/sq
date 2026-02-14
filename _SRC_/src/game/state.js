@@ -1,3 +1,6 @@
+import { EventHub, events } from "../app/events"
+import { updateStoredData } from "../game/storage"
+
 export let availablePetLevel = 50
 export let dragonPointIndex = 0
 
@@ -32,3 +35,12 @@ export function setStoredState( storedState ) {
         availablePetLevel = storedState.availablePetLevel
     }
 }
+
+EventHub.on( events.globalGameReset, () => {
+    availablePetLevel = 1
+    dragonPointIndex = 0
+    world = [ [0,0,0], ]
+
+    updateStoredData()
+    setTimeout( () => location.reload(), 1000 )
+})

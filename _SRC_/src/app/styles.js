@@ -36,6 +36,7 @@ export let styles = {
     popupTitle: null,
     popupDescription: null,
     popupTurnsText: null,
+    settingsReset: null,
 }
 
 export function initFontStyles() {
@@ -147,6 +148,16 @@ export function initFontStyles() {
         fontFamily: fonts.BSBoldItalic,
         fontSize: 40,
         fill: 0xee0000,
+    })
+
+    styles.settingsReset = new TextStyle({
+        fontFamily: fonts.BSItalic,
+        fontSize: 24,
+        fill: 0xee0000,
+        align: 'right',
+        wordWrap: true,
+        wordWrapWidth: 640,
+        lineHeight: 24,
     })
 
     styles.isReady = true

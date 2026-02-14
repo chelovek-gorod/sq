@@ -1072,17 +1072,20 @@ export const TEXT_SETTINGS = {
         cs: 'Jazyk:'
     },
     [TEXT_SETTING_TYPE.RESET]:{
-        en: 'Reset all progress',
-        ru: 'Сбросить весь прогресс',
-        tr: 'Tüm ilerlemeyi sıfırla',
-        es: 'Reiniciar todo el progreso',
-        de: 'Gesamten Fortschritt zurücksetzen',
-        pt: 'Redefinir todo o progresso',
-        fr: 'Réinitialiser toute la progression',
-        pl: 'Zresetuj cały postęp',
-        it: 'Ripristina tutti i progressi',
-        nl: 'Reset alle voortgang',
-        cs: 'Resetovat veškerý postup'
+        en: (count) => `To reset all game progress and start over - press the cross button ${count} times`,
+        ru: (count) => {
+            const word = count % 10 === 1 && count % 100 !== 11 ? 'раз' : 'раза';
+            return `Что бы сбросить весь прогрес игры и начать все сначало - нажимай кнопку с крестиком ${count} ${word}`
+        },
+        tr: (count) => `Tüm oyun ilerlemesini sıfırlamak ve yeniden başlamak için çarpı işaretli düğmeye ${count} kez basın`,
+        es: (count) => `Para reiniciar todo el progreso del juego y empezar de nuevo - presiona el botón de la cruz ${count} veces`,
+        de: (count) => `Um den gesamten Spielstand zurückzusetzen und von vorne zu beginnen - drücke die Kreuz-Taste ${count} Mal`,
+        pt: (count) => `Para redefinir todo o progresso do jogo e começar de novo - pressione o botão com a cruz ${count} vezes`,
+        fr: (count) => `Pour réinitialiser toute la progression du jeu et recommencer - appuyez sur le bouton avec la croix ${count} fois`,
+        pl: (count) => `Aby zresetować cały postęp w grze i zacząć od nowa - naciśnij przycisk z krzyżykiem ${count} razy`,
+        it: (count) => `Per ripristinare tutti i progressi del gioco e ricominciare - premi il pulsante con la croce ${count} volte`,
+        nl: (count) => `Om alle spelvoortgang te resetten en opnieuw te beginnen - druk ${count} keer op de knop met het kruisje`,
+        cs: (count) => `Pro resetování veškerého postupu ve hře a začátek od začátku - stiskněte tlačítko s křížkem ${count}krát`
     }
 }
 

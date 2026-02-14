@@ -23,6 +23,7 @@ export const events = {
     showLevelCards: 'showLevelCards',
     showPopup: 'showPopup',
     setMapCameraInteractive: 'setMapCameraInteractive',
+    globalGameReset: 'globalGameReset',
 }
 
 export function screenResize( data ) {
@@ -75,4 +76,7 @@ export function showPopup( data ) {
 }
 export function setMapCameraInteractive( isActive ) {
     EventHub.emit( events.setMapCameraInteractive, isActive )
+}
+export function globalGameReset() {
+    EventHub.emit( events.globalGameReset )
 }
