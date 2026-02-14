@@ -24,6 +24,8 @@ function findPetPlace(petName) {
     return null
 }
 
+const dataQueue = []
+
 export default class Popup extends Container {
     constructor() {
         super()
@@ -61,6 +63,8 @@ export default class Popup extends Container {
 
         EventHub.on(events.showPopup, this.show, this)
         EventHub.on(events.startScene, this.kill, this)
+
+        // if (dataQueue.length) this.show( dataQueue.pop() )
     }
 
     screenResize(screenData) {
@@ -77,6 +81,8 @@ export default class Popup extends Container {
     show(data) {
         // data = {type: POPUP_TYPE.TASK, data: this.task}
 
+        if (this.visible) return dataQueue.push(data)
+
         if (data.type === POPUP_TYPE.TASK) this.fillTask(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
         else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
@@ -86,8 +92,13 @@ export default class Popup extends Container {
     }
 
     close() {
-        this.closeButton.onOut()
+        this.clear()
         this.visible = false
+        if ( dataQueue.length ) this.show( dataQueue.shift() )
+    }
+
+    clear() {
+        this.closeButton.onOut()
 
         if (this.sparks) {
             this.content.removeChild(this.sparks.container)
@@ -95,7 +106,11 @@ export default class Popup extends Container {
             this.sparks = null
         }
 
-        this.content.children.forEach( c => kill(c) )
+        while (this.content.children.length) {
+            const obj = this.content.children[0]
+            this.content.removeChild( obj )
+            kill( obj )
+        }
     }
 
     fillTask(data) {
