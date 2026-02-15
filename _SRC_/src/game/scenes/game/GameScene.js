@@ -50,7 +50,7 @@ export default class Game extends Container {
         this.task = new GameTask(levelTask)
         this.addChild(this.task)
 
-        this.collection = new Collection()
+        this.collection = new Collection( this.clickBook.bind(this) )
         this.collection.visible = false
         this.addChild(this.collection)
 
@@ -96,7 +96,7 @@ export default class Game extends Container {
         this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
         this.shineBar.position.set(-screenData.centerX, -screenData.centerY)
 
-        this.task.position.set(0, -screenData.centerY)
+        this.task.position.set(0, -screenData.centerY + 20)
 
         const freeWidth = screenData.width
         const freeHeight = screenData.height - FIELD_OFFSET_Y

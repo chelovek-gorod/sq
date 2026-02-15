@@ -27,7 +27,7 @@ export default class World extends Container {
         this.fireflies = new FirefliesContainer()
         this.addChild(this.fireflies)
 
-        this.collection = new Collection()
+        this.collection = new Collection( this.clickBook.bind(this) )
         this.collection.visible = false
         this.addChild(this.collection)
 

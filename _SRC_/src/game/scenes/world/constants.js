@@ -1,5 +1,4 @@
 import { createEnum } from "../../../utils/functions"
-import { BG_GRADIENT_NAME } from "../game/constants"
 
 export const MAP_WIDTH = 2048
 export const MAP_HEIGHT = 1366
@@ -17,7 +16,7 @@ export const POINTS = [
         tasks: [
             {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0},
             {type: TASK.LOCK, value: 4, turns: 0, levelIndex: 1},
-            {type: TASK.CLOUD, value: 12, turns: 12, levelIndex: 2}
+            {type: TASK.LOCK, value: 12, turns: 12, levelIndex: 2}
         ]
     },
     {

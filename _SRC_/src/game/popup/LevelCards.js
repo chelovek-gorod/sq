@@ -13,7 +13,6 @@ import Button from "../UI/Button";
 const CARD = {
     width: 280,
     height: 320,
-    offset: 0,
 
     minScale: 0.9,
     maxScale: 1,
@@ -23,19 +22,54 @@ const CARD = {
 const BUTTON_SIZE = 100
 
 const DATA = {
-    1: [{x: 0, y: 0}],
-    2: [{x: -CARD.offset * 0.5 + -CARD.width * 0.5, y: 0}, {x: CARD.offset * 0.5 + CARD.width * 0.5, y: 0}],
-    3: [{x: -CARD.width + -CARD.offset, y: 0}, {x: 0, y: 0}, {x: CARD.width + CARD.offset, y: 0}],
-    width: CARD.width * 3 + CARD.offset * 6 + BUTTON_SIZE * 2,
-    height: CARD.height + CARD.offset * 4 + BUTTON_SIZE,
+    width2: CARD.width * 2 + BUTTON_SIZE * 3,
+    width3: CARD.width * 3 + BUTTON_SIZE * 3,
+    height1: CARD.height + BUTTON_SIZE * 1.5,
+    height2: CARD.height * 2 + BUTTON_SIZE * 1.5,
+}
+
+const CARDS = {
+    noWrap : {
+        1: [
+            {x: 0, y: 0}, // card 1
+            {x: CARD.width * 0.5 + BUTTON_SIZE * 0.5, y: -CARD.height * 0.5}, // button
+        ],
+        2: [
+            {x: -CARD.width * 0.5, y: 0}, // card 1
+            {x: CARD.width * 0.5, y: 0}, // card 2
+            {x: CARD.width + BUTTON_SIZE * 0.5, y: -CARD.height * 0.5}, // button
+        ],
+        3: [
+            {x: -CARD.width, y: 0}, // card 1
+            {x: 0, y: 0}, // card 2
+            {x: CARD.width, y: 0}, // card 3
+            {x: CARD.width * 1.5 + BUTTON_SIZE * 0.5, y: -CARD.height * 0.5}, // button
+        ]
+    },
+    wrap: {
+        1: [
+            {x: 0, y: 0}, // card 1
+            {x: CARD.width * 0.5 + BUTTON_SIZE * 0.5, y: -CARD.height * 0.5}, // button
+        ],
+        2: [
+            {x: -CARD.width * 0.5, y: 0}, // card 1
+            {x: CARD.width * 0.5, y: 0}, // card 2
+            {x: CARD.width + BUTTON_SIZE * 0.5, y: -CARD.height * 0.5}, // button
+        ],
+        3: [
+            {x: -CARD.width * 0.5, y: -CARD.height * 0.5}, // card 1
+            {x: CARD.width * 0.5, y: -CARD.height * 0.5}, // card 2
+            {x: 0, y: CARD.height * 0.5}, // card 3
+            {x: CARD.width + BUTTON_SIZE * 0.5, y: -CARD.height}, // button
+        ]
+    }
 }
 
 class Card extends Container {
-    constructor(index, point, task, state) {
+    constructor(index, task, state) {
         super()
 
         this.scale.set( CARD.minScale )
-        this.position.set(point.x, point.y)
 
         this.bg = new Sprite( atlases.task.textures[index] )
         this.bg.anchor.set(0.5)
@@ -115,8 +149,11 @@ export default class LevelCards extends Container {
 
         this.visible = false
 
+        this.isWrap = false
+
         this.overlay = new Graphics()
         this.overlay.eventMode = 'static'
+        this.overlay.on('pointerdown', this.closeCards, this)
         this.addChild(this.overlay)
 
         this.container = new Container()
@@ -142,10 +179,21 @@ export default class LevelCards extends Container {
         )
         this.overlay.fill({ color: 0x000000, alpha: 0.5 })
 
-        const scaleX = screenData.width / DATA.width
-        const scaleY = screenData.height / DATA.height
-        const scale = Math.min(1, scaleX, scaleY)
+        const scaleX2 = screenData.width / DATA.width2
+        const scaleX3 = screenData.width / DATA.width3
+        const scaleY1 = screenData.height / DATA.height1
+        const scaleY2 = screenData.height / DATA.height2
+
+        // если в 1 ряд размещать
+        const scale1 = Math.min(1, scaleX3, scaleY1)
+        // если в 2 ряда размещать
+        const scale2 = Math.min(1, scaleX2, scaleY2)
+
+        this.isWrap = scale2 > scale1
+        const scale = Math.max(scale2, scale1)
         this.container.scale.set(scale)
+
+        if (this.cards.children.length) this.replaceCards()
     }
 
     showLevelCards(mapPointIndex) {
@@ -154,18 +202,26 @@ export default class LevelCards extends Container {
 
         for(let i = 0; i < tasksCount; i++) {
             this.cards.addChild( new Card(
-                i,
-                DATA[tasksCount][i],
+                i % 3,
                 POINTS[mapPointIndex].tasks[i],
                 world[mapPointIndex],
             ))
         }
 
-        const x = DATA[tasksCount][tasksCount - 1].x + CARD.width * 0.5 + BUTTON_SIZE * 0.25
-        const y = -CARD.height * 0.5
-        this.closeBtn.position.set( x, y )
+        this.replaceCards()
 
         this.visible = true
+    }
+
+    replaceCards() {
+        const cardsCount = this.cards.children.length
+        const closeBtnPoint = CARDS[ this.isWrap ? 'wrap' : 'noWrap'][cardsCount][cardsCount]
+        this.closeBtn.position.set(closeBtnPoint.x, closeBtnPoint.y)
+
+        this.cards.children.forEach( (card, i) => {
+            const cardPoint = CARDS[ this.isWrap ? 'wrap' : 'noWrap'][cardsCount][i]
+            card.position.set(cardPoint.x, cardPoint.y)
+        })
     }
 
     closeCards() {
@@ -175,6 +231,7 @@ export default class LevelCards extends Container {
     }
 
     kill() {
+        this.overlay.off('pointerdown', this.closeCards, this)
         EventHub.off( events.showLevelCards, this.showLevelCards, this )
     }
 }

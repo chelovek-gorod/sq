@@ -55,8 +55,8 @@ export default class GameTask extends Container {
                 this.turnsCount.y += 5
             } else {
                 // SS 12  T 12
-                this.taskIcon.x -= task.type === TASK.CLOUD ? 40 : 45
-                this.taskCount.x -= task.type === TASK.CLOUD ? 45 : 60
+                this.taskIcon.x -= task.type === TASK.CLOUD ? 40 : 50
+                this.taskCount.x -= task.type === TASK.CLOUD ? 45 : 55
 
                 this.turnsIcon.x += 80
                 this.turnsCount.x += 65
@@ -66,8 +66,8 @@ export default class GameTask extends Container {
                 this.turnsCount.y += 5
             }
         } else if (this.taskCount) {
-            this.taskIcon.x += task.type === TASK.CLOUD ? 10 : 20
-            this.taskCount.x += task.type === TASK.CLOUD ? 10 : 5
+            this.taskIcon.x += task.type === TASK.CLOUD ? 10 : 25
+            this.taskCount.x += task.type === TASK.CLOUD ? 10 : 10
 
             this.taskCount.y += 5
         }

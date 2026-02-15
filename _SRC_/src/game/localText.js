@@ -947,7 +947,7 @@ export const TEXT_HELP_DRAGON_TITLE = {
     cs: 'Magický Drak'
 }
 
-export const TEXT_HELP_GET_DRAGON_DESCRIPTION = {
+export const TEXT_HELP_DRAGON_ADD_DESCRIPTION = {
     en: 'Collect 10 Glimmers to get the Dragon',
     ru: 'Собери 10 сияний и получи Дракона',
     tr: '10 Parıltı topla ve Ejderhayı al',
@@ -961,7 +961,7 @@ export const TEXT_HELP_GET_DRAGON_DESCRIPTION = {
     cs: 'Nasbírej 10 Září a získej Draka'
 }
 
-export const TEXT_HELP_USE_DRAGON_DESCRIPTION = {
+export const TEXT_HELP_DRAGON_USE_DESCRIPTION = {
     en: 'Dragon can merge with any Squinki',
     ru: 'Дракон соединяется с любым Сквинки',
     tr: 'Ejderha herhangi bir Squinki ile birleşebilir',

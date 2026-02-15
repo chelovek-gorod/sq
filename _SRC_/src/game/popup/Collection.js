@@ -2,7 +2,7 @@ import { Container, Graphics, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 import { images, atlases } from "../../app/assets";
 import { showPopup } from "../../app/events";
-import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PET_DATA, PLACE_PETS } from "../scenes/game/constants";
+import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PLACE_PETS } from "../scenes/game/constants";
 import { availablePetLevel } from "../state";
 import { POPUP_TYPE } from "./constants";
 
@@ -142,16 +142,21 @@ class Pet extends Sprite {
 }
 
 export default class Collection extends Container {
-    constructor() {
+    constructor( closeCallback = null ) {
         super()
+
+        this.closeCallback = closeCallback
+
         this.overlay = new Graphics()
         this.overlay.eventMode = 'static'
+        this.overlay.on('pointerdown', this.click, this)
         this.addChild(this.overlay)
 
         this.container = new Container()
         this.addChild(this.container)
 
         this.bg = new Sprite(images.collection_bg)
+        this.bg.eventMode = 'static'
         this.container.addChild(this.bg)
 
         this.pets = new Container()
@@ -182,5 +187,13 @@ export default class Collection extends Container {
 
     addPet(i) {
         this.pets.addChild( new Pet(i) )
+    }
+
+    click() {
+        if (this.closeCallback) this.closeCallback()
+    }
+
+    kill() {
+        this.overlay.off('pointerdown', this.click, this)
     }
 }
