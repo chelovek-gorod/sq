@@ -11,6 +11,11 @@ const minScale = 1.0
 const maxScale = 1.1
 const scaleStep = 0.0006
 
+const Y_TASK_CLOUD = 15
+const Y_TASK_OTHER = 10
+const Y_TURNS = 17
+const Y_COUNT = 16
+
 export default class GameTask extends Container {
     constructor(task) {
         super()
@@ -19,7 +24,7 @@ export default class GameTask extends Container {
 
         this.taskIcon = new Sprite( atlases.task.textures[task.type] )
         this.taskIcon.anchor.set(task.type === TASK.NEW ? 0.5: 1, 0)
-        this.taskIcon.scale.set(0.3)
+        this.taskIcon.scale.set(0.22)
         this.addChild(this.taskIcon)
 
         this.taskCount = task.type === TASK.NEW
@@ -32,7 +37,7 @@ export default class GameTask extends Container {
             : new Sprite( atlases.task.textures[TASK.TIME] )
         if (this.turnsIcon) {
             this.turnsIcon.anchor.set(1, 0)
-            this.turnsIcon.scale.set(0.25)
+            this.turnsIcon.scale.set(0.2)
             this.addChild(this.turnsIcon)
         }
 
@@ -42,34 +47,39 @@ export default class GameTask extends Container {
         if (this.turnsCount) this.addChild(this.turnsCount)
 
         // set positions
+        this.taskIcon.y += TASK.CLOUD ? Y_TASK_CLOUD : Y_TASK_OTHER
         if (task.turns) {
             // turns
             if (task.type === TASK.NEW) {
-                //   ?   T 12
-                this.taskIcon.x -= 60
+                //  ?   T 12
+                this.taskIcon.x -= 35
+
+                this.turnsIcon.x += 50
+                this.turnsCount.x += 35
+
+                this.turnsIcon.y += Y_TURNS
+                this.turnsCount.y += Y_COUNT
+            } else {
+                // SS 12  T 12
+                this.taskIcon.x -= 20
+                this.taskCount.x -= 25
 
                 this.turnsIcon.x += 65
                 this.turnsCount.x += 50
 
-                this.turnsIcon.y += 5
-                this.turnsCount.y += 5
-            } else {
-                // SS 12  T 12
-                this.taskIcon.x -= task.type === TASK.CLOUD ? 40 : 50
-                this.taskCount.x -= task.type === TASK.CLOUD ? 45 : 55
-
-                this.turnsIcon.x += 80
-                this.turnsCount.x += 65
-
-                this.turnsIcon.y += 5
-                this.taskCount.y += 5
-                this.turnsCount.y += 5
+                this.turnsIcon.y += Y_TURNS
+                this.taskCount.y += Y_COUNT
+                this.turnsCount.y += Y_COUNT
             }
         } else if (this.taskCount) {
-            this.taskIcon.x += task.type === TASK.CLOUD ? 10 : 25
-            this.taskCount.x += task.type === TASK.CLOUD ? 10 : 10
+            // SS 12
+            this.taskIcon.x += 20
+            this.taskCount.x += 15
 
-            this.taskCount.y += 5
+            this.taskCount.y += Y_COUNT
+        } else {
+            //  ?
+            this.taskIcon.x += 5
         }
 
         this.isOnHover = false

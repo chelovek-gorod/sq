@@ -89,11 +89,11 @@ class Card extends Container {
         this.addChild(this.doneImage)
 
         const taskCountText = task.type === TASK.NEW
-            ? '+1'
+            ? '+?' + (task.turns ? '/' + task.turns : '')
             : task.value + (task.turns ? '/' + task.turns : '')
         this.countText = new Text({text: taskCountText, style: styles.cardCount})
         this.countText.anchor.set(0.5)
-        this.countText.position.set(0, 110)
+        this.countText.position.set(-5, 110)
         this.addChild(this.countText)
 
         setCursorPointer(this)

@@ -113,7 +113,7 @@ export function initFontStyles() {
 
     styles.taskCount = new TextStyle({
         fontFamily: fonts.BSBold,
-        fontSize: 48,
+        fontSize: 40,
         fill: '#ffffff',
         //align: 'center',
     
