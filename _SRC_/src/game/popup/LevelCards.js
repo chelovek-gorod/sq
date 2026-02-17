@@ -6,7 +6,8 @@ import { styles } from "../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../utils/functions";
 import { SCENE_NAME } from "../scenes/constants";
 import { FIELD_OFFSET_Y, FIELD_OFFSET_X } from "../scenes/game/constants";
-import { POINTS, TASK } from "../scenes/world/constants";
+import { LEVELS_LIST } from "../scenes/game/levels";
+import { TASK } from "../scenes/world/constants";
 import { setLevelTask, world } from "../state";
 import Button from "../UI/Button";
 
@@ -66,10 +67,8 @@ const CARDS = {
 }
 
 class Card extends Container {
-    constructor(index, task, state) {
+    constructor(index, isDone, levelIndex, task) {
         super()
-
-        console.log(index, task, state)
 
         this.scale.set( CARD.minScale )
 
@@ -77,15 +76,15 @@ class Card extends Container {
         this.bg.anchor.set(0.5)
         this.addChild(this.bg)
 
-        // task = {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
-        this.levelTask = task
+        this.levelIndex = levelIndex
 
+        // task = {type: TASK.NEW, value: 2, turns: 0}
         const taskSprite = task.type + (task.turns ? '_' + TASK.TIME : '')
         this.image = new Sprite( atlases.task.textures[taskSprite] )
         this.image.anchor.set(0.5)
         this.addChild(this.image)
 
-        this.isDone = state && state[index]
+        this.isDone = isDone
         this.doneImage = new Sprite( this.isDone ? atlases.task.textures.done : Texture.EMPTY )
         this.doneImage.anchor.set(0.5)
         this.addChild(this.doneImage)
@@ -110,7 +109,7 @@ class Card extends Container {
     }
 
     click() {
-        setLevelTask( this.levelTask )
+        setLevelTask( this.levelIndex )
         startScene( SCENE_NAME.Game )
     }
 
@@ -201,16 +200,17 @@ export default class LevelCards extends Container {
         if (this.cards.children.length) this.replaceCards()
     }
 
-    showLevelCards(mapPointIndex) {
+    showLevelCards(worldPointIndex) {
         setMapCameraInteractive( false )
-        const tasksCount = POINTS[mapPointIndex].tasks.length
 
-        for(let i = 0; i < tasksCount; i++) {
-            this.cards.addChild( new Card(
-                i % 3,
-                POINTS[mapPointIndex].tasks[i],
-                world[mapPointIndex],
-            ))
+        const startTaskIndex = worldPointIndex * 3
+        const worldPointData = world[worldPointIndex]
+
+        for(let i = 0; i < 3; i++) {
+            const taskIndex = startTaskIndex + i
+            const task = LEVELS_LIST[taskIndex].task
+            const isDone = worldPointData[i]
+            this.cards.addChild( new Card( i, isDone, taskIndex, task ))
         }
 
         this.replaceCards()

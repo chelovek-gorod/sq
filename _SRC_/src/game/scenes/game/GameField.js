@@ -1,6 +1,6 @@
 import { Container } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
-import { EventHub, events, userDoStep } from "../../../app/events";
+import { EventHub, events, levelDone, showPopup, userDoStep } from "../../../app/events";
 import Clouds from "./Clouds";
 import { CEIL_DATA, CLOUDS_STATE, LOCKS_STATE, OBSTACLE, PLACE_MAP } from "./constants";
 import FieldCeil from "./FieldCeil";
@@ -9,6 +9,7 @@ import Splash from "../../effects/Splash";
 import Lock from "./Lock";
 import SparkParticles from "../../effects/SparkParticles";
 import Fireworks from "../../effects/Fireworks";
+import { POPUP_TYPE } from "../../popup/constants";
 
 function getMapObject( code ) {
     switch(code) {
@@ -20,7 +21,7 @@ function getMapObject( code ) {
 }
 
 export default class GameField extends Container {
-    constructor(level) {
+    constructor(levelMap) {
         super()
 
         this.ceils = new Container()
@@ -39,24 +40,24 @@ export default class GameField extends Container {
         this.dragData = { pet: null, isDone: false }
         this.closestDragCeil = null
 
-        this.fill(level)
+        this.fill(levelMap)
 
         EventHub.on( events.dragging, this.dragging, this )
         EventHub.on( events.addFireworks, this.addFireworks, this )
         tickerAdd(this)
     }
 
-    fill(level) {
+    fill(levelMap) {
         const ceilsMap = new Map()
     
         const halfWidth = CEIL_DATA.width * 0.5
         const halfHeight = CEIL_DATA.height * 0.5
-        const xSteps = Math.ceil(level.map[0].length / 3)
+        const xSteps = Math.ceil(levelMap[0].length / 3)
         
         let yy = 0 // пол клетки добавится в начале цикла
-        for(let y = 0; y < level.map.length; y++) {
+        for(let y = 0; y < levelMap.length; y++) {
             yy += halfHeight 
-            const line = level.map[y]
+            const line = levelMap[y]
             let xx = 0 // пол клетки добавится в начале цикла
             for(let x = 0; x < xSteps; x++) {
                 xx += halfWidth 
@@ -106,6 +107,27 @@ export default class GameField extends Container {
         })
     
         ceilsMap.clear()
+    }
+
+    checkAvailablePetsMerge() {
+        let isMergeAvailable = false
+        const pets = []
+
+        for(let p = this.pets.children.length - 1; p >= 0 && !isMergeAvailable; p--) {
+            isMergeAvailable = pets.indexOf(this.pets.children[p].type) > -1
+                || this.pets.children[p].type === 51
+            pets.push(this.pets.children[p].type)
+        }
+        if (isMergeAvailable) return true
+
+        for(let d = this.draggingPets.children.length - 1; d >= 0 && !isMergeAvailable; d--) {
+            isMergeAvailable = pets.indexOf(this.draggingPets.children[d].type) > -1
+                || this.draggingPets.children[d].type === 51
+            pets.push(this.pets.children[d].type)
+        }
+        if (isMergeAvailable) return true
+
+        return false
     }
 
     dragging( dragData ) {
@@ -196,7 +218,7 @@ export default class GameField extends Container {
         return free[ Math.floor(Math.random() * free.length) ]
     }
 
-    tick( time ) {
+    tick() {
         if (!this.dragData.pet) return
 
         const newClosestCeil = this.getClosestDragCeil()

@@ -1,5 +1,5 @@
 import { Container, Graphics, Sprite, Text } from "pixi.js"
-import { EventHub, events, globalGameReset } from "../../app/events"
+import { EventHub, events, globalGameReset, startScene } from "../../app/events"
 import { POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
 import TapIcon from "../UI/TapIcon"
@@ -17,6 +17,7 @@ import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_R
     TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
 import LoseRain from "../effects/LoseRain"
 import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, soundGetState, soundGetVolume, soundOff, soundOn, soundSetVolume } from "../../app/sound"
+import { SCENE_NAME } from "../scenes/constants"
 
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
@@ -44,6 +45,9 @@ const dataQueue = []
 export default class Popup extends Container {
     constructor() {
         super()
+
+        this.isResult = false
+        this.isResultDone = false
 
         this.currentLanguage = getLanguage()
 
@@ -106,9 +110,18 @@ export default class Popup extends Container {
         else if (data.type === POPUP_TYPE.SETTINGS) this.fillSettings()
 
         this.visible = true
+        this.isResult = data.type === POPUP_TYPE.RESULT
+        this.isResultDone = this.isResult ? data.data : false
     }
 
     close() {
+        if (this.isResult) {
+            if (this.isResultDone) startScene(SCENE_NAME.World)
+            else startScene(SCENE_NAME.Game)
+            kill(this)
+            return
+        }
+
         this.clear()
         this.visible = false
         if ( dataQueue.length ) this.show( dataQueue.shift() )

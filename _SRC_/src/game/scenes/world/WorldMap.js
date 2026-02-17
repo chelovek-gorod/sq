@@ -2,6 +2,7 @@ import { Container, Sprite, DisplacementFilter } from 'pixi.js'
 import { tickerAdd } from '../../../app/application'
 import { atlases, images } from '../../../app/assets'
 import { EventHub, events } from '../../../app/events'
+import { moveToTarget } from '../../../utils/functions'
 import { dragonPointIndex } from '../../state'
 import { PET } from '../game/constants'
 import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT } from './constants'
@@ -12,7 +13,7 @@ const DP_FILTER_SPEED = 0.03
 
 const DRAG_SENSITIVITY = 1.2
 const EDGE_PAN_SPEED = 6 // 0.6px в миллисекунду или 600px в секунду
-const EDGE_PAN_ZONE = 60
+const EDGE_PAN_ZONE = 30
 const RETURN_LERP = 0.12 //  коэффициент плавности позиция += (цель - позиция) * RETURN_LERP
 const FOCUS_TOLERANCE = 0.3 // пикселей — если до цели меньше, прыгаем сразу
 
@@ -79,8 +80,11 @@ export default class WorldMap extends Container {
         this.dragon.scale.set(0.4)
         this.dragon.anchor.set(0.5, 0.75)
         this.dragon.eventMode = 'none'
+        this.dragon.target = null
         this.addChild(this.dragon)
         this.setDragon()
+
+        EventHub.on( events.flyDragonToPoint, this.flyDragonToPoint, this )
 
         // ================= EVENTS =================
 
@@ -128,6 +132,11 @@ export default class WorldMap extends Container {
 
     tick({ deltaMS }) {
         const dt = deltaMS
+
+        // fly dragon
+        if (this.dragon.target) {
+            moveToTarget(this.dragon, this.dragon.target, 0.3 * dt)
+        }
 
         // displacement
         this.DPFilterSprite.x += deltaMS * DP_FILTER_SPEED
@@ -278,6 +287,13 @@ export default class WorldMap extends Container {
             POINTS[dragonPointIndex].x,
             POINTS[dragonPointIndex].y
         )
+    }
+
+    flyDragonToPoint() {
+        this.dragon.target = {
+            x: POINTS[dragonPointIndex].x,
+            y: POINTS[dragonPointIndex].y
+        }
     }
 
     setOnOff( isOn ) {

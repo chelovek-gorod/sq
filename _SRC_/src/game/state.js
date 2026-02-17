@@ -1,6 +1,5 @@
 import { EventHub, events } from "../app/events"
 import { updateStoredData } from "../game/storage"
-import { POINTS } from "./scenes/world/constants"
 
 export let availablePetLevel = 50
 export let dragonPointIndex = 0
@@ -17,17 +16,10 @@ export function setDragonPointIndex( index ) {
     dragonPointIndex = index
 }
 
-// levelTask = {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
-export let levelTask = null
-export function setLevelTask(task) {
-    levelTask = task
-    levelTask.pointIndex = Math.floor(levelTask.levelIndex / 3)
-    levelTask.taskIndex = levelTask.levelIndex % 3
-    const taskA = +world[levelTask.pointIndex][0]
-    const taskB = +world[levelTask.pointIndex][1]
-    const taskC = +world[levelTask.pointIndex][2]
-    levelTask.doneTasksCount = taskA + taskB + taskC
-    levelTask.isLastLevel = levelTask.levelIndex === POINTS.length
+// levelTask = {type: TASK.NEW, value: 2, turns: 0}
+export let levelIndex = -1
+export function setLevelTask(index) {
+    levelIndex = index
 }
 
 export let world = [
@@ -55,28 +47,59 @@ export function setStoredState( storedState ) {
     && storedState.dragonPointIndex < 51) {
         availablePetLevel = storedState.availablePetLevel
     }
+
+    if ('world' in storedState) {
+        try {
+            const storedWorld = JSON.parse(storedState.world)
+            if (!Array.isArray(storedWorld)) {
+                console.error('ERROR in JSON storedState.world', storedState.world, e)
+                return 
+            }
+
+            let isOk = true
+            storedWorld.forEach( point => {
+                if (!Array.isArray(point) && !point.length != 3) isOk = false
+            })
+            if (!isOk) {
+                console.error('ERROR in JSON storedState.world', storedState.world, e)
+                return 
+            }
+
+            world = storedWorld
+        } catch (e) {
+            console.error('ERROR in JSON storedState.world', storedState.world, e)
+        }
+    }
 }
 
 EventHub.on( events.globalGameReset, () => {
     availablePetLevel = 1
     dragonPointIndex = 0
-    world = [ [0,0,0], ]
+    world = [ [false, false, false], ]
 
     updateStoredData()
     setTimeout( () => location.reload(), 1000 )
 })
 
-EventHub.on( events.levelDone, () => {
-    const pointIndex = Math.floor(levelTask.levelIndex / 3)
-    const taskIndex = levelTask.levelIndex % 3
+EventHub.on( events.levelDone, (isDone) => {
+    if (!isDone) return
+
+    const pointIndex = Math.floor(levelIndex / 3)
+    const taskIndex = levelIndex % 3
+
+    if(pointIndex + 1 === world.length) world.push( [false, false, false])
 
     world[pointIndex][taskIndex] = true
 
-    // check place done
-    if(dragonPointIndex < 19) {
-        dragonPointIndex++
-        world.push( [false, false, false])
-    }
-
     updateStoredData()
 })
+
+export function getWorldPointIndexByLevelIndex(levelIndex) {
+    return Math.floor(levelIndex / 3)
+}
+
+export function getWorldPointDataByLevelIndex(levelIndex) {
+    const worldPointIndex = getWorldPointIndexByLevelIndex(levelIndex)
+    if (worldPointIndex < world.length) return [...world[worldPointIndex]]
+    else return null
+}

@@ -136,7 +136,7 @@ export default class PetToken extends Container {
     }
     
     moveToCeil(ceil) {
-        const isTurn = this.ceil !== ceil
+        if (this.ceil !== ceil) getTargetTurn()
 
         this.ceil.pet = null
         this.ceil = ceil
@@ -181,8 +181,6 @@ export default class PetToken extends Container {
         if (this.isShining) {
             setTimeout( soundPlay, this.isUpgraded ? 600 : 0, sounds.se_starfall )
         }
-
-        if (isTurn) getTargetTurn()
     }
 
     upgrade(isOtherPetShine, otherType) {

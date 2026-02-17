@@ -1,9 +1,9 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases } from "../../../app/assets";
-import { showLevelCards } from "../../../app/events";
+import { showLevelCards, flyDragonToPoint } from "../../../app/events";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
-import { world } from "../../state";
+import { setDragonPointIndex, world } from "../../state";
 import { POINTS, POINT_COLORS } from "./constants";
 
 const minScale = 1.0
@@ -55,6 +55,8 @@ export default class MapPoint extends Container {
     }
 
     click() {
+        setDragonPointIndex( this.index )
+        flyDragonToPoint()
         showLevelCards( this.index )
     }
 

@@ -13,6 +13,7 @@ export const events = {
 
     updateLanguage: 'updateLanguage',
 
+    flyDragonToPoint: 'flyDragonToPoint',
     addSpark: 'addSpark',
     showSparksShadow: 'showSparksShadow',
     addFireworks: 'addFireworks',
@@ -53,6 +54,9 @@ export function updateLanguage( currentLanguage ) {
     EventHub.emit( events.updateLanguage, currentLanguage )
 }
 
+export function flyDragonToPoint() {
+    EventHub.emit( events.flyDragonToPoint )
+}
 export function addSpark( data ) {
     EventHub.emit( events.addSpark, data )
 }
@@ -99,6 +103,6 @@ export function getTargetLock() {
 export function getTargetCloud() {
     EventHub.emit( events.getTargetCloud )
 }
-export function levelDone() {
-    EventHub.emit( events.levelDone )
+export function levelDone( isDone ) {
+    EventHub.emit( events.levelDone, isDone )
 }

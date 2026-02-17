@@ -1,3 +1,4 @@
+import { TASK } from "../world/constants"
 import { BG_GRADIENT_NAME } from "./constants"
 
 /*
@@ -9,6 +10,8 @@ import { BG_GRADIENT_NAME } from "./constants"
 */
 
 export const LEVELS_LIST = [
+    // POINT 0
+    // MAP 0-0
     {
         map: [
             '........................',
@@ -19,32 +22,88 @@ export const LEVELS_LIST = [
             '.........<S-01>.........',
             '........................',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Blue
     },
+
+    // MAP 0-1
     {
         map: [
             '........................',
-            '...<A-01>......<A-01>...',
+            '...<A-[]>......<A-v>...',
             '<A-01><A-01><A-01><A-01>',
             '...<A-01><A-[]><A-01>...',
             '......<S-01><S-01>......',
-            '.........<S-01>.........',
+            '.........<S-[]>.........',
             '........................',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Pink
     },
+
+    // MAP 0-2
     {
         map: [
             '........................',
-            '...<A-01>......<A-01>...',
-            '<A-01><A-01><A-01><F-01>',
-            '...<S-01>......<J-01>...',
-            '<S-01><S-01><J-01><J-01>',
-            '...<F-01>......<S-01>...',
+            '...<A-01><A-[]><A-01>...',
+            '<F-01>..................',
+            '...<S-01><S-[]><F-01>...',
+            '..................<J-01>',
+            '...<J-01><J-[]><J-01>...',
             '........................',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Gold
     },
+
+    // POINT 1
+    // MAP 1-0
+    {
+        map: [
+            '........................',
+            '...<A-01><A-[]><A-01>...',
+            '<F-02>..................',
+            '...<S-01><S-XX><F-01>...',
+            '..................<J-02>',
+            '...<J-01><J-[]><J-01>...',
+            '........................',
+        ],
+        task: {type: TASK.LOCK, value: 1, turns: 0},
+        bg: BG_GRADIENT_NAME.Blue
+    },
+
+    // MAP 1-1
+    {
+        map: [
+            '........................',
+            '...<A-01><A-XX><A-01>...',
+            '<F-01><S-01><S-[]><F-01>',
+            '...<S-02><S-XX><F-02>...',
+            '<S-01><S-[]><F-01><J-01>',
+            '...<J-01><J-XX><J-01>...',
+            '........................',
+        ],
+        task: {type: TASK.LOCK, value: 3, turns: 0},
+        bg: BG_GRADIENT_NAME.Gold
+    },
+
+    // MAP 1-2
+    {
+        map: [
+            '........................',
+            '...<A-02><A-XX><A-02>...',
+            '<F-01>..................',
+            '...<S-01><S-[]><F-01>...',
+            '..................<J-01>',
+            '...<J-02><J-XX><J-02>...',
+            '........................',
+        ],
+        task: {type: TASK.LOCK, value: 2, turns: 0},
+        bg: BG_GRADIENT_NAME.Green
+    },
+
+    // POINT 2
+    // MAP 2-0
     {
         map: [
             '............<O-SS>............',
@@ -59,8 +118,11 @@ export const LEVELS_LIST = [
             '.........<F-01><A-01>.........',
             '............<O-01>............',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Blue
     },
+
+    // MAP 2-1
     {
         map: [
             '...<J-01>...<O-02>...<A-01>...',
@@ -75,8 +137,11 @@ export const LEVELS_LIST = [
             '.........<F-33><A-34>.........',
             '...<A-01>...<O-02>...<J-01>...',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Gold
     },
+
+    // MAP 2-2
     {
         map: [
             '............<A-SS>............',
@@ -91,8 +156,12 @@ export const LEVELS_LIST = [
             '.........<S-01><S-01>.........',
             '............<F-SS>............',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Green
     },
+
+    // POINT 3
+    // MAP 3-0
     {
         map:  [
             '........................',
@@ -103,6 +172,7 @@ export const LEVELS_LIST = [
             '........................',
             '........................',
         ],
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Gold
     },
 ]
