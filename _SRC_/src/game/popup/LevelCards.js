@@ -69,6 +69,8 @@ class Card extends Container {
     constructor(index, task, state) {
         super()
 
+        console.log(index, task, state)
+
         this.scale.set( CARD.minScale )
 
         this.bg = new Sprite( atlases.task.textures[index] )
@@ -83,8 +85,8 @@ class Card extends Container {
         this.image.anchor.set(0.5)
         this.addChild(this.image)
 
-        const isDone = state && state[index] > 0
-        this.doneImage = new Sprite( isDone ? atlases.task.textures.done : Texture.EMPTY )
+        this.isDone = state && state[index]
+        this.doneImage = new Sprite( this.isDone ? atlases.task.textures.done : Texture.EMPTY )
         this.doneImage.anchor.set(0.5)
         this.addChild(this.doneImage)
 
@@ -96,11 +98,14 @@ class Card extends Container {
         this.countText.position.set(-5, 110)
         this.addChild(this.countText)
 
-        setCursorPointer(this)
-        this.on('pointerdown', this.click, this)
-        this.on('pointerover', this.onHover, this)
-        this.on('pointerout', this.onOut, this)
-
+        if (!this.isDone) {
+            setCursorPointer(this)
+            this.on('pointerdown', this.click, this)
+            this.on('pointerover', this.onHover, this)
+            this.on('pointerout', this.onOut, this)
+        } else {
+            this.eventMode = 'static'
+        }
         this.isOnHover = false
     }
 

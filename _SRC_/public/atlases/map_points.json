@@ -29,39 +29,15 @@
         "x": 136,
         "y": 4,
         "w": 118,
-        "h": 89
+        "h": 63
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 2,
-        "y": 40,
+        "y": 66,
         "w": 118,
-        "h": 89
-      },
-      "sourceSize": {
-        "w": 130,
-        "h": 130
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "stars_1": {
-      "frame": {
-        "x": 262,
-        "y": 4,
-        "w": 118,
-        "h": 82
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 2,
-        "y": 40,
-        "w": 118,
-        "h": 82
+        "h": 63
       },
       "sourceSize": {
         "w": 130,
@@ -75,7 +51,7 @@
     "stars_0": {
       "frame": {
         "x": 262,
-        "y": 94,
+        "y": 4,
         "w": 112,
         "h": 54
       },
@@ -97,6 +73,54 @@
       }
     },
     "BLUE": {
+      "frame": {
+        "x": 262,
+        "y": 66,
+        "w": 108,
+        "h": 87
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 27,
+        "w": 108,
+        "h": 87
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 130
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "stars_1": {
+      "frame": {
+        "x": 136,
+        "y": 75,
+        "w": 118,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 66,
+        "w": 118,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 130,
+        "h": 130
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "GRAY": {
       "frame": {
         "x": 4,
         "y": 101,
@@ -120,34 +144,10 @@
         "y": 0.5
       }
     },
-    "GRAY": {
-      "frame": {
-        "x": 120,
-        "y": 101,
-        "w": 108,
-        "h": 87
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 10,
-        "y": 27,
-        "w": 108,
-        "h": 87
-      },
-      "sourceSize": {
-        "w": 130,
-        "h": 130
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "GREEN": {
       "frame": {
-        "x": 236,
-        "y": 156,
+        "x": 120,
+        "y": 139,
         "w": 108,
         "h": 87
       },
@@ -162,30 +162,6 @@
       "sourceSize": {
         "w": 130,
         "h": 130
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "dot": {
-      "frame": {
-        "x": 352,
-        "y": 156,
-        "w": 24,
-        "h": 26
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 3,
-        "y": 4,
-        "w": 24,
-        "h": 26
-      },
-      "sourceSize": {
-        "w": 30,
-        "h": 30
       },
       "pivot": {
         "x": 0.5,
@@ -218,8 +194,8 @@
     },
     "RED": {
       "frame": {
-        "x": 120,
-        "y": 196,
+        "x": 236,
+        "y": 161,
         "w": 108,
         "h": 87
       },
@@ -242,10 +218,12 @@
     }
   },
   "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
     "image": "map_points.png",
     "format": "RGBA8888",
     "size": {
-      "w": 384,
+      "w": 378,
       "h": 287
     },
     "scale": 1

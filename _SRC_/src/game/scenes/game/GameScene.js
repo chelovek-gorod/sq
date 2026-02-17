@@ -73,14 +73,6 @@ export default class Game extends Container {
             music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
             music.bgm_5, music.bgm_6, music.bgm_7, music.bgm_8, music.bgm_9
         ])
-
-        // test
-        setTimeout( ()=> {
-            showPopup({type: 'NEW', data: 1})
-            showPopup({type: 'NEW', data: 2})
-            showPopup({type: 'RESULT', data: false})
-            showPopup({type: 'RESULT', data: true})
-        }, 1000)
     }
 
     screenResize(screenData) {

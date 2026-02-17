@@ -1,16 +1,21 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { atlases, images, sounds } from "../../../app/assets";
-import { addShineBall, addSpark, addFireworks, dragging, addFlyText } from "../../../app/events";
+import { addShineBall, addSpark, addFireworks, dragging, addFlyText, getTargetPet, getTargetTurn, EventHub, events } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { availablePetLevel } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
 let isOnDrag = false
 
+
+
 export default class PetToken extends Container {
     constructor(type, ceil) {
         super()
+
+        // reset global flag
+        isOnDrag = false
 
         this.type = type
         this.ceil = ceil
@@ -51,6 +56,8 @@ export default class PetToken extends Container {
         this.on('globalpointermove', this.onDragMove, this)
 
         this.position.set(ceil.x, ceil.y)
+
+        EventHub.on( events.levelDone, this.levelDone, this )
 
         tickerAdd(this)
     }
@@ -129,6 +136,8 @@ export default class PetToken extends Container {
     }
     
     moveToCeil(ceil) {
+        const isTurn = this.ceil !== ceil
+
         this.ceil.pet = null
         this.ceil = ceil
         this.ceil.pet = this
@@ -162,6 +171,7 @@ export default class PetToken extends Container {
                 })
                 this.ceil.pet = null
                 addFireworks({x: this.x, y: this.y})
+                getTargetPet()
                 kill(this)
                 return
             }
@@ -171,6 +181,8 @@ export default class PetToken extends Container {
         if (this.isShining) {
             setTimeout( soundPlay, this.isUpgraded ? 600 : 0, sounds.se_starfall )
         }
+
+        if (isTurn) getTargetTurn()
     }
 
     upgrade(isOtherPetShine, otherType) {
@@ -185,6 +197,11 @@ export default class PetToken extends Container {
         } else {
             this.image.scale.set(Math.max(PET_DATA.scale, this.image.scale.x - value))
         }
+    }
+
+    levelDone() {
+        isOnDrag = true
+        if (this.state === PET_STATE.DRAGGING) this.returnToStart(true)
     }
 
     tick(time) {
@@ -241,5 +258,6 @@ export default class PetToken extends Container {
 
     kill() {
         tickerRemove(this)
+        EventHub.off( events.levelDone, this.levelDone, this )
     }
 }

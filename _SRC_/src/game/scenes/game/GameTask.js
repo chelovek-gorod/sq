@@ -1,10 +1,11 @@
 import { Container, Sprite, Text } from "pixi.js";
-import { tickerAdd, tickerRemove } from "../../../app/application";
+import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { atlases } from "../../../app/assets";
-import { showPopup } from "../../../app/events";
+import { EventHub, events, levelDone, showPopup } from "../../../app/events";
 import { styles } from "../../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
 import { POPUP_TYPE } from "../../popup/constants";
+import { addAvailablePetLevel } from "../../state";
 import { TASK } from "../world/constants";
 
 const minScale = 1.0
@@ -16,11 +17,15 @@ const Y_TASK_OTHER = 10
 const Y_TURNS = 17
 const Y_COUNT = 16
 
+const DONE_AWAIT_TIMEOUT = 1800 // не ниже 1667, так как облака и замки исчезают именно столько!
+
 export default class GameTask extends Container {
     constructor(task) {
         super()
+        // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
+        this.task = {...task} 
 
-        this.task = {...task}
+        this.winAwaitTimeout = 0
 
         this.taskIcon = new Sprite( atlases.task.textures[task.type] )
         this.taskIcon.anchor.set(task.type === TASK.NEW ? 0.5: 1, 0)
@@ -89,6 +94,12 @@ export default class GameTask extends Container {
         this.on('pointerover', this.onHover, this)
         this.on('pointerout', this.onOut, this)
 
+        // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
+        if (this.task.type === TASK.NEW) EventHub.on( events.getTargetPet, this.getTargetPet, this )
+        if (this.task.type === TASK.LOCK) EventHub.on( events.getTargetLock, this.getTargetLock, this )
+        if (this.task.type === TASK.CLOUD) EventHub.on( events.getTargetCloud, this.getTargetCloud, this )
+        if (this.turnsCount) EventHub.on( events.getTargetTurn, this.getTargetTurn, this )
+
         setTimeout( () => showPopup( {type: POPUP_TYPE.TASK, data: this.task} ), 0 )
     }
 
@@ -110,7 +121,75 @@ export default class GameTask extends Container {
         tickerAdd(this)
     }
 
+    // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
+    getTargetPet() {
+        let petLevel = addAvailablePetLevel()
+        if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        if ( this.task.isLastLevel ) {
+            petLevel = addAvailablePetLevel()
+            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        }
+        
+        showPopup( {type: POPUP_TYPE.RESULT, data: true} )
+
+        levelDone()
+        this.winAwaitTimeout = 0
+    }
+    getTargetLock() {
+        this.task.value--
+        this.taskCount.text = this.task.value
+        if (this.task.value > 0) return
+
+        if ( this.task.isLastLevel ) {
+            petLevel = addAvailablePetLevel()
+            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        }
+
+        showPopup( {type: POPUP_TYPE.RESULT, data: true} )
+
+        levelDone()
+        this.winAwaitTimeout = 0
+    }
+    getTargetCloud() {
+        this.task.value--
+        this.taskCount.text = this.task.value
+        if (this.task.value > 0) return
+
+        if ( this.task.isLastLevel ) {
+            petLevel = addAvailablePetLevel()
+            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        }
+
+        showPopup( {type: POPUP_TYPE.RESULT, data: true} )
+
+        levelDone()
+        this.winAwaitTimeout = 0
+    }
+    getTargetTurn() {
+        this.task.turns--
+        this.turnsCount.text = this.task.turns
+        if (this.task.turns > 0) return
+
+        // showPopup( {type: POPUP_TYPE.RESULT, data: false} )
+
+        if (this.task.type === TASK.NEW) {}
+
+        levelDone()
+
+        this.winAwaitTimeout = DONE_AWAIT_TIMEOUT
+        tickerAdd(this)
+    }
+
     tick(time) {
+        if (this.winAwaitTimeout > 0) {
+            this.winAwaitTimeout -= time.deltaMS
+            if (this.winAwaitTimeout <= 0) {
+                showPopup( {type: POPUP_TYPE.RESULT, data: false} )
+                kill(this)
+            }
+            return
+        }
+
         const scaleAdd = scaleStep * time.deltaMS
         if (this.isOnHover) {
             this.scale.set( Math.min(maxScale, this.scale.x + scaleAdd) )
@@ -123,9 +202,15 @@ export default class GameTask extends Container {
 
     kill() {
         tickerRemove(this)
+
         removeCursorPointer(this)
         this.off('pointerdown', this.click, this)
         this.off('pointerover', this.onHover, this)
         this.off('pointerout', this.onOut, this)
+
+        if (this.task.type === TASK.NEW) EventHub.off( events.getTargetPet, this.getTargetPet, this )
+        if (this.task.type === TASK.LOCK) EventHub.off( events.getTargetLock, this.getTargetLock, this )
+        if (this.task.type === TASK.CLOUD) EventHub.off( events.getTargetCloud, this.getTargetCloud, this )
+        if (this.turnsCount) EventHub.off( events.getTargetTurn, this.getTargetTurn, this )
     }
 }

@@ -1,10 +1,9 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases } from "../../../app/assets";
-import { showLevelCards, startScene } from "../../../app/events";
+import { showLevelCards } from "../../../app/events";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
 import { world } from "../../state";
-import { SCENE_NAME } from "../constants";
 import { POINTS, POINT_COLORS } from "./constants";
 
 const minScale = 1.0
@@ -16,7 +15,7 @@ export default class MapPoint extends Container {
         super()
 
         this.position.set( POINTS[index].x, POINTS[index].y )
-        this.scale.set(minScale)
+        this.scale.set( minScale )
 
         this.isOnHover = false
 
@@ -36,30 +35,27 @@ export default class MapPoint extends Container {
     }
 
     updateFace() {
-        if (!this.isAvailable) {
-            this.isAvailable = true
-            this.base.texture = atlases.map_points.textures[ POINTS[this.index].color ]
+        let doneCount = 0
+        const tasks = world[this.index]
+        for(let i = 0; i < 3; i++) {
+            if (tasks[i]) doneCount++
+        }
 
+        if (doneCount < 3) {
+            this.isAvailable = true
             setCursorPointer(this)
             this.on('pointerdown', this.click, this)
             this.on('pointerover', this.onHover, this)
             this.on('pointerout', this.onOut, this)
         }
 
-        //  don counters 0  1  2  - сколько не выполненных, сколько выполненных, сколько выпон. с полн. колексц.
-        const doneArr = [0, 0, 0]
-        const tasks = world[this.index].length
-        for(let i = tasks - 1; i >= 0; i--) doneArr[ world[this.index][i] ]++
-
-        if (doneArr[0] === tasks) this.face.texture = Texture.EMPTY
-        else if (doneArr[2] === tasks) this.face.texture = atlases.map_points.textures.stars_3
-        else if (doneArr[1] + doneArr[2] === tasks) this.face.texture = atlases.map_points.textures.stars_2
-        else this.face.texture = atlases.map_points.textures.stars_1
+        if (doneCount > 0) {
+            this.face.texture = atlases.map_points.textures['stars_' + doneCount]
+        }
     }
 
     click() {
         showLevelCards( this.index )
-        // startScene( SCENE_NAME.Game )
     }
 
     onHover() {
@@ -89,9 +85,12 @@ export default class MapPoint extends Container {
 
     kill() {
         tickerRemove(this)
-        removeCursorPointer(this)
-        this.off('pointerdown', this.click, this)
-        this.off('pointerover', this.onHover, this)
-        this.off('pointerout', this.onOut, this)
+
+        if (this.isAvailable) {
+            removeCursorPointer(this)
+            this.off('pointerdown', this.click, this)
+            this.off('pointerover', this.onHover, this)
+            this.off('pointerout', this.onOut, this)
+        }
     }
 }

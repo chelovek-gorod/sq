@@ -24,6 +24,12 @@ export const events = {
     showPopup: 'showPopup',
     setMapCameraInteractive: 'setMapCameraInteractive',
     globalGameReset: 'globalGameReset',
+
+    getTargetPet: 'getTargetPet',
+    getTargetTurn: 'getTargetTurn',
+    getTargetLock: 'getTargetLock',
+    getTargetCloud: 'getTargetCloud',
+    levelDone: 'levelDone',
 }
 
 export function screenResize( data ) {
@@ -79,4 +85,20 @@ export function setMapCameraInteractive( isActive ) {
 }
 export function globalGameReset() {
     EventHub.emit( events.globalGameReset )
+}
+
+export function getTargetPet() {
+    EventHub.emit( events.getTargetPet )
+}
+export function getTargetTurn() {
+    EventHub.emit( events.getTargetTurn )
+}
+export function getTargetLock() {
+    EventHub.emit( events.getTargetLock )
+}
+export function getTargetCloud() {
+    EventHub.emit( events.getTargetCloud )
+}
+export function levelDone() {
+    EventHub.emit( events.levelDone )
 }

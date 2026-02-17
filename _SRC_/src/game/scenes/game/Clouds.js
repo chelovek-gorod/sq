@@ -1,7 +1,7 @@
 import { Container, Sprite } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
 import { atlases, images } from "../../../app/assets";
-import { EventHub, events } from "../../../app/events";
+import { EventHub, events, getTargetCloud } from "../../../app/events";
 import { CLOUDS_STATE, OBSTACLE } from "./constants";
 
 
@@ -208,7 +208,10 @@ export default class Clouds extends Container {
             const disappearStep = delta * 0.0006
             this.alpha -= disappearStep
             this.scale.set( this.scale.x + disappearStep )
-            if (this.alpha < 0) kill(this)
+            if (this.alpha < 0) {
+                getTargetCloud()
+                kill(this)
+            }
         }
     }
 }

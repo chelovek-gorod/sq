@@ -1,6 +1,7 @@
 import { Container, Sprite } from "pixi.js"
 import { kill, tickerAdd } from "../../../app/application"
 import { images } from "../../../app/assets"
+import { getTargetLock } from "../../../app/events"
 import { LOCKS_STATE, OBSTACLE } from "./constants"
 
 export default class Lock extends Container {
@@ -96,7 +97,10 @@ export default class Lock extends Container {
             const disappearStep = time.deltaMS * 0.0006
             this.alpha -= disappearStep
             this.scale.set( this.scale.x + disappearStep )
-            if (this.alpha < 0) kill(this)
+            if (this.alpha < 0) {
+                getTargetLock()
+                kill(this)
+            }
         }
     }
 }
