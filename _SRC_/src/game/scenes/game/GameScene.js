@@ -1,11 +1,11 @@
 import { Container } from 'pixi.js'
 import { atlases, music } from '../../../app/assets'
-import { EventHub, events, levelDone, showPopup, startScene } from '../../../app/events'
+import { EventHub, events, showPopup, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import BackgroundGradient from '../../BG/BackgroundGradient'
 import { getLanguage } from '../../localization'
 import TapIcon from '../../UI/TapIcon'
-import { BG_GRADIENT_COLORS, CEIL_DATA, DONE_AWAIT_TIMEOUT, FIELD_OFFSET_X, FIELD_OFFSET_Y } from './constants'
+import { BG_GRADIENT_COLORS, CEIL_DATA, FIELD_OFFSET_X, FIELD_OFFSET_Y } from './constants'
 import GameField from './GameField'
 import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
@@ -16,7 +16,7 @@ import { LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
 import GameTask from './GameTask'
 import Popup from '../../popup/Popup'
-import { kill, tickerAdd, tickerRemove } from '../../../app/application'
+import { kill } from '../../../app/application'
 import { POPUP_TYPE } from '../../popup/constants'
 
 export default class Game extends Container {
@@ -31,8 +31,6 @@ export default class Game extends Container {
         EventHub.on( events.userDoStep, this.userDoStep, this )
 
         this.level = LEVELS_LIST[ levelIndex ]
-
-        this.checkDoneTimeout = setTimeout( () => this.checkDone(), DONE_AWAIT_TIMEOUT )
 
         const levelCeilsInWidth = this.level.map[0].length / 6
         const levelCeilsInHeight = (this.level.map.length + 1) / 2
@@ -75,8 +73,6 @@ export default class Game extends Container {
             music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
             music.bgm_5, music.bgm_6, music.bgm_7, music.bgm_8, music.bgm_9
         ])
-
-        tickerAdd(this)
     }
 
     screenResize(screenData) {
@@ -168,35 +164,13 @@ export default class Game extends Container {
         showPopup({type: POPUP_TYPE.SETTINGS, data: null})
     }
 
-    checkDone() { 
-        if (this.task.isDone) {
-            showPopup({type: POPUP_TYPE.RESULT, data: this.task.isDone})
-            return
-        }
-
-        if (this.field.effects.children.length) {
-            this.checkDoneTimeout = setTimeout( () => this.checkDone(), DONE_AWAIT_TIMEOUT )
-            return
-        }
-
-        if (this.task.isTurns && this.field.checkAvailablePetsMerge()) {
-            this.checkDoneTimeout = setTimeout( () => this.checkDone(), DONE_AWAIT_TIMEOUT )
-            return
-        }
-
-        levelDone(false)
-        this.checkDoneTimeout = setTimeout( () => 
-            showPopup({type: POPUP_TYPE.RESULT, data: this.task.isDone}),
-            DONE_AWAIT_TIMEOUT
-        )
-    }
-
     updateLanguage(lang) {
         this.currentLanguage = lang
     }
 
     kill() {
-        clearTimeout(this.checkDoneTimeout)
+        kill(this.popup)
+
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.userDoStep, this.userDoStep, this )
         EventHub.off( events.addShineBall, this.addShineBall, this )

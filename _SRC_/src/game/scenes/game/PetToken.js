@@ -8,8 +8,6 @@ import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
 let isOnDrag = false
 
-
-
 export default class PetToken extends Container {
     constructor(type, ceil) {
         super()
@@ -198,8 +196,7 @@ export default class PetToken extends Container {
     }
 
     levelDone() {
-        isOnDrag = true
-        if (this.state === PET_STATE.DRAGGING) this.returnToStart(true)
+        this.onDragEnd()
     }
 
     tick(time) {

@@ -3,13 +3,14 @@ import { kill, tickerAdd, tickerRemove } from "../../app/application";
 import { images, atlases } from "../../app/assets";
 import { EventHub, events, setMapCameraInteractive, startScene } from "../../app/events";
 import { styles } from "../../app/styles";
-import { removeCursorPointer, setCursorPointer } from "../../utils/functions";
+import { createEnum, removeCursorPointer, setCursorPointer } from "../../utils/functions";
 import { SCENE_NAME } from "../scenes/constants";
 import { FIELD_OFFSET_Y, FIELD_OFFSET_X } from "../scenes/game/constants";
 import { LEVELS_LIST } from "../scenes/game/levels";
 import { TASK } from "../scenes/world/constants";
 import { setLevelTask, world } from "../state";
 import Button from "../UI/Button";
+import Overlay from "./Overlay";
 
 const CARD = {
     width: 280,
@@ -18,6 +19,7 @@ const CARD = {
     minScale: 0.9,
     maxScale: 1,
     scaleStep: 0.0006,
+    awaitTime: 150,
 }
 
 const BUTTON_SIZE = 100
@@ -28,6 +30,8 @@ const DATA = {
     height1: CARD.height + BUTTON_SIZE * 1.5,
     height2: CARD.height * 2 + BUTTON_SIZE * 1.5,
 }
+
+const CARD_STATE = createEnum(['AWAIT_OPEN', 'OPEN', 'READY', 'AWAIT_CLOSE', 'CLOSE'])
 
 const CARDS = {
     noWrap : {
@@ -70,9 +74,14 @@ class Card extends Container {
     constructor(index, isDone, levelIndex, task) {
         super()
 
-        this.scale.set( CARD.minScale )
+        this.index = index
 
-        this.bg = new Sprite( atlases.task.textures[index] )
+        this.state = CARD_STATE.AWAIT_OPEN
+        this.awaitTime = CARD.awaitTime * this.index
+
+        this.scale.set( 0, CARD.minScale )
+
+        this.bg = new Sprite( atlases.task.textures[this.index] )
         this.bg.anchor.set(0.5)
         this.addChild(this.bg)
 
@@ -106,29 +115,62 @@ class Card extends Container {
             this.eventMode = 'static'
         }
         this.isOnHover = false
+
+        tickerAdd(this)
     }
 
     click() {
+        if (this.state !== CARD_STATE.READY) return
+
         setLevelTask( this.levelIndex )
         startScene( SCENE_NAME.Game )
     }
 
     onHover() {
-        if (this.isOnHover) return
+        if (this.state !== CARD_STATE.READY || this.isOnHover) return
 
         this.isOnHover = true
         tickerAdd(this)
     }
 
     onOut() {
-        if (!this.isOnHover) return
+        if (this.state !== CARD_STATE.READY || !this.isOnHover) return
 
         this.isOnHover = false
         tickerAdd(this)
     }
 
+    close() {
+        this.awaitTime = CARD.awaitTime * this.index
+        this.state = CARD_STATE.AWAIT_CLOSE
+        tickerAdd(this)
+    }
+
     tick(time) {
+        if (this.state === CARD_STATE.AWAIT_OPEN || this.state === CARD_STATE.AWAIT_CLOSE) {
+            this.awaitTime -= time.deltaMS
+            if (this.awaitTime > 0) return
+            else if (this.state === CARD_STATE.AWAIT_OPEN) this.state = CARD_STATE.OPEN
+            else this.state = CARD_STATE.CLOSE
+        }
+
         const scaleAdd = CARD.scaleStep * time.deltaMS
+
+        if (this.state === CARD_STATE.OPEN) {
+            this.scale.x = Math.min(CARD.minScale, this.scale.x + scaleAdd * 3)
+            if (this.scale.x === CARD.minScale) this.state = CARD_STATE.READY
+        }
+
+        if (this.state === CARD_STATE.CLOSE) {
+            this.scale.x = Math.max(0, this.scale.x - scaleAdd * 3)
+            if (this.scale.x === 0) {
+                tickerRemove(this)
+                this.parent.parent.parent.cardClosed()
+            }
+        }
+
+        if (this.state !== CARD_STATE.READY) return
+        
         if (this.isOnHover) {
             this.scale.set( Math.min(CARD.maxScale, this.scale.x + scaleAdd) )
             if (this.scale.x === CARD.maxScale) tickerRemove(this)
@@ -155,9 +197,9 @@ export default class LevelCards extends Container {
 
         this.isWrap = false
 
-        this.overlay = new Graphics()
-        this.overlay.eventMode = 'static'
-        this.overlay.on('pointerdown', this.closeCards, this)
+        this.openedCardsCount = 0
+
+        this.overlay = new Overlay( () => this.closeCards() )
         this.addChild(this.overlay)
 
         this.container = new Container()
@@ -174,14 +216,7 @@ export default class LevelCards extends Container {
     }
 
     screenResize(screenData) {
-        this.overlay.clear()
-        this.overlay.rect(
-            -screenData.centerX - FIELD_OFFSET_X,
-            -screenData.centerY - FIELD_OFFSET_Y,
-            screenData.width + FIELD_OFFSET_X * 2,
-            screenData.height + FIELD_OFFSET_Y * 2
-        )
-        this.overlay.fill({ color: 0x000000, alpha: 0.5 })
+        this.overlay.screenResize(screenData)
 
         const scaleX2 = screenData.width / DATA.width2
         const scaleX3 = screenData.width / DATA.width3
@@ -202,6 +237,9 @@ export default class LevelCards extends Container {
 
     showLevelCards(worldPointIndex) {
         setMapCameraInteractive( false )
+        this.overlay.show()
+
+        this.openedCardsCount = 3
 
         const startTaskIndex = worldPointIndex * 3
         const worldPointData = world[worldPointIndex]
@@ -230,13 +268,20 @@ export default class LevelCards extends Container {
     }
 
     closeCards() {
+        this.overlay.hide()
+        this.cards.children.forEach( card => card.close() )
+    }
+    cardClosed() {
+        this.openedCardsCount--
+        if (this.openedCardsCount > 0) return
+
         this.cards.children.forEach( card => kill(card) )
         this.visible = false
         setMapCameraInteractive( true )
     }
+    
 
     kill() {
-        this.overlay.off('pointerdown', this.closeCards, this)
         EventHub.off( events.showLevelCards, this.showLevelCards, this )
     }
 }

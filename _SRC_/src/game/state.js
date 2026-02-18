@@ -7,6 +7,7 @@ export let dragonPointIndex = 0
 export function addAvailablePetLevel() {
     if (availablePetLevel < 50) {
         availablePetLevel++
+        updateStoredData()
         return availablePetLevel
     } else {
         return 0
@@ -14,6 +15,8 @@ export function addAvailablePetLevel() {
 }
 export function setDragonPointIndex( index ) {
     dragonPointIndex = index
+    updateStoredData()
+    console.log(dragonPointIndex)
 }
 
 // levelTask = {type: TASK.NEW, value: 2, turns: 0}
@@ -44,8 +47,8 @@ export function setStoredState( storedState ) {
     if ('dragonPointIndex' in storedState
     && Number.isInteger(storedState.dragonPointIndex)
     && storedState.dragonPointIndex > 0
-    && storedState.dragonPointIndex < 51) {
-        availablePetLevel = storedState.availablePetLevel
+    && storedState.dragonPointIndex < 20) {
+        dragonPointIndex = storedState.dragonPointIndex
     }
 
     if ('world' in storedState) {

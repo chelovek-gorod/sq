@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Text } from "pixi.js"
+import { Container, Sprite, Text } from "pixi.js"
 import { EventHub, events, globalGameReset, startScene } from "../../app/events"
 import { POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
@@ -9,7 +9,7 @@ import { styles } from "../../app/styles"
 import { TASK } from "../scenes/world/constants"
 import { LEVEL_PET, PLACE_PETS } from "../scenes/game/constants"
 import { availablePetLevel } from "../state"
-import { kill } from "../../app/application"
+import { getAppScreen, kill, tickerAdd, tickerRemove } from "../../app/application"
 import WinDisc from "../effects/WinDisc"
 import SparkParticles from "../effects/SparkParticles"
 import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
@@ -18,6 +18,8 @@ import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_R
 import LoseRain from "../effects/LoseRain"
 import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, soundGetState, soundGetVolume, soundOff, soundOn, soundSetVolume } from "../../app/sound"
 import { SCENE_NAME } from "../scenes/constants"
+import { createEnum } from "../../utils/functions"
+import Overlay from "./Overlay"
 
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
@@ -42,9 +44,22 @@ function findSoundMusic(isMusic = true) {
 
 const dataQueue = []
 
+const POPUP_STATE = createEnum(['CLOSED', 'OPEN_UP', 'OPEN_DOWN', 'ACTIVE', 'CLOSE_UP', 'CLOSE_DOWN'])
+const SCALE_TIME = 300
+const SCALE_RATE = 1.1
+
 export default class Popup extends Container {
     constructor() {
         super()
+
+        dataQueue.length = 0
+
+        this.state = POPUP_STATE.CLOSED
+        this.normalSCale = 1
+        this.scaleMax = SCALE_RATE
+        this.scaleSpeed = 0
+        this.scaleSpeedMax = 1
+        this.scaleAcceleration = 1.1
 
         this.isResult = false
         this.isResultDone = false
@@ -55,11 +70,11 @@ export default class Popup extends Container {
 
         this.sparks = null
 
-        this.shell = new Graphics()
-        this.shell.eventMode = 'static'
+        this.shell = new Overlay()
         this.addChild(this.shell)
         
         this.box = new Container()
+        this.box.scale.set(0)
         this.addChild(this.box)
 
         this.bg = new Sprite( images.popup_bg )
@@ -84,18 +99,18 @@ export default class Popup extends Container {
         EventHub.on(events.showPopup, this.show, this)
         EventHub.on(events.startScene, this.kill, this)
 
-        // if (dataQueue.length) this.show( dataQueue.pop() )
+        this.screenResize( getAppScreen() )
     }
 
     screenResize(screenData) {
-        this.shell.clear()
-        this.shell.rect(-screenData.centerX, -screenData.centerY, screenData.width, screenData.height)
-        this.shell.fill(0x000000)
-        this.shell.alpha = 0.5
+        this.shell.screenResize(screenData)
 
         const screenSize = screenData.isLandscape ? screenData.height : screenData.width
-        const scale = Math.min(1, screenSize / BG_SIZE)
-        this.box.scale.set(scale)
+        this.scaleNormal = Math.min(1, screenSize / BG_SIZE)
+        this.scaleMax = this.scaleNormal * SCALE_RATE
+        const fullScale = (this.scaleMax - this.scaleNormal) * 2 + this.scaleNormal
+        this.scaleSpeedMax = (fullScale * 2) / SCALE_TIME
+        this.scaleAcceleration = (fullScale * 2) / (SCALE_TIME * SCALE_TIME)
     }
 
     show(data) {
@@ -110,21 +125,29 @@ export default class Popup extends Container {
         else if (data.type === POPUP_TYPE.SETTINGS) this.fillSettings()
 
         this.visible = true
+        this.shell.show()
         this.isResult = data.type === POPUP_TYPE.RESULT
         this.isResultDone = this.isResult ? data.data : false
+
+        this.state = POPUP_STATE.OPEN_UP
+        this.scaleSpeed = this.scaleSpeedMax
+        tickerAdd(this)
     }
 
     close() {
+        if (this.state !== POPUP_STATE.ACTIVE) return
+
         if (this.isResult) {
-            if (this.isResultDone) startScene(SCENE_NAME.World)
-            else startScene(SCENE_NAME.Game)
             kill(this)
+            dataQueue.length = 0
+            setTimeout(() => startScene(this.isResultDone ? SCENE_NAME.World : SCENE_NAME.Game), 0)
             return
         }
 
-        this.clear()
-        this.visible = false
-        if ( dataQueue.length ) this.show( dataQueue.shift() )
+        this.shell.hide()
+        this.state = POPUP_STATE.CLOSE_UP
+        this.scaleSpeed = 0
+        tickerAdd(this)
     }
 
     clear() {
@@ -143,6 +166,10 @@ export default class Popup extends Container {
         }
 
         if (this.settingsUI) this.settingsUI = null
+
+        this.visible = false
+        this.state = POPUP_STATE.CLOSED
+        if ( dataQueue.length ) this.show( dataQueue.shift() )
     }
 
     fillTask(data) {
@@ -463,6 +490,36 @@ export default class Popup extends Container {
 
         const resetDescription = TEXT_SETTINGS[TEXT_SETTING_TYPE.RESET][this.currentLanguage](this.settingsUI.resetCount)
         this.settingsUI.resetText.text = resetDescription
+    }
+
+    tick(time) {
+        const scaleStep = this.scaleSpeed * time.deltaMS
+        const acceleration = this.scaleAcceleration * time.deltaMS
+        this.scaleSpeed += (this.state.indexOf('OPEN') > -1) ? -acceleration : acceleration
+
+        if (this.state === POPUP_STATE.OPEN_UP || this.state === POPUP_STATE.CLOSE_UP) {
+            this.box.scale.set( Math.min(this.scaleMax, this.box.scale.x + scaleStep) )
+            if (this.box.scale.x !== this.scaleMax) return
+            this.state = (this.state === POPUP_STATE.OPEN_UP)
+                ? POPUP_STATE.OPEN_DOWN
+                : POPUP_STATE.CLOSE_DOWN
+        }
+
+        if (this.state === POPUP_STATE.OPEN_DOWN) {
+            this.box.scale.set( Math.max(this.scaleNormal, this.box.scale.x - scaleStep) )
+            if (this.box.scale.x === this.scaleNormal) {
+                tickerRemove(this)
+                this.state = POPUP_STATE.ACTIVE
+            }
+        }
+        
+        if (this.state === POPUP_STATE.CLOSE_DOWN) {
+            this.box.scale.set( Math.max(0, this.box.scale.x - scaleStep) )
+            if (this.box.scale.x === 0) {
+                tickerRemove(this)
+                this.clear()
+            }
+        }
     }
 
     kill() {

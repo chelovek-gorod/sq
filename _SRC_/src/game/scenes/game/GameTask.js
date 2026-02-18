@@ -7,6 +7,7 @@ import { removeCursorPointer, setCursorPointer } from "../../../utils/functions"
 import { POPUP_TYPE } from "../../popup/constants";
 import { addAvailablePetLevel, getWorldPointDataByLevelIndex } from "../../state";
 import { TASK } from "../world/constants";
+import { DONE_AWAIT_TIMEOUT } from "./constants";
 
 const minScale = 1.0
 const maxScale = 1.1
@@ -23,6 +24,7 @@ export default class GameTask extends Container {
 
         this.isDone = false
         this.isTurns = true
+        this.doneCheckTime = DONE_AWAIT_TIMEOUT
 
         const pointLevels = getWorldPointDataByLevelIndex(levelIndex)
         const isLastLevel = +pointLevels[0] + +pointLevels[1] + +pointLevels[2] === 2
@@ -90,6 +92,7 @@ export default class GameTask extends Container {
         }
 
         this.isOnHover = false
+        this.isHoverUsed = false
 
         setCursorPointer(this)
         this.on('pointerdown', this.click, this)
@@ -100,9 +103,11 @@ export default class GameTask extends Container {
         if (this.task.type === TASK.NEW) EventHub.on( events.getTargetPet, this.getTargetPet, this )
         if (this.task.type === TASK.LOCK) EventHub.on( events.getTargetLock, this.getTargetLock, this )
         if (this.task.type === TASK.CLOUD) EventHub.on( events.getTargetCloud, this.getTargetCloud, this )
-        if (this.turnsCount) EventHub.on( events.getTargetTurn, this.getTargetTurn, this )
+        EventHub.on( events.getTargetTurn, this.getTargetTurn, this )
 
         setTimeout( () => showPopup( {type: POPUP_TYPE.TASK, data: this.task} ), 0 )
+
+        tickerAdd(this)
     }
 
     click() {
@@ -113,14 +118,14 @@ export default class GameTask extends Container {
         if (this.isOnHover) return
 
         this.isOnHover = true
-        tickerAdd(this)
+        this.isHoverUsed = true
     }
 
     onOut() {
         if (!this.isOnHover) return
 
         this.isOnHover = false
-        tickerAdd(this)
+        this.isHoverUsed = true
     }
 
     // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
@@ -162,6 +167,8 @@ export default class GameTask extends Container {
         this.isDone = true
     }
     getTargetTurn() {
+        if (!this.turnsCount) return
+
         this.task.turns--
         this.turnsCount.text = this.task.turns
         if (this.task.turns > 0) return
@@ -170,14 +177,41 @@ export default class GameTask extends Container {
         this.isTurns = false
     }
 
+    checkDone() { 
+        if (this.parent.field.effects.children.length) return
+
+        if (this.isDone) {
+            showPopup({type: POPUP_TYPE.RESULT, data: this.isDone})
+            tickerRemove(this)
+            return
+        }
+
+
+        if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) return
+
+        levelDone(false)
+        this.checkDoneTimeout = setTimeout( () => 
+            showPopup({type: POPUP_TYPE.RESULT, data: this.task.isDone}),
+            tickerRemove(this)
+        )
+    }
+
     tick(time) {
+        this.doneCheckTime -= time.deltaMS
+        if (this.doneCheckTime < 0) {
+            this.doneCheckTime = DONE_AWAIT_TIMEOUT
+            this.checkDone()
+        }
+
+        if (!this.isHoverUsed) return
+
         const scaleAdd = scaleStep * time.deltaMS
         if (this.isOnHover) {
             this.scale.set( Math.min(maxScale, this.scale.x + scaleAdd) )
-            if (this.scale.x === maxScale) tickerRemove(this)
+            if (this.scale.x === maxScale) this.isHoverUsed = false
         } else {
             this.scale.set( Math.max(minScale, this.scale.x - scaleAdd) )
-            if (this.scale.x === minScale) tickerRemove(this)
+            if (this.scale.x === minScale) this.isHoverUsed = false
         }
     }
 
@@ -192,6 +226,6 @@ export default class GameTask extends Container {
         if (this.task.type === TASK.NEW) EventHub.off( events.getTargetPet, this.getTargetPet, this )
         if (this.task.type === TASK.LOCK) EventHub.off( events.getTargetLock, this.getTargetLock, this )
         if (this.task.type === TASK.CLOUD) EventHub.off( events.getTargetCloud, this.getTargetCloud, this )
-        if (this.turnsCount) EventHub.off( events.getTargetTurn, this.getTargetTurn, this )
+        EventHub.off( events.getTargetTurn, this.getTargetTurn, this )
     }
 }
