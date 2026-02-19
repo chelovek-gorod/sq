@@ -3,6 +3,7 @@ import { updateStoredData } from "../game/storage"
 
 export let availablePetLevel = 50
 export let dragonPointIndex = 0
+export let isNeedHelp = true
 
 export function addAvailablePetLevel() {
     if (availablePetLevel < 50) {
@@ -16,7 +17,6 @@ export function addAvailablePetLevel() {
 export function setDragonPointIndex( index ) {
     dragonPointIndex = index
     updateStoredData()
-    console.log(dragonPointIndex)
 }
 
 // levelTask = {type: TASK.NEW, value: 2, turns: 0}
@@ -73,6 +73,8 @@ export function setStoredState( storedState ) {
             console.error('ERROR in JSON storedState.world', storedState.world, e)
         }
     }
+
+    isNeedHelp = world.length < 4
 }
 
 EventHub.on( events.globalGameReset, () => {
@@ -91,6 +93,7 @@ EventHub.on( events.levelDone, (isDone) => {
     const taskIndex = levelIndex % 3
 
     if(pointIndex + 1 === world.length) world.push( [false, false, false])
+    isNeedHelp = world.length < 4
 
     world[pointIndex][taskIndex] = true
 

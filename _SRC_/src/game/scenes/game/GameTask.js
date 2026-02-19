@@ -1,7 +1,8 @@
 import { Container, Sprite, Text } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { atlases } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { EventHub, events, levelDone, showPopup } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
 import { POPUP_TYPE } from "../../popup/constants";
@@ -24,6 +25,7 @@ export default class GameTask extends Container {
 
         this.isDone = false
         this.isTurns = true
+        this.isNeedCheckDoneAgain = true
         this.doneCheckTime = DONE_AWAIT_TIMEOUT
 
         const pointLevels = getWorldPointDataByLevelIndex(levelIndex)
@@ -106,11 +108,11 @@ export default class GameTask extends Container {
         EventHub.on( events.getTargetTurn, this.getTargetTurn, this )
 
         setTimeout( () => showPopup( {type: POPUP_TYPE.TASK, data: this.task} ), 0 )
-
         tickerAdd(this)
     }
 
     click() {
+        soundPlay(sounds.se_click)
         showPopup( {type: POPUP_TYPE.TASK, data: this.task} )
     }
 
@@ -119,6 +121,7 @@ export default class GameTask extends Container {
 
         this.isOnHover = true
         this.isHoverUsed = true
+        soundPlay(sounds.se_task_hover)
     }
 
     onOut() {
@@ -188,6 +191,11 @@ export default class GameTask extends Container {
 
 
         if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) return
+
+        if (this.isNeedCheckDoneAgain) {
+            this.isNeedCheckDoneAgain = false
+            return
+        }
 
         levelDone(false)
         this.checkDoneTimeout = setTimeout( () => 

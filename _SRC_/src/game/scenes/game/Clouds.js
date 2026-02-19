@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
-import { atlases, images } from "../../../app/assets";
+import { atlases, images, sounds } from "../../../app/assets";
 import { EventHub, events, getTargetCloud } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
 import { CLOUDS_STATE, OBSTACLE } from "./constants";
 
 
@@ -144,12 +145,14 @@ export default class Clouds extends Container {
         })
 
         this.turnsToStartStorm = 3
+        soundPlay(sounds.se_storm)
     }
     
     clearClouds( isFull = false ) {
         if (isFull || this.state === CLOUDS_STATE.Clouds) {
             this.state = CLOUDS_STATE.Open
             this.ceil.pet = null
+            soundPlay(sounds.se_clouds)
             return
         }
         

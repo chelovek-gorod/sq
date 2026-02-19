@@ -1,10 +1,10 @@
 import { Container, Sprite, Text } from "pixi.js"
 import { EventHub, events, globalGameReset, startScene } from "../../app/events"
-import { POPUP_TYPE } from "./constants"
+import { POPUP_HELP_TYPE, POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
 import TapIcon from "../UI/TapIcon"
 import { getAvailableLanguages, getLanguage, getLanguageName, setLanguage } from "../localization"
-import { atlases, images } from "../../app/assets"
+import { atlases, images, sounds } from "../../app/assets"
 import { styles } from "../../app/styles"
 import { TASK } from "../scenes/world/constants"
 import { LEVEL_PET, PLACE_PETS } from "../scenes/game/constants"
@@ -12,11 +12,11 @@ import { availablePetLevel } from "../state"
 import { getAppScreen, kill, tickerAdd, tickerRemove } from "../../app/application"
 import WinDisc from "../effects/WinDisc"
 import SparkParticles from "../effects/SparkParticles"
-import { TEXT_BUTTON_TYPE, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
+import { TEXT_BUTTON_TYPE, TEXT_HELP_DRAGON_ADD_DESCRIPTION, TEXT_HELP_DRAGON_TITLE, TEXT_HELP_DRAGON_USE_DESCRIPTION, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
     TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
     TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
 import LoseRain from "../effects/LoseRain"
-import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, soundGetState, soundGetVolume, soundOff, soundOn, soundSetVolume } from "../../app/sound"
+import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, soundGetState, soundGetVolume, soundOff, soundOn, soundPlay, soundSetVolume } from "../../app/sound"
 import { SCENE_NAME } from "../scenes/constants"
 import { createEnum } from "../../utils/functions"
 import Overlay from "./Overlay"
@@ -119,6 +119,7 @@ export default class Popup extends Container {
         if (this.visible) return dataQueue.push(data)
 
         if (data.type === POPUP_TYPE.TASK) this.fillTask(data.data)
+        if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
         else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
         else if (data.type === POPUP_TYPE.NEW) this.fillNew(data.data)
@@ -180,7 +181,9 @@ export default class Popup extends Container {
         if (data.type === TASK.NEW) {
             this.setTaskImageNEW()
 
-            const description = TEXT_TASK_DESCRIPTION[TASK.NEW][this.currentLanguage]
+            const petName = LEVEL_PET[ Math.min(50, availablePetLevel) ]
+            const petLocal = TEXT_SQUINKI_NAME[ petName ][ this.currentLanguage ]
+            const description = TEXT_TASK_DESCRIPTION[TASK.NEW][this.currentLanguage](petLocal)
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
@@ -241,6 +244,25 @@ export default class Popup extends Container {
         this.content.addChild(imageA, imageB, imageC)
     }
 
+    fillHelp(data) {
+        this.title.text = TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
+        
+        const image = new Sprite( atlases.popup_images.textures[data] )
+        image.anchor.set(0.5)
+        image.position.set(0, -50)
+        this.content.addChild(image)
+
+        const description = POPUP_HELP_TYPE.DRAGON_ADD
+            ? TEXT_HELP_DRAGON_ADD_DESCRIPTION[this.currentLanguage]
+            : TEXT_HELP_DRAGON_USE_DESCRIPTION[this.currentLanguage]
+        const descriptionText = new Text({text: description, style: styles.popupDescription})
+        descriptionText.anchor.set(0.5, 0)
+        descriptionText.position.set(0, 50)
+        this.content.addChild(descriptionText)
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+    }
+
     fillInfo(type) {
         this.title.text = TEXT_SQUINKI_NAME[ LEVEL_PET[type] ][ this.currentLanguage ]
 
@@ -289,9 +311,11 @@ export default class Popup extends Container {
             this.sparks.container.scale.set(0.5)
             this.content.addChild( this.sparks.container )
             this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+            soundPlay(sounds.se_result_win)
         } else {
             this.content.addChild( new LoseRain() )
             this.closeButton.setTextKey( TEXT_BUTTON_TYPE.RETRY )
+            soundPlay(sounds.se_result_lose)
         }
     }
 
@@ -324,6 +348,7 @@ export default class Popup extends Container {
         this.content.addChild( this.sparks.container )
 
         this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+        soundPlay(sounds.se_popup_new)
     }
 
     fillSettings() {

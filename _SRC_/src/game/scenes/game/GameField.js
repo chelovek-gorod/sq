@@ -1,6 +1,6 @@
 import { Container } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
-import { EventHub, events, levelDone, showPopup, userDoStep } from "../../../app/events";
+import { EventHub, events, userDoStep } from "../../../app/events";
 import Clouds from "./Clouds";
 import { CEIL_DATA, CLOUDS_STATE, LOCKS_STATE, OBSTACLE, PLACE_MAP } from "./constants";
 import FieldCeil from "./FieldCeil";
@@ -9,7 +9,8 @@ import Splash from "../../effects/Splash";
 import Lock from "./Lock";
 import SparkParticles from "../../effects/SparkParticles";
 import Fireworks from "../../effects/Fireworks";
-import { POPUP_TYPE } from "../../popup/constants";
+import { isNeedHelp } from "../../state";
+import HelpFinger from "../../effects/HelpFinger";
 
 function getMapObject( code ) {
     switch(code) {
@@ -45,6 +46,17 @@ export default class GameField extends Container {
         EventHub.on( events.dragging, this.dragging, this )
         EventHub.on( events.addFireworks, this.addFireworks, this )
         tickerAdd(this)
+
+        this.isNeedHideHelp = false
+        this.helpFinger = null
+        if (isNeedHelp) {
+            this.isNeedHideHelp = true
+            this.helpFinger = new HelpFinger()
+            this.addChild( this.helpFinger )
+            this.setHelp()
+
+            EventHub.on( events.levelDone, this.stopHelp, this )
+        }
     }
 
     fill(levelMap) {
@@ -109,6 +121,35 @@ export default class GameField extends Container {
         ceilsMap.clear()
     }
 
+    setHelp() {
+        if (!this.helpFinger || this.pets.children.length < 2) return
+
+        const sameIndexes = []
+        const seenTypes = new Map()
+        for (let i = this.pets.children.length - 1; i >= 0; i--) {
+            const currentType = this.pets.children[i].type
+            if (seenTypes.has(currentType)) {
+                sameIndexes.push(seenTypes.get(currentType), i)
+                break
+            } else {
+                seenTypes.set(currentType, i)
+            }
+        }
+
+        if (sameIndexes.length < 2) return
+
+        const p1 = {...this.pets.children[ sameIndexes[0] ].position}
+        const p2 = {...this.pets.children[ sameIndexes[1] ].position}
+        this.helpFinger.help(p1._x, p1._y, p2._x, p2._y)
+        this.isNeedHideHelp = true
+    }
+    stopHelp() {
+        if (this.helpFinger) {
+            this.helpFinger = null
+            kill(this.helpFinger)
+        }
+    }
+
     checkAvailablePetsMerge() {
         let isMergeAvailable = false
         const pets = []
@@ -131,6 +172,10 @@ export default class GameField extends Container {
     }
 
     dragging( dragData ) {
+        if (this.isNeedHideHelp) {
+            this.isNeedHideHelp = false
+            this.helpFinger.hide()
+        }
         this.dragData.pet = dragData.pet
         this.dragData.isDone = dragData.isDone
     }
@@ -158,6 +203,8 @@ export default class GameField extends Container {
     }
 
     setDraggingPet() {
+        if (isNeedHelp && this.helpFinger) setTimeout( () => this.setHelp(), 0 )
+
         const dragPet = this.dragData.pet
         const targetCeil = this.closestDragCeil
         
@@ -186,12 +233,12 @@ export default class GameField extends Container {
     }
 
     addEffect( effect ) {
-        if (!this.effects) return console.error(`this.effects = ${this}`)
+        if (!this.effects) return // console.error(`this.effects = ${this}`)
         this.effects.addChild( effect )
     }
 
     addFireworks( data ) {
-        if (!this.effects) return console.error(`this.effects = ${this}`)
+        if (!this.effects) return // console.error(`this.effects = ${this}`)
         this.effects.addChild( new Fireworks( data.x, data.y ) )
     }
 
@@ -235,6 +282,8 @@ export default class GameField extends Container {
     kill() {
         this.sparks.kill()
         tickerRemove(this)
-        EventHub.off( events.dragging, this.dragging.bind(this) )
+        EventHub.off( events.dragging, this.dragging, this)
+        EventHub.off( events.addFireworks, this.addFireworks, this )
+        if (isNeedHelp) EventHub.off( events.levelDone, this.stopHelp, this )
     }
 }

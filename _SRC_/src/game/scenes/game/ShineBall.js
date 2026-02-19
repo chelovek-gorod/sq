@@ -30,7 +30,7 @@ export default class ShineBall extends Container {
         this.targetPoint = targetPoint
         tickerAdd(this)
 
-        soundPlay(sounds.se_starfall)
+        soundPlay( points < 5 ? sounds.se_sparks_small : sounds.se_sparks_max )
         showSparksShadow(true)
     }
 

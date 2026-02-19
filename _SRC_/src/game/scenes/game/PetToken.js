@@ -8,6 +8,14 @@ import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
 let isOnDrag = false
 
+const merge_sounds = [1, 2, 3]
+let merge_sound_index = 0
+const get_merge_sound = () => {
+    merge_sound_index++
+    if (merge_sound_index === merge_sounds.length) merge_sound_index = 0
+    return 'se_squinki_merge_' + merge_sounds[merge_sound_index]
+}
+
 export default class PetToken extends Container {
     constructor(type, ceil) {
         super()
@@ -98,7 +106,7 @@ export default class PetToken extends Container {
         this.shadow.position.set(0, 25)
         this.shadow.scale.set(PET_DATA.scale)
 
-        soundPlay( sounds.se_start_drag )
+        soundPlay( sounds.se_squinki_start )
 
         dragging({ pet: this, isDone: false })
     }
@@ -130,7 +138,7 @@ export default class PetToken extends Container {
     returnToStart( isNormalBack = true ) {
         this.position.set(this.ceil.x, this.ceil.y)
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
-        soundPlay( isNormalBack ? sounds.se_end_drag_home : sounds.se_error_move )
+        soundPlay( isNormalBack ? sounds.se_squinki_back : sounds.se_squinki_error )
     }
     
     moveToCeil(ceil) {
@@ -156,7 +164,7 @@ export default class PetToken extends Container {
             this.type++
             this.image.texture = atlases.pets.textures[LEVEL_PET[this.type]]
 
-            soundPlay( sounds.se_line )
+            
 
             score += this.type > availablePetLevel ? 2 : 0
             addFlyText({text: "+" + score, x: this.x, y: this.y})
@@ -167,17 +175,21 @@ export default class PetToken extends Container {
                     y: this.y,
                     points: 2
                 })
+                soundPlay( sounds.se_squinki_max )
                 this.ceil.pet = null
                 addFireworks({x: this.x, y: this.y})
                 getTargetPet()
                 kill(this)
                 return
             }
+            soundPlay( sounds[get_merge_sound()] )
         }
+
+        soundPlay( sounds.se_squinki_back )
 
         this.isShining = PLACE_PETS[this.ceil.place].includes( LEVEL_PET[this.type] )
         if (this.isShining) {
-            setTimeout( soundPlay, this.isUpgraded ? 600 : 0, sounds.se_starfall )
+            setTimeout( soundPlay, this.isUpgraded ? 300 : 0, sounds.se_squinki_sparks )
         }
     }
 

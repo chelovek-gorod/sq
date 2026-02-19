@@ -1,14 +1,16 @@
 import { Container, Graphics, Sprite, Text, Texture } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../app/application";
-import { images, atlases } from "../../app/assets";
-import { EventHub, events, setMapCameraInteractive, startScene } from "../../app/events";
+import { images, atlases, sounds } from "../../app/assets";
+import { EventHub, events, helpShow, setMapCameraInteractive, startScene } from "../../app/events";
+import { soundPlay } from "../../app/sound";
 import { styles } from "../../app/styles";
 import { createEnum, removeCursorPointer, setCursorPointer } from "../../utils/functions";
+import HelpFinger from "../effects/HelpFinger";
 import { SCENE_NAME } from "../scenes/constants";
 import { FIELD_OFFSET_Y, FIELD_OFFSET_X } from "../scenes/game/constants";
 import { LEVELS_LIST } from "../scenes/game/levels";
 import { TASK } from "../scenes/world/constants";
-import { setLevelTask, world } from "../state";
+import { isNeedHelp, setLevelTask, world } from "../state";
 import Button from "../UI/Button";
 import Overlay from "./Overlay";
 
@@ -124,6 +126,7 @@ class Card extends Container {
 
         setLevelTask( this.levelIndex )
         startScene( SCENE_NAME.Game )
+        soundPlay(sounds.se_click)
     }
 
     onHover() {
@@ -131,6 +134,7 @@ class Card extends Container {
 
         this.isOnHover = true
         tickerAdd(this)
+        soundPlay(sounds.se_task_hover)
     }
 
     onOut() {
@@ -244,11 +248,19 @@ export default class LevelCards extends Container {
         const startTaskIndex = worldPointIndex * 3
         const worldPointData = world[worldPointIndex]
 
+        this.help = null
+        this.helpIndex = 0
         for(let i = 0; i < 3; i++) {
             const taskIndex = startTaskIndex + i
             const task = LEVELS_LIST[taskIndex].task
             const isDone = worldPointData[i]
             this.cards.addChild( new Card( i, isDone, taskIndex, task ))
+
+            if (isNeedHelp && !this.help && !isDone) {
+                this.helpIndex = i
+                this.help = new HelpFinger()
+                this.addChild(this.help)
+            }
         }
 
         this.replaceCards()
@@ -265,9 +277,16 @@ export default class LevelCards extends Container {
             const cardPoint = CARDS[ this.isWrap ? 'wrap' : 'noWrap'][cardsCount][i]
             card.position.set(cardPoint.x, cardPoint.y)
         })
+
+        if (this.help) {
+            const globalPoint = this.cards.children[this.helpIndex].getGlobalPosition()
+            const localPoint = this.toLocal( globalPoint )
+            this.help.help( localPoint.x, localPoint.y )
+        }
     }
 
     closeCards() {
+        kill(this.help)
         this.overlay.hide()
         this.cards.children.forEach( card => card.close() )
     }
@@ -278,6 +297,8 @@ export default class LevelCards extends Container {
         this.cards.children.forEach( card => kill(card) )
         this.visible = false
         setMapCameraInteractive( true )
+
+        if (isNeedHelp) helpShow()
     }
     
 

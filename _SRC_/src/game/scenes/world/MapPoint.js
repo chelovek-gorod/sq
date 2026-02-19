@@ -1,9 +1,10 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { atlases } from "../../../app/assets";
-import { showLevelCards, flyDragonToPoint } from "../../../app/events";
+import { atlases, sounds } from "../../../app/assets";
+import { showLevelCards, flyDragonToPoint, helpHide } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
-import { setDragonPointIndex, world } from "../../state";
+import { isNeedHelp, setDragonPointIndex, world } from "../../state";
 import { POINTS, POINT_COLORS } from "./constants";
 
 const minScale = 1.0
@@ -55,9 +56,12 @@ export default class MapPoint extends Container {
     }
 
     click() {
+        if (isNeedHelp) helpHide()
+        
         setDragonPointIndex( this.index )
         flyDragonToPoint()
         showLevelCards( this.index )
+        soundPlay(sounds.se_click)
     }
 
     onHover() {
@@ -65,6 +69,7 @@ export default class MapPoint extends Container {
 
         this.isOnHover = true
         tickerAdd(this)
+        soundPlay(sounds.se_map_hover)
     }
 
     onOut() {

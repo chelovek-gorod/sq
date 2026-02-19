@@ -31,6 +31,9 @@ export const events = {
     getTargetLock: 'getTargetLock',
     getTargetCloud: 'getTargetCloud',
     levelDone: 'levelDone',
+
+    helpShow: 'helpShow',
+    helpHide: 'helpHide',
 }
 
 export function screenResize( data ) {
@@ -105,4 +108,11 @@ export function getTargetCloud() {
 }
 export function levelDone( isDone ) {
     EventHub.emit( events.levelDone, isDone )
+}
+
+export function helpShow() {
+    EventHub.emit( events.helpShow )
+}
+export function helpHide() {
+    EventHub.emit( events.helpHide )
 }

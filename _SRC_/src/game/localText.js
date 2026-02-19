@@ -878,17 +878,17 @@ export const TEXT_TASK_TITLE = {
 
 export const TEXT_TASK_DESCRIPTION = {
     [TASK.NEW]: {
-        en: 'Merge two same Squinki to unlock a new one',
-        ru: 'Соедини двух одинаковых Сквинки, чтобы открыть нового',
-        tr: 'İki aynı Squinki\'yi birleştir, yenisini aç',
-        es: 'Fusiona dos Squinki iguales para descubrir uno nuevo',
-        de: 'Verbinde zwei gleiche Squinki, um ein neues freizuschalten',
-        pt: 'Combine dois Squinki iguais para desbloquear um novo',
-        fr: 'Fusionne deux Squinki identiques pour débloquer un nouveau',
-        pl: 'Połącz dwa takie same Squinki, aby odblokować nowego',
-        it: 'Unisci due Squinki uguali per sbloccarne uno nuovo',
-        nl: 'Voeg twee dezelfde Squinki samen om een nieuwe te ontgrendelen',
-        cs: 'Spoj dva stejné Squinki a odemkni nového'
+        en: (petName) => `Merge two Squinki ${petName} to unlock a new Squinki`,
+        ru: (petName) => `Соедини двух Сквинки ${petName}, чтобы открыть нового Сквинки`,
+        tr: (petName) => `İki Squinki ${petName} birleştir, yeni bir Squinki aç`,
+        es: (petName) => `Fusiona dos Squinki ${petName} para descubrir un nuevo Squinki`,
+        de: (petName) => `Verbinde zwei Squinki ${petName}, um ein neues Squinki freizuschalten`,
+        pt: (petName) => `Combine dois Squinki ${petName} para desbloquear um novo Squinki`,
+        fr: (petName) => `Fusionne deux Squinki ${petName} pour débloquer un nouveau Squinki`,
+        pl: (petName) => `Połącz dwa Squinki ${petName}, aby odblokować nowego Squinki`,
+        it: (petName) => `Unisci due Squinki ${petName} per sbloccare un nuovo Squinki`,
+        nl: (petName) => `Voeg twee Squinki ${petName} samen om een nieuwe Squinki te ontgrendelen`,
+        cs: (petName) => `Spoj dva Squinki ${petName} a odemkni nového Squinki`
     },
     [TASK.CLOUD]: {
         en: 'Merge two Squinki next to a cloud — and it will disappear',

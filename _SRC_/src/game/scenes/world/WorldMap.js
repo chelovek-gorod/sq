@@ -3,7 +3,8 @@ import { tickerAdd } from '../../../app/application'
 import { atlases, images } from '../../../app/assets'
 import { EventHub, events } from '../../../app/events'
 import { moveToTarget } from '../../../utils/functions'
-import { dragonPointIndex } from '../../state'
+import HelpFinger from '../../effects/HelpFinger'
+import { dragonPointIndex, isNeedHelp, world } from '../../state'
 import { PET } from '../game/constants'
 import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT } from './constants'
 import MapDot from './MapDot'
@@ -85,6 +86,14 @@ export default class WorldMap extends Container {
         this.setDragon()
 
         EventHub.on( events.flyDragonToPoint, this.flyDragonToPoint, this )
+
+        // =============== HELP FINGER ==============
+
+        if (isNeedHelp) {
+            const target = POINTS[world.length - 1]
+            const helpFinger = new HelpFinger(target.x, target.y)
+            this.addChild( helpFinger )
+        }
 
         // ================= EVENTS =================
 

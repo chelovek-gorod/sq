@@ -89,7 +89,7 @@ export default class Button extends Container {
         this.isOnHover = true
         if (this.isText) this.value.style = styles.buttonHover
         else this.value.blendMode = 'add'
-        soundPlay(sounds.se_swipe)
+        soundPlay(sounds.se_hover)
         tickerAdd(this)
     }
     onOut() {

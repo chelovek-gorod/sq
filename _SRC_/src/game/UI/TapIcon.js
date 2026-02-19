@@ -51,7 +51,7 @@ export default class TapIcon extends Sprite {
 
         this.isOnHover = true
         if (this.isText) this.value.style = styles.buttonHover
-        soundPlay(sounds.se_swipe)
+        soundPlay(sounds.se_scale)
         tickerAdd(this)
     }
     onOut() {

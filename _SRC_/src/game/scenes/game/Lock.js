@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js"
 import { kill, tickerAdd } from "../../../app/application"
-import { images } from "../../../app/assets"
+import { images, sounds } from "../../../app/assets"
 import { getTargetLock } from "../../../app/events"
+import { soundPlay } from "../../../app/sound"
 import { LOCKS_STATE, OBSTACLE } from "./constants"
 
 export default class Lock extends Container {
@@ -73,6 +74,7 @@ export default class Lock extends Container {
     open() {
         this.state = LOCKS_STATE.Open
         this.ceil.pet = null
+        soundPlay(sounds.se_lock)
     }
 
     tick( time ) {

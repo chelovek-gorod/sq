@@ -24,7 +24,7 @@ export const fonts = {
 }
 
 export const images = {
-    img_finger: 'finger.png',
+    finger: 'finger.png',
     img_logo: 'logo.png',
     bg_main: 'main_bg.png',
     game_title: 'game_title_width_shadow.png',
@@ -44,17 +44,13 @@ export const images = {
 
     map_static: 'map_static.png',
     map_action: 'map_action.png',
-    map_point_blue: 'map_point_blue.png',
-    map_point_orange: 'map_point_orange.png',
-    map_point_purple: 'map_point_purple.png',
-    map_point_dot: 'map_point_dot.png',
 
     dpf: 'dpf.png',
 
     star_radial_1: 'star_radial_a.png',
     star_radial_2: 'star_radial_b.png',
     star_radial_3: 'star_radial_c.png',
-    dpf_radial: 'dpf_radial_4.png',
+    dpf_radial: 'dpf_radial.png',
 }
 export const atlases = {
     buttons: 'buttons.json',
@@ -75,14 +71,32 @@ export const atlases = {
     sound_music: 'sound_music.json',
 }
 export const sounds = {
-    se_swipe: 'se_swipe.mp3',
+    se_hover: 'se_hover.mp3',
+    se_scale: 'se_scale.mp3',
     se_click: 'se_click.mp3',
-    se_bonus: 'se_bonus.mp3',
-    se_error_move: 'se_error_move.mp3',
-    se_start_drag: 'se_start_drag.mp3',
-    se_end_drag_home: 'se_end_drag_home.mp3',
-    se_starfall: 'se_starfall.mp3',
-    se_line: 'se_line.mp3',
+    se_map_hover: 'se_map_hover.mp3',
+    se_task_hover: 'se_task_hover.mp3',
+
+    se_squinki_start: 'se_squinki_start.mp3',
+    se_squinki_back: 'se_squinki_back.mp3',
+    se_squinki_error: 'se_squinki_error.mp3',
+    se_squinki_merge_1: 'se_squinki_merge_1.mp3',
+    se_squinki_merge_2: 'se_squinki_merge_2.mp3',
+    se_squinki_merge_3: 'se_squinki_merge_3.mp3',
+    se_squinki_sparks: 'se_squinki_sparks.mp3',
+    se_squinki_max: 'se_squinki_max.mp3',
+    se_squinki_dragon: 'se_squinki_dragon.mp3',
+
+    se_sparks_small: 'se_sparks_small.mp3',
+    se_sparks_max: 'se_sparks_max.mp3',
+
+    se_storm: 'se_storm.mp3',
+    se_clouds: 'se_clouds.mp3',
+    se_lock: 'se_lock.mp3',
+
+    se_result_lose: 'se_result_lose.mp3',
+    se_result_win: 'se_result_win.mp3',
+    se_popup_new: 'se_popup_new.mp3',
 }
 export const music = {
     bgm_0: 'bgm_0.mp3',

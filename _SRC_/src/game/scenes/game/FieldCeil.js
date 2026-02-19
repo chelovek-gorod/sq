@@ -1,6 +1,7 @@
 import { Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { atlases } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
+import { soundPlay } from "../../../app/sound";
 import { CEIL_DATA, OBSTACLE } from "./constants";
 import PetToken from "./PetToken";
 
@@ -72,6 +73,7 @@ export default class FieldCeil extends Sprite {
             this.parent.parent.addSplash( this )
             this.pet = new PetToken( 51 , this )
             this.parent.parent.pets.addChild( this.pet )
+            soundPlay(sounds.se_squinki_dragon)
             return
         }
 

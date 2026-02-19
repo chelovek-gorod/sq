@@ -10,8 +10,9 @@ import FirefliesContainer from '../../effects/Fireflies'
 import LevelCards from '../../popup/LevelCards'
 import { SCENE_NAME } from '../constants'
 import Popup from '../../popup/Popup'
-import { POPUP_TYPE } from '../../popup/constants'
+import { POPUP_HELP_TYPE, POPUP_TYPE } from '../../popup/constants'
 import { kill } from '../../../app/application'
+import { isNeedHelp, world } from '../../state'
 
 export default class World extends Container {
     constructor() {
@@ -48,9 +49,20 @@ export default class World extends Container {
         this.popup = new Popup()
         this.addChild(this.popup)
 
-        // setTimeout( showPopup({type: POPUP_TYPE.NEW, data: 7}) ,1000)
+        if (isNeedHelp) {
+            if (world.length === 2 && world[0].includes(true) && world[0].includes(false)) {
+                setTimeout(
+                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD})
+                )
+            }
+            if (world.length === 3 && world[1].includes(true) && world[1].includes(false)) {
+                setTimeout(
+                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_USE})
+                )
+            }
+        }
 
-        setMusicList([ music.bgm_0 ])
+        setMusicList([ music.bgm_3 ])
     }
 
     screenResize(screenData) {
