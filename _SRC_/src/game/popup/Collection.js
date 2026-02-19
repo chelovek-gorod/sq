@@ -79,7 +79,7 @@ const POINTS = [
 
 class Pet extends Sprite {
     constructor(type) {
-        super( atlases.pets.textures[LEVEL_PET[type]] )
+        super( atlases.units.textures[LEVEL_PET[type]] )
         this.anchor.set(0.5, 0.8)
         this.scale.set(PET_MIN_SCALE)
 

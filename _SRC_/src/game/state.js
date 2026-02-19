@@ -74,7 +74,7 @@ export function setStoredState( storedState ) {
         }
     }
 
-    isNeedHelp = world.length < 4
+    isNeedHelp = world.length < 3
 }
 
 EventHub.on( events.globalGameReset, () => {
@@ -93,7 +93,7 @@ EventHub.on( events.levelDone, (isDone) => {
     const taskIndex = levelIndex % 3
 
     if(pointIndex + 1 === world.length) world.push( [false, false, false])
-    isNeedHelp = world.length < 4
+    isNeedHelp = world.length < 3
 
     world[pointIndex][taskIndex] = true
 

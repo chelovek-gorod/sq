@@ -873,6 +873,19 @@ export const TEXT_TASK_TITLE = {
         it: 'Apri tutti i lucchetti',
         nl: 'Open alle sloten',
         cs: 'Otevři všechny zámky'
+    },
+    [TASK.FREE]: {
+        en: 'Ultimate Challenge',
+        ru: 'Большое Испытание',
+        tr: 'Büyük Mücadele',
+        es: 'Gran Desafío',
+        de: 'Große Herausforderung',
+        pt: 'Grande Desafio',
+        fr: 'Grand Défi',
+        pl: 'Wielkie Wyzwanie',
+        it: 'Grande Sfida',
+        nl: 'Grote Uitdaging',
+        cs: 'Velká Výzva'
     }
 }
 
@@ -915,6 +928,19 @@ export const TEXT_TASK_DESCRIPTION = {
         it: 'Raccogli 10 Bagliori — sblocca un lucchetto casuale',
         nl: 'Verzamel 10 Glinsteringen — open een willekeurig slot',
         cs: 'Nasbírej 10 Září — odemkni náhodný zámek'
+    },
+    [TASK.FREE]: {
+        en: 'Clear the entire board',
+        ru: 'Нужно полностью очистить все поле',
+        tr: 'Tüm tahtayı tamamen temizle',
+        es: 'Limpia todo el tablero por completo',
+        de: 'Das gesamte Feld vollständig leeren',
+        pt: 'Limpe todo o campo completamente',
+        fr: 'Nettoie tout le plateau complètement',
+        pl: 'Całkowicie wyczyść całą planszę',
+        it: 'Pulisci completamente tutto il campo',
+        nl: 'Maak het hele veld volledig leeg',
+        cs: 'Zcela vyčisti celé hrací pole'
     }
 }
 

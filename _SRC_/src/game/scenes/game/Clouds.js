@@ -91,7 +91,7 @@ export default class Clouds extends Container {
             cloud.lightningTime = this.lightningTimes[index]
         })
 
-        this.shadow = new Sprite( images.pet_shadow )
+        this.shadow = new Sprite( atlases.units.textures.shadow )
         this.shadow.anchor.set(0.5, 0.85)
         this.shadow.position.set(0, 75)
         this.addChildAt(this.shadow, 0)
@@ -106,18 +106,18 @@ export default class Clouds extends Container {
 
             container.lightning = new Sprite()
             container.lightningTextureIndex = index
-            container.lightning.texture = atlases.clouds.textures["lightning_" + container.lightningTextureIndex]
+            container.lightning.texture = atlases.units.textures["lightning_" + container.lightningTextureIndex]
             container.lightning.anchor.set(0.5)
             container.lightning.alpha = 0
             container.addChild(container.lightning)
 
-            container.cloudDark = new Sprite( atlases.clouds.textures.cloud_dark )
+            container.cloudDark = new Sprite( atlases.units.textures.cloud_dark )
             container.cloudDark.alpha = this.state === CLOUDS_STATE.Storm ? 1 : 0
             container.cloudDark.anchor.set(0.5)
             container.cloudDark.scale.x = index < 2 ? -1 : 1
             container.addChild(container.cloudDark)
 
-            container.cloudWhite = new Sprite( atlases.clouds.textures.cloud_white )
+            container.cloudWhite = new Sprite( atlases.units.textures.cloud_white )
             container.cloudWhite.alpha = this.state === CLOUDS_STATE.Storm ? 0 : 1
             container.cloudWhite.anchor.set(0.5)
             container.cloudWhite.scale.x = index < 2 ? -1 : 1
@@ -139,7 +139,7 @@ export default class Clouds extends Container {
         this.children.forEach( container => {
             if (container instanceof Sprite) return
 
-            container.cloudDark.texture = atlases.clouds.textures.cloud_dark
+            container.cloudDark.texture = atlases.units.textures.cloud_dark
             container.cloudDark.alpha = 1
             container.cloudWhite.alpha = 0
         })
@@ -162,7 +162,7 @@ export default class Clouds extends Container {
             this.children.forEach( container => {
                 if (container instanceof Sprite) return
                 
-                container.cloudDark.texture = atlases.clouds.textures.cloud_dark
+                container.cloudDark.texture = atlases.units.textures.cloud_dark
                 container.cloudDark.alpha = 0
                 container.lightning.alpha = 0
                 container.cloudWhite.alpha = 1
@@ -192,16 +192,16 @@ export default class Clouds extends Container {
                 if (cloud.lightningTime === 0) {
                     cloud.lightningTime = this.lightningTimeout + Math.random() * this.lightningTimeout
                     cloud.lightning.alpha = 0
-                    cloud.cloudDark.texture = atlases.clouds.textures.cloud_dark
+                    cloud.cloudDark.texture = atlases.units.textures.cloud_dark
                 } else if (cloud.lightningTime > 0) {
                     cloud.lightningTime -= delta
                 } else {
                     cloud.lightningTime = 0
                     cloud.lightningTextureIndex++
                     if (cloud.lightningTextureIndex > 3) cloud.lightningTextureIndex = 1
-                    cloud.lightning.texture = atlases.clouds.textures["lightning_" + cloud.lightningTextureIndex]
+                    cloud.lightning.texture = atlases.units.textures["lightning_" + cloud.lightningTextureIndex]
                     cloud.lightning.alpha = 1
-                    cloud.cloudDark.texture = atlases.clouds.textures.cloud_lightning
+                    cloud.cloudDark.texture = atlases.units.textures.cloud_lightning
                 }
             }
         })

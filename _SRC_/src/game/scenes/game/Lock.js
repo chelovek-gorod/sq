@@ -1,6 +1,6 @@
 import { Container, Sprite } from "pixi.js"
 import { kill, tickerAdd } from "../../../app/application"
-import { images, sounds } from "../../../app/assets"
+import { atlases, sounds } from "../../../app/assets"
 import { getTargetLock } from "../../../app/events"
 import { soundPlay } from "../../../app/sound"
 import { LOCKS_STATE, OBSTACLE } from "./constants"
@@ -28,7 +28,7 @@ export default class Lock extends Container {
         this.chainAmplitude = 0.5
         this.chainAngleSpeed = 0.0018
 
-        this.shadow = new Sprite( images.pet_shadow )
+        this.shadow = new Sprite( atlases.units.textures.shadow )
         this.shadow.anchor.set(0.5, 0.85)
         this.shadow.scale.set(0.5)
         this.shadow.position.set(0, 55)
@@ -38,31 +38,31 @@ export default class Lock extends Container {
         this.imagesContainer.position.set(this.baseX, this.baseY)
         this.addChild(this.imagesContainer)
 
-        this.chainA = new Sprite( images.lock_chain )
+        this.chainA = new Sprite( atlases.units.textures.lock_chain )
         this.chainA.anchor.set(0.2, 0.5)
         this.chainA.baseAngle = 2.5
         this.chainA.rotation = this.chainA.baseAngle
         this.chainA.position.set(-65, 65)
 
-        this.chainB = new Sprite( images.lock_chain )
+        this.chainB = new Sprite( atlases.units.textures.lock_chain )
         this.chainB.anchor.set(0.2, 0.5)
         this.chainB.baseAngle = 0.5
         this.chainB.rotation = this.chainB.baseAngle
         this.chainB.position.set(50, 70)
 
-        this.chainC = new Sprite( images.lock_chain )
+        this.chainC = new Sprite( atlases.units.textures.lock_chain )
         this.chainC.anchor.set(0.2, 0.5)
         this.chainC.baseAngle = 5.7
         this.chainC.rotation = this.chainC.baseAngle
         this.chainC.position.set(65, -25)
 
-        this.chainD = new Sprite( images.lock_chain )
+        this.chainD = new Sprite( atlases.units.textures.lock_chain )
         this.chainD.anchor.set(0.2, 0.5)
         this.chainD.baseAngle = 4
         this.chainD.rotation = this.chainD.baseAngle
         this.chainD.position.set(-70, -30)
 
-        this.lock = new Sprite( images.lock_place )
+        this.lock = new Sprite( atlases.units.textures.lock_place )
         this.lock.anchor.set(0.5)
 
         this.imagesContainer.addChild(this.chainA, this.chainB, this.chainC, this.chainD, this.lock)

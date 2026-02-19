@@ -7,7 +7,28 @@ export const MAP_HALF_WIDTH = Math.ceil(MAP_WIDTH * 0.5)
 export const MAP_HALF_HEIGHT = Math.ceil(MAP_HEIGHT * 0.5)
 
 export const POINT_COLORS = createEnum(["RED", "PURPLE", "GREEN", "BLUE", "GRAY"])
-export const TASK = createEnum(["CLOUD", "LOCK", "NEW", "TIME"])
+export const TASK = createEnum(["CLOUD", "LOCK", "NEW", "TIME", "FREE"])
+
+export const FREE_POINTS = [
+    {
+        color: 'blue',
+        crystals: ['Y', 'G', 'P'],
+        x: -MAP_HALF_WIDTH + 880, y: -MAP_HALF_HEIGHT + 620,
+        task: 0
+    },
+    {
+        color: 'green',
+        crystals: ['B', 'P', 'Y'],
+        x: -MAP_HALF_WIDTH + 1190, y: -MAP_HALF_HEIGHT + 265,
+        task: 1
+    },
+    {
+        color: 'purple',
+        crystals: ['G', 'Y', 'B'],
+        x: -MAP_HALF_WIDTH + 1750, y: -MAP_HALF_HEIGHT + 480,
+        task: 2
+    }
+]
 
 export const POINTS = [
     {

@@ -29,7 +29,7 @@ const SCALE_RANGE = FF_MAX_SCALE - FF_MIN_SCALE
 
 class Firefly extends Sprite {
     constructor(minX, maxX, minY, maxY) {
-        super(atlases.fireflies.textures[getFfName()])
+        super(atlases.ui.textures[getFfName()])
         this.anchor.set(0.5)
         this.alpha = 1
         this.blendMode = 'screen'

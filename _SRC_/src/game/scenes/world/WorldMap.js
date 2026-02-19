@@ -4,9 +4,11 @@ import { atlases, images } from '../../../app/assets'
 import { EventHub, events } from '../../../app/events'
 import { moveToTarget } from '../../../utils/functions'
 import HelpFinger from '../../effects/HelpFinger'
+import SparkParticles from '../../effects/SparkParticles'
 import { dragonPointIndex, isNeedHelp, world } from '../../state'
 import { PET } from '../game/constants'
-import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT } from './constants'
+import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT, FREE_POINTS } from './constants'
+import FreePoint from './FreePoint'
 import MapDot from './MapDot'
 import MapPoint from './MapPoint'
 
@@ -75,9 +77,10 @@ export default class WorldMap extends Container {
         this.addChild(this.points)
 
         for (let d = 1; d < 83; d++) this.points.addChild(new MapDot(d))
-        for (let i = 0; i < POINTS.length; i++) this.points.addChild(new MapPoint(i))
+        for (let p = 0; p < POINTS.length; p++) this.points.addChild(new MapPoint(p))
+        for (let f = 0; f < FREE_POINTS.length; f++) this.points.addChild(new FreePoint(f))
 
-        this.dragon = new Sprite(atlases.pets.textures[PET.Dragon])
+        this.dragon = new Sprite(atlases.units.textures[PET.Dragon])
         this.dragon.scale.set(0.4)
         this.dragon.anchor.set(0.5, 0.75)
         this.dragon.eventMode = 'none'
@@ -86,6 +89,12 @@ export default class WorldMap extends Container {
         this.setDragon()
 
         EventHub.on( events.flyDragonToPoint, this.flyDragonToPoint, this )
+
+        // =============== FREE SPARKS ==============
+
+        this.sparks = new SparkParticles()
+        this.sparks.container.scale.set(0.5)
+        this.addChild(this.sparks.container)
 
         // =============== HELP FINGER ==============
 
@@ -324,5 +333,7 @@ export default class WorldMap extends Container {
         this.off('pointerupoutside', this.onPointerUp, this)
 
         EventHub.off( events.setMapCameraInteractive, this.setOnOff, this )
+
+        this.sparks.kill()
     }
 }

@@ -1,6 +1,6 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd } from "../../app/application";
-import { images } from "../../app/assets";
+import { atlases } from "../../app/assets";
 import { getRandom } from "../../utils/functions";
 
 const minX = -130
@@ -14,7 +14,7 @@ const speed = 0.06
 
 class Drop extends Sprite {
     constructor(x, y, stopY, scale) {
-        super(images.result_drop)
+        super(atlases.ui.textures.drop)
         this.anchor.set(0.5)
         this.scale.set(scale)
         this.speed = speed + speed * 0.5 * scale

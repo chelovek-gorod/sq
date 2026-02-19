@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
-import { atlases, images, sounds } from "../../../app/assets";
-import { addShineBall, addSpark, addFireworks, dragging, addFlyText, getTargetPet, getTargetTurn, EventHub, events } from "../../../app/events";
+import { atlases, sounds } from "../../../app/assets";
+import { addShineBall, addSpark, addFireworks, dragging, addFlyText,
+    getTargetPet, getTargetTurn, EventHub, events } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { availablePetLevel } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
@@ -46,12 +47,12 @@ export default class PetToken extends Container {
         this.swingSpeed = 0.001
         this.swingAmplitude = 0.05
 
-        this.shadow = new Sprite(images.pet_shadow)
+        this.shadow = new Sprite(atlases.units.textures.shadow)
         this.shadow.anchor.set(PET_DATA.anchor.x, PET_DATA.anchor.y)
         this.shadow.scale.set(PET_DATA.scale * 0.8)
         this.addChild(this.shadow)
         
-        this.image = new Sprite(atlases.pets.textures[LEVEL_PET[this.type]])
+        this.image = new Sprite(atlases.units.textures[LEVEL_PET[this.type]])
         this.image.anchor.set(PET_DATA.anchor.x, PET_DATA.anchor.y)
         this.image.scale.set(PET_DATA.scale)
         this.addChild(this.image)
@@ -162,7 +163,7 @@ export default class PetToken extends Container {
             this.isOtherPetShine = false
 
             this.type++
-            this.image.texture = atlases.pets.textures[LEVEL_PET[this.type]]
+            this.image.texture = atlases.units.textures[LEVEL_PET[this.type]]
 
             
 

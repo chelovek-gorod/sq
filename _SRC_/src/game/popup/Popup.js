@@ -77,7 +77,7 @@ export default class Popup extends Container {
         this.box.scale.set(0)
         this.addChild(this.box)
 
-        this.bg = new Sprite( images.popup_bg )
+        this.bg = new Sprite( atlases.ui.textures.popup_bg )
         this.bg.anchor.set(0.5)
         this.box.addChild(this.bg)
 
@@ -189,7 +189,7 @@ export default class Popup extends Container {
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
         } else if (data.type === TASK.CLOUD) {
-            const image = new Sprite( atlases.popup_images.textures[TASK.CLOUD] )
+            const image = new Sprite( atlases.ui.textures['task_' + TASK.CLOUD] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
             this.content.addChild(image)
@@ -200,7 +200,7 @@ export default class Popup extends Container {
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
         } else {
-            const image = new Sprite( atlases.popup_images.textures[TASK.LOCK] )
+            const image = new Sprite( atlases.ui.textures['task_' + TASK.LOCK] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
             this.content.addChild(image)
@@ -217,7 +217,7 @@ export default class Popup extends Container {
             const turnsText = new Text({text: turnsDescription, style: styles.popupTurnsText})
             this.content.addChild(turnsText)
 
-            const turnsIcon = new Sprite( atlases.task.textures[TASK.TIME] )
+            const turnsIcon = new Sprite( atlases.ui.textures[TASK.TIME.toLowerCase()] )
             turnsIcon.scale.set(0.4) // 60px
             this.content.addChild(turnsIcon)
 
@@ -230,15 +230,15 @@ export default class Popup extends Container {
     }
 
     setTaskImageNEW() {
-        const imageA = new Sprite( atlases.pets.textures[LEVEL_PET[availablePetLevel]] )
+        const imageA = new Sprite( atlases.units.textures[LEVEL_PET[availablePetLevel]] )
         imageA.anchor.set(0.5)
         imageA.scale.set(0.55)
         imageA.position.set(-265, -60)
-        const imageB = new Sprite( atlases.pets.textures[LEVEL_PET[availablePetLevel]] )
+        const imageB = new Sprite( atlases.units.textures[LEVEL_PET[availablePetLevel]] )
         imageB.anchor.set(0.5)
         imageB.scale.set(0.55)
         imageB.position.set(0, -60)
-        const imageC = new Sprite( atlases.popup_images.textures[TASK.NEW] )
+        const imageC = new Sprite( atlases.ui.textures['task_' + TASK.NEW] )
         imageC.anchor.set(0.5)
         imageC.position.set(0, -50)
         this.content.addChild(imageA, imageB, imageC)
@@ -247,12 +247,15 @@ export default class Popup extends Container {
     fillHelp(data) {
         this.title.text = TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
         
-        const image = new Sprite( atlases.popup_images.textures[data] )
+        const texture = data === POPUP_HELP_TYPE.DRAGON_ADD
+            ? 'help_ADD_DRAGON'
+            : 'help_USE_DRAGON'
+        const image = new Sprite( atlases.ui.textures[texture] )
         image.anchor.set(0.5)
         image.position.set(0, -50)
         this.content.addChild(image)
 
-        const description = POPUP_HELP_TYPE.DRAGON_ADD
+        const description = data === POPUP_HELP_TYPE.DRAGON_ADD
             ? TEXT_HELP_DRAGON_ADD_DESCRIPTION[this.currentLanguage]
             : TEXT_HELP_DRAGON_USE_DESCRIPTION[this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
@@ -273,13 +276,13 @@ export default class Popup extends Container {
         this.content.addChild(levelText)
 
         const place = findPetPlace( LEVEL_PET[type] )
-        const placeImage = new Sprite( atlases.places.textures[place] )
+        const placeImage = new Sprite( atlases.world.textures[place] )
         placeImage.scale.set(0.7)
         placeImage.anchor.set(0.5)
         placeImage.position.set(0, 10)
         this.content.addChild(placeImage)
 
-        const petImage = new Sprite( atlases.pets.textures[ LEVEL_PET[type] ] )
+        const petImage = new Sprite( atlases.units.textures[ LEVEL_PET[type] ] )
         petImage.scale.set(0.8)
         petImage.anchor.set(0.5)
         petImage.position.set(0, -30)
@@ -300,7 +303,7 @@ export default class Popup extends Container {
             ? TEXT_RESULT_WIN[this.currentLanguage]
             : TEXT_RESULT_LOSE[this.currentLanguage]
 
-        const image = new Sprite( isWin ? images.result_WIN : images.result_LOSE )
+        const image = new Sprite( isWin ? atlases.ui.textures.result_WIN : atlases.ui.textures.result_LOSE )
         image.scale.set(0.8)
         image.anchor.set(0.5)
         image.position.set(0, 30)
@@ -325,7 +328,7 @@ export default class Popup extends Container {
         const effect = new WinDisc()
         this.content.addChild( effect )
 
-        const petImage = new Sprite( atlases.pets.textures[ LEVEL_PET[type]] )
+        const petImage = new Sprite( atlases.units.textures[ LEVEL_PET[type]] )
         petImage.scale.set(0.8)
         petImage.anchor.set(0.5)
         petImage.position.set(0, -30)
@@ -362,7 +365,7 @@ export default class Popup extends Container {
         this.settingsUI.musicLabel.position.set(-200, -170)
         this.content.addChild( this.settingsUI.musicLabel )
 
-        const musicTexture = atlases.sound_music.textures[ 'music_' + findSoundMusic(true) ]
+        const musicTexture = atlases.ui.textures[ 'music_' + findSoundMusic(true) ]
         this.settingsUI.musicBtn = new TapIcon( musicTexture, this.changeMusic.bind(this) )
         this.settingsUI.musicBtn.anchor.set(0.5)
         this.settingsUI.musicBtn.position.set(-200, -80)
@@ -375,7 +378,7 @@ export default class Popup extends Container {
         this.settingsUI.soundLabel.position.set(200, -170)
         this.content.addChild( this.settingsUI.soundLabel )
 
-        const soundTexture = atlases.sound_music.textures[ 'sound_' + findSoundMusic(false) ]
+        const soundTexture = atlases.ui.textures[ 'sound_' + findSoundMusic(false) ]
         this.settingsUI.soundBtn = new TapIcon( soundTexture, this.changeSound.bind(this) )
         this.settingsUI.soundBtn.anchor.set(0.5)
         this.settingsUI.soundBtn.position.set(200, -80)
@@ -392,7 +395,7 @@ export default class Popup extends Container {
         this.settingsUI.langLabel.position.set(0, 20)
         this.content.addChild( this.settingsUI.langLabel )
 
-        this.settingsUI.leftBtn = new Button( images.button_icon_left, null, this.prevLang.bind(this) )
+        this.settingsUI.leftBtn = new Button( atlases.ui.textures.button_icon_left, null, this.prevLang.bind(this) )
         this.settingsUI.leftBtn.scale.set(0.75)
         this.settingsUI.leftBtn.position.set(-120, 100)
         this.content.addChild( this.settingsUI.leftBtn )
@@ -403,7 +406,7 @@ export default class Popup extends Container {
         this.settingsUI.langCode.position.set(0, 100)
         this.content.addChild( this.settingsUI.langCode )
 
-        this.settingsUI.rightBtn = new Button( images.button_icon_right, null, this.nextLang.bind(this) )
+        this.settingsUI.rightBtn = new Button( atlases.ui.textures.button_icon_right, null, this.nextLang.bind(this) )
         this.settingsUI.rightBtn.scale.set(0.75)
         this.settingsUI.rightBtn.position.set(120, 100)
         this.content.addChild( this.settingsUI.rightBtn )
@@ -417,7 +420,7 @@ export default class Popup extends Container {
         this.settingsUI.resetText.position.set(280, 170)
         this.content.addChild(this.settingsUI.resetText)
 
-        this.settingsUI.resetBtn = new Button( images.button_icon_close, null, this.resetGame.bind(this) )
+        this.settingsUI.resetBtn = new Button( atlases.ui.textures.button_icon_close, null, this.resetGame.bind(this) )
         this.settingsUI.resetBtn.scale.set(0.4)
         this.settingsUI.resetBtn.position.set(320, 200)
         this.content.addChild(this.settingsUI.resetBtn)
@@ -440,7 +443,7 @@ export default class Popup extends Container {
             musicOn()
             iconIndex = 1
         }
-        const musicTexture = atlases.sound_music.textures[ 'music_' + iconIndex ]
+        const musicTexture = atlases.ui.textures[ 'music_' + iconIndex ]
         this.settingsUI.musicBtn.setIcon( musicTexture )
     }
 
@@ -461,7 +464,7 @@ export default class Popup extends Container {
             soundOn()
             iconIndex = 1
         }
-        const soundTexture = atlases.sound_music.textures[ 'sound_' + iconIndex ]
+        const soundTexture = atlases.ui.textures[ 'sound_' + iconIndex ]
         this.settingsUI.soundBtn.setIcon( soundTexture )
     }
 

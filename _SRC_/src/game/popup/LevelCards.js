@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite, Text, Texture } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../app/application";
-import { images, atlases, sounds } from "../../app/assets";
+import { atlases, sounds } from "../../app/assets";
 import { EventHub, events, helpShow, setMapCameraInteractive, startScene } from "../../app/events";
 import { soundPlay } from "../../app/sound";
 import { styles } from "../../app/styles";
@@ -83,7 +83,7 @@ class Card extends Container {
 
         this.scale.set( 0, CARD.minScale )
 
-        this.bg = new Sprite( atlases.task.textures[this.index] )
+        this.bg = new Sprite( atlases.ui.textures['card_' + this.index] )
         this.bg.anchor.set(0.5)
         this.addChild(this.bg)
 
@@ -91,12 +91,12 @@ class Card extends Container {
 
         // task = {type: TASK.NEW, value: 2, turns: 0}
         const taskSprite = task.type + (task.turns ? '_' + TASK.TIME : '')
-        this.image = new Sprite( atlases.task.textures[taskSprite] )
+        this.image = new Sprite( atlases.ui.textures[taskSprite.toLowerCase()] )
         this.image.anchor.set(0.5)
         this.addChild(this.image)
 
         this.isDone = isDone
-        this.doneImage = new Sprite( this.isDone ? atlases.task.textures.done : Texture.EMPTY )
+        this.doneImage = new Sprite( this.isDone ? atlases.ui.textures.done : Texture.EMPTY )
         this.doneImage.anchor.set(0.5)
         this.addChild(this.doneImage)
 
@@ -212,7 +212,7 @@ export default class LevelCards extends Container {
         this.cards = new Container()
         this.container.addChild(this.cards)
 
-        this.closeBtn = new Button( images.button_icon_close, '', this.closeCards.bind(this) )
+        this.closeBtn = new Button( atlases.ui.textures.button_icon_close, '', this.closeCards.bind(this) )
         this.closeBtn.scale.set(0.75)
         this.container.addChild(this.closeBtn)
 

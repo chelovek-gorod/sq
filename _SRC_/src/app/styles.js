@@ -26,8 +26,6 @@ export let styles = {
 
     /* Font keys (init all fonts in function bellow) */
     loading: null,
-    gameTitle: null,
-    gameSubtitle: null,
     button: null,
     buttonHover: null,
     shineCounter: null,
@@ -50,22 +48,6 @@ export function initFontStyles() {
         dropShadowBlur: 6,
         dropShadowAngle: 0,
         dropShadowDistance: 0,
-    })
-
-    styles.gameTitle = new TextStyle({
-        fontFamily: fonts.RubikDirt,
-        fontSize: 128,
-        fill: '#ffffff',
-
-        stroke: {
-            color: '#33ffff',
-            width: 16
-        }
-    })
-    styles.gameSubtitle = new TextStyle({
-        fontFamily: fonts.RubikGemstones,
-        fontSize: 72,
-        fill: fillSubtitleGradient,
     })
 
     styles.button = new TextStyle({

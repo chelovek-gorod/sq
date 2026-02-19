@@ -1,6 +1,6 @@
 import { Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
-import { images } from "../../app/assets";
+import { atlases } from "../../app/assets";
 import { EventHub, events } from "../../app/events";
 import { createEnum, moveToTarget } from "../../utils/functions";
 
@@ -17,7 +17,7 @@ const BACK_SPEED = 0.9
 
 export default class HelpFinger extends Sprite {
     constructor(x = null, y = null) {
-        super( images.finger )
+        super( atlases.ui.textures.finger )
         this.anchor.set(0.12, 0.13)
         this.startPoint = {x: 0, y: 0}
         this.targetPoint = null

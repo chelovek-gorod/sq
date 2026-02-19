@@ -24,7 +24,7 @@ export default class MapPoint extends Container {
         this.isAvailable = false
 
         const pointColor = index < world.length ? POINTS[index].color : POINT_COLORS.GRAY
-        this.base = new Sprite( atlases.map_points.textures[pointColor] )
+        this.base = new Sprite( atlases.world.textures[pointColor] )
         this.base.anchor.set(0.5)
         this.addChild(this.base)
 
@@ -51,7 +51,7 @@ export default class MapPoint extends Container {
         }
 
         if (doneCount > 0) {
-            this.face.texture = atlases.map_points.textures['stars_' + doneCount]
+            this.face.texture = atlases.world.textures['stars_' + doneCount]
         }
     }
 

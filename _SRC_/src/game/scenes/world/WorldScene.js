@@ -49,17 +49,18 @@ export default class World extends Container {
         this.popup = new Popup()
         this.addChild(this.popup)
 
-        if (isNeedHelp) {
-            if (world.length === 2 && world[0].includes(true) && world[0].includes(false)) {
-                setTimeout(
-                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD})
-                )
-            }
-            if (world.length === 3 && world[1].includes(true) && world[1].includes(false)) {
-                setTimeout(
-                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_USE})
-                )
-            }
+        // help
+        if (world.length === 2
+        && world[0].includes(true) && world[0].includes(false)) {
+            setTimeout(
+                () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD})
+            )
+        }
+        if (world.length > 2 && world.length < 5 &&
+        world[1].includes(true) && world[1].includes(false)) {
+            setTimeout(
+                () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_USE})
+            )
         }
 
         setMusicList([ music.bgm_3 ])

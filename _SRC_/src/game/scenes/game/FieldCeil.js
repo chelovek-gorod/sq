@@ -7,7 +7,7 @@ import PetToken from "./PetToken";
 
 export default class FieldCeil extends Sprite {
     constructor(x, y, place) {
-        super( atlases.places.textures[place] )
+        super( atlases.world.textures[place] )
         this.anchor.set(0.5)
         this.position.set(x, y)
         this.alpha = CEIL_DATA.alpha

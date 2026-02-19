@@ -33,7 +33,7 @@ export default class GameTask extends Container {
         // {type: TASK.NEW, value: 0, turns: 0}
         this.task = {...task, isLastLevel: isLastLevel}
 
-        this.taskIcon = new Sprite( atlases.task.textures[task.type] )
+        this.taskIcon = new Sprite( atlases.ui.textures[task.type.toLowerCase()] )
         this.taskIcon.anchor.set(task.type === TASK.NEW ? 0.5: 1, 0)
         this.taskIcon.scale.set(0.22)
         this.addChild(this.taskIcon)
@@ -45,7 +45,7 @@ export default class GameTask extends Container {
 
         this.turnsIcon = task.turns === 0
             ? null
-            : new Sprite( atlases.task.textures[TASK.TIME] )
+            : new Sprite( atlases.ui.textures[TASK.TIME.toLowerCase()] )
         if (this.turnsIcon) {
             this.turnsIcon.anchor.set(1, 0)
             this.turnsIcon.scale.set(0.2)

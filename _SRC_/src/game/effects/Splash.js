@@ -4,7 +4,7 @@ import { atlases } from "../../app/assets";
 
 export default class Splash extends AnimatedSprite {
     constructor(x, y) {
-        super( atlases.splash_2.animations.go )
+        super( atlases.splash.animations.go )
         this.anchor.set(0.5, 0.5)
         this.animationSpeed = 0.5
         this.position.set(x, y)

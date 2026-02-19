@@ -14,9 +14,6 @@ export const path = {
     fonts : './fonts/',
 }
 export const fonts = {
-    RubikDirt: 'RubikDirt-Regular.ttf',
-    RubikGemstones: 'RubikGemstones-Regular.ttf',
-    
     BSBold: 'BalsamiqSans-Bold.ttf',
     BSBoldItalic: 'BalsamiqSans-BoldItalic.ttf',
     BSItalic: 'BalsamiqSans-Italic.ttf',
@@ -24,23 +21,10 @@ export const fonts = {
 }
 
 export const images = {
-    finger: 'finger.png',
     img_logo: 'logo.png',
     bg_main: 'main_bg.png',
     game_title: 'game_title_width_shadow.png',
     collection_bg: 'collection_bg.png',
-    lock_chain: 'lock_chain.png',
-    lock_place: 'lock_place.png',
-    pet_shadow: 'shadow.png',
-
-    button_icon_close: 'button_icon_close.png',
-    button_icon_left: 'button_icon_left.png',
-    button_icon_right: 'button_icon_right.png',
-
-    popup_bg: 'popup_bg.png',
-    result_LOSE: 'result_LOSE.png',
-    result_WIN: 'result_WIN.png',
-    result_drop: 'drop.png',
 
     map_static: 'map_static.png',
     map_action: 'map_action.png',
@@ -53,22 +37,17 @@ export const images = {
     dpf_radial: 'dpf_radial.png',
 }
 export const atlases = {
-    buttons: 'buttons.json',
-    pets: 'pets.json',
-    places: 'place.json',
-    clouds: 'clouds.json',
+    units: 'units.json',
+    
     splash: 'splash.json',
     fireworks: 'fireworks.json',
-    splash_2: 'splash_2.json',
     stars: 'color_stars.json',
-    fireflies: 'fireflies.json',
+
     ui: 'ui.json',
     shine_ui: 'shine_ui.json',
-    map_points: 'map_points.json',
+
+    world: 'world.json',
     map_dots: 'map_dots.json',
-    task: 'task.json',
-    popup_images: 'popup_images.json',
-    sound_music: 'sound_music.json',
 }
 export const sounds = {
     se_hover: 'se_hover.mp3',

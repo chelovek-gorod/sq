@@ -25,11 +25,11 @@ export default class Button extends Container {
         
 
         this.backImage = new Sprite(
-            atlases.buttons.textures[ icon ? 'button_icon' : 'button' ]
+            atlases.ui.textures[ icon ? 'button_icon' : 'button' ]
         )
         this.backImage.anchor.set(0.5)
         this.frontImage = new Sprite(
-            atlases.buttons.textures[ icon ? 'button_icon_hover' : 'button_hover' ]
+            atlases.ui.textures[ icon ? 'button_icon_hover' : 'button_hover' ]
         )
         this.frontImage.anchor.set(0.5)
         this.frontImage.alpha = 0
