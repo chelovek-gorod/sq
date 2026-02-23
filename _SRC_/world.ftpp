@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "",
+  "images": [
+    {
+      "name": "1.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/1.png",
+      "folder": ""
+    },
+    {
+      "name": "2.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/2.png",
+      "folder": ""
+    },
+    {
+      "name": "3.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/3.png",
+      "folder": ""
+    },
+    {
+      "name": "4.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/4.png",
+      "folder": ""
+    },
+    {
+      "name": "5.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/5.png",
+      "folder": ""
+    },
+    {
+      "name": "6.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/6.png",
+      "folder": ""
+    },
+    {
+      "name": "7.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/7.png",
+      "folder": ""
+    },
+    {
+      "name": "8.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/8.png",
+      "folder": ""
+    },
+    {
+      "name": "Arctic0.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/Arctic0.png",
+      "folder": ""
+    },
+    {
+      "name": "BLUE.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/BLUE.png",
+      "folder": ""
+    },
+    {
+      "name": "Farm0.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/Farm0.png",
+      "folder": ""
+    },
+    {
+      "name": "GRAY.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/GRAY.png",
+      "folder": ""
+    },
+    {
+      "name": "GREEN.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/GREEN.png",
+      "folder": ""
+    },
+    {
+      "name": "Jungle0.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/Jungle0.png",
+      "folder": ""
+    },
+    {
+      "name": "Ocean0.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/Ocean0.png",
+      "folder": ""
+    },
+    {
+      "name": "PURPLE.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/PURPLE.png",
+      "folder": ""
+    },
+    {
+      "name": "RED.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/RED.png",
+      "folder": ""
+    },
+    {
+      "name": "Savannah0.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/Savannah0.png",
+      "folder": ""
+    },
+    {
+      "name": "stars_0.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/stars_0.png",
+      "folder": ""
+    },
+    {
+      "name": "stars_1.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/stars_1.png",
+      "folder": ""
+    },
+    {
+      "name": "stars_2.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/stars_2.png",
+      "folder": ""
+    },
+    {
+      "name": "stars_3.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/map_points/stars_3.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "world",
+    "textureFormat": "png",
+    "removeFileExtension": true,
+    "prependFolderName": false,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "",
+    "width": 960,
+    "height": 960,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 2,
+    "extrude": 2,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}

@@ -1,4 +1,4 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { addSpark } from "../../../app/events";
@@ -12,7 +12,7 @@ const scaleStep = 0.0006
 
 const alphaSpeed = 0.0006
 
-const STATE = createEnum(['IN_A', 'OUT_A', 'IN_B', 'OUT_B', 'IN_C', 'OUT_C',])
+const STATE = createEnum(['IN_A', 'OUT_A', 'IN_B', 'OUT_B'])
 
 export default class FreePoint extends Container {
     constructor( index ) { 
@@ -25,10 +25,9 @@ export default class FreePoint extends Container {
         this.isHoveredNow = false
 
         this.index = index
-        this.isAvailable = true
+        this.isAvailable = false
 
-        const pointColor = this.isAvailable ? FREE_POINTS[index].color : 'gray'
-        this.base = new Sprite( atlases.world.textures['free_' + pointColor] )
+        this.base = new Sprite( atlases.world.textures.free_base )
         this.base.anchor.set(0.5)
         this.addChild(this.base)
 
@@ -36,28 +35,33 @@ export default class FreePoint extends Container {
             this.state = STATE.IN_A
             this.isSparkFrame = false
 
-            const crystalImageA = 'free_' + FREE_POINTS[index].crystals[0]
+            const crystalImageBase = 'free_' + FREE_POINTS[index].crystals[0]
+            this.crystalImageBase = new Sprite( atlases.world.textures[crystalImageBase])
+            this.crystalImageBase.anchor.set(0.5)
+            this.addChild(this.crystalImageBase)
+
+            const crystalImageA = 'free_' + FREE_POINTS[index].crystals[1]
             this.crystalA = new Sprite( atlases.world.textures[crystalImageA])
             this.crystalA.anchor.set(0.5)
             this.crystalA.alpha = 0
             this.addChild(this.crystalA)
 
-            const crystalImageB = 'free_' + FREE_POINTS[index].crystals[1]
+            const crystalImageB = 'free_' + FREE_POINTS[index].crystals[2]
             this.crystalB = new Sprite( atlases.world.textures[crystalImageB])
             this.crystalB.anchor.set(0.5)
             this.crystalB.alpha = 0
             this.addChild(this.crystalB)
 
-            const crystalImageC = 'free_' + FREE_POINTS[index].crystals[2]
-            this.crystalC = new Sprite( atlases.world.textures[crystalImageC])
-            this.crystalC.anchor.set(0.5)
-            this.crystalC.alpha = 0
-            this.addChild(this.crystalC)
+            this.clickPoint = new Graphics()
+            this.clickPoint.circle(0, -30, 80)
+            this.clickPoint.fill(0xffffff)
+            this.clickPoint.alpha = 0.001
+            this.addChild(this.clickPoint)
 
-            setCursorPointer(this)
-            this.on('pointerdown', this.click, this)
-            this.on('pointerover', this.onHover, this)
-            this.on('pointerout', this.onOut, this)
+            setCursorPointer(this.clickPoint)
+            this.clickPoint.on('pointerdown', this.click, this)
+            this.clickPoint.on('pointerover', this.onHover, this)
+            this.clickPoint.on('pointerout', this.onOut, this)
 
             tickerAdd(this)
         }
@@ -85,7 +89,7 @@ export default class FreePoint extends Container {
     tick(time) {
         if (this.isAvailable) {
             this.isSparkFrame = !this.isSparkFrame
-            if (this.isSparkFrame) addSpark({x: this.x * 2, y: this.y * 2, type: 'multi'})
+            if (this.isSparkFrame) addSpark({x: this.x * 2, y: this.y * 2 - 120, type: 'multi'})
         }
 
         const alphaStep = alphaSpeed * time.deltaMS
@@ -105,16 +109,7 @@ export default class FreePoint extends Container {
             break
             case STATE.OUT_B :
                 this.crystalB.alpha = Math.max(0, this.crystalB.alpha - alphaStep)
-                if (this.crystalB.alpha === 0) this.state = STATE.IN_C
-            break
-
-            case STATE.IN_C :
-                this.crystalC.alpha = Math.min(1, this.crystalC.alpha + alphaStep)
-                if (this.crystalC.alpha === 1) this.state = STATE.OUT_C
-            break
-            case STATE.OUT_C :
-                this.crystalC.alpha = Math.max(0, this.crystalC.alpha - alphaStep)
-                if (this.crystalC.alpha === 0) this.state = STATE.IN_A
+                if (this.crystalB.alpha === 0) this.state = STATE.IN_A
             break
         }
 
@@ -134,10 +129,10 @@ export default class FreePoint extends Container {
         tickerRemove(this)
 
         if (this.isAvailable) {
-            removeCursorPointer(this)
-            this.off('pointerdown', this.click, this)
-            this.off('pointerover', this.onHover, this)
-            this.off('pointerout', this.onOut, this)
+            removeCursorPointer(this.clickPoint)
+            this.clickPoint.off('pointerdown', this.click, this)
+            this.clickPoint.off('pointerover', this.onHover, this)
+            this.clickPoint.off('pointerout', this.onOut, this)
         }
     }
 }

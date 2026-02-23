@@ -80,6 +80,16 @@ export default class WorldMap extends Container {
         for (let p = 0; p < POINTS.length; p++) this.points.addChild(new MapPoint(p))
         for (let f = 0; f < FREE_POINTS.length; f++) this.points.addChild(new FreePoint(f))
 
+        this.ship = new Sprite(images.ship)
+        //this.ship.scale.set(0.4)
+        this.ship.anchor.set(0.5, 0.8)
+        this.ship.position.set(-600, 380)
+        this.ship.swingDirection = 1
+        this.ship.swingProgress = 0
+        this.ship.swingSpeed = 0.0003
+        this.ship.swingAmplitude = 0.07
+        this.addChild(this.ship)
+
         this.dragon = new Sprite(atlases.units.textures[PET.Dragon])
         this.dragon.scale.set(0.4)
         this.dragon.anchor.set(0.5, 0.75)
@@ -149,11 +159,19 @@ export default class WorldMap extends Container {
     // ================= TICK =================
 
     tick({ deltaMS }) {
-        const dt = deltaMS
+ 
+        // ship
+        this.ship.swingProgress += this.ship.swingSpeed * deltaMS
+        if (this.ship.swingProgress >= 1) {
+            this.ship.swingProgress = 0
+            this.ship.swingDirection *= -1
+        }
+        const angle = this.ship.swingAmplitude * this.ship.swingDirection
+        this.ship.rotation = Math.sin(this.ship.swingProgress * Math.PI) * angle
 
         // fly dragon
         if (this.dragon.target) {
-            moveToTarget(this.dragon, this.dragon.target, 0.3 * dt)
+            moveToTarget(this.dragon, this.dragon.target, 0.3 * deltaMS)
         }
 
         // displacement

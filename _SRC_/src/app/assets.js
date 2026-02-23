@@ -35,6 +35,8 @@ export const images = {
     star_radial_2: 'star_radial_b.png',
     star_radial_3: 'star_radial_c.png',
     dpf_radial: 'dpf_radial.png',
+
+    ship: 'ship.png',
 }
 export const atlases = {
     units: 'units.json',

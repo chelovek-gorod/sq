@@ -92,7 +92,12 @@ EventHub.on( events.levelDone, (isDone) => {
     const pointIndex = Math.floor(levelIndex / 3)
     const taskIndex = levelIndex % 3
 
-    if(pointIndex + 1 === world.length) world.push( [false, false, false])
+    const levels = world[pointIndex]
+    const doneCount = +levels[0] + +levels[1] + +levels[2]
+    console.log(levels, doneCount)
+    if(doneCount === 1) {
+        world.push( [false, false, false] )
+    }
     isNeedHelp = world.length < 3
 
     world[pointIndex][taskIndex] = true

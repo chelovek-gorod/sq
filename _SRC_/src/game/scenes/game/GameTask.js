@@ -133,10 +133,16 @@ export default class GameTask extends Container {
 
     // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
     getTargetPet() {
-        let petLevel = addAvailablePetLevel()
-        if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        if(this.isDone) return
+
+        while (this.task.value) {
+            this.task.value--
+            const petLevel = addAvailablePetLevel()
+            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        }
+
         if ( this.task.isLastLevel ) {
-            petLevel = addAvailablePetLevel()
+            const petLevel = addAvailablePetLevel()
             if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
         }
 
@@ -144,6 +150,8 @@ export default class GameTask extends Container {
         this.isDone = true
     }
     getTargetLock() {
+        if(this.isDone) return
+
         this.task.value--
         this.taskCount.text = this.task.value
         if (this.task.value > 0) return
@@ -157,6 +165,8 @@ export default class GameTask extends Container {
         this.isDone = true
     }
     getTargetCloud() {
+        if(this.isDone) return
+        
         this.task.value--
         this.taskCount.text = this.task.value
         if (this.task.value > 0) return

@@ -165,8 +165,6 @@ export default class PetToken extends Container {
             this.type++
             this.image.texture = atlases.units.textures[LEVEL_PET[this.type]]
 
-            
-
             score += this.type > availablePetLevel ? 2 : 0
             addFlyText({text: "+" + score, x: this.x, y: this.y})
 

@@ -83,7 +83,7 @@ class Card extends Container {
 
         this.scale.set( 0, CARD.minScale )
 
-        this.bg = new Sprite( atlases.ui.textures['card_' + this.index] )
+        this.bg = new Sprite( atlases.world.textures['card_' + this.index] )
         this.bg.anchor.set(0.5)
         this.addChild(this.bg)
 
@@ -101,7 +101,7 @@ class Card extends Container {
         this.addChild(this.doneImage)
 
         const taskCountText = task.type === TASK.NEW
-            ? '+?' + (task.turns ? '/' + task.turns : '')
+            ? '+' + task.value + (task.turns ? '/' + task.turns : '')
             : task.value + (task.turns ? '/' + task.turns : '')
         this.countText = new Text({text: taskCountText, style: styles.cardCount})
         this.countText.anchor.set(0.5)

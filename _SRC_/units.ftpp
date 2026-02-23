@@ -1,0 +1,336 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "",
+  "images": [
+    {
+      "name": "ArcticFox.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/ArcticFox.png",
+      "folder": ""
+    },
+    {
+      "name": "Axolotl.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Axolotl.png",
+      "folder": ""
+    },
+    {
+      "name": "Bat.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Bat.png",
+      "folder": ""
+    },
+    {
+      "name": "Beaver.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Beaver.png",
+      "folder": ""
+    },
+    {
+      "name": "BelugaWhale.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/BelugaWhale.png",
+      "folder": ""
+    },
+    {
+      "name": "Bunny.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Bunny.png",
+      "folder": ""
+    },
+    {
+      "name": "Capybara.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Capybara.png",
+      "folder": ""
+    },
+    {
+      "name": "Cat.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Cat.png",
+      "folder": ""
+    },
+    {
+      "name": "Chameleon.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Chameleon.png",
+      "folder": ""
+    },
+    {
+      "name": "Chick.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Chick.png",
+      "folder": ""
+    },
+    {
+      "name": "Cuttlefish.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Cuttlefish.png",
+      "folder": ""
+    },
+    {
+      "name": "Dog.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Dog.png",
+      "folder": ""
+    },
+    {
+      "name": "Dolphin.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Dolphin.png",
+      "folder": ""
+    },
+    {
+      "name": "Dragon.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Dragon.png",
+      "folder": ""
+    },
+    {
+      "name": "Duck.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Duck.png",
+      "folder": ""
+    },
+    {
+      "name": "Elephant.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Elephant.png",
+      "folder": ""
+    },
+    {
+      "name": "Filly.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Filly.png",
+      "folder": ""
+    },
+    {
+      "name": "Frog.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Frog.png",
+      "folder": ""
+    },
+    {
+      "name": "Giraffe.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Giraffe.png",
+      "folder": ""
+    },
+    {
+      "name": "Goldfish.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Goldfish.png",
+      "folder": ""
+    },
+    {
+      "name": "Jerboa.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Jerboa.png",
+      "folder": ""
+    },
+    {
+      "name": "Kangaroo.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Kangaroo.png",
+      "folder": ""
+    },
+    {
+      "name": "KillerWhale.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/KillerWhale.png",
+      "folder": ""
+    },
+    {
+      "name": "Koala.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Koala.png",
+      "folder": ""
+    },
+    {
+      "name": "Lamb.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Lamb.png",
+      "folder": ""
+    },
+    {
+      "name": "Lemming.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Lemming.png",
+      "folder": ""
+    },
+    {
+      "name": "Lion.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Lion.png",
+      "folder": ""
+    },
+    {
+      "name": "Mole.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Mole.png",
+      "folder": ""
+    },
+    {
+      "name": "Monkey.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Monkey.png",
+      "folder": ""
+    },
+    {
+      "name": "Mouse.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Mouse.png",
+      "folder": ""
+    },
+    {
+      "name": "Narwhal.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Narwhal.png",
+      "folder": ""
+    },
+    {
+      "name": "Octopus.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Octopus.png",
+      "folder": ""
+    },
+    {
+      "name": "Ostrich.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Ostrich.png",
+      "folder": ""
+    },
+    {
+      "name": "Panda.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Panda.png",
+      "folder": ""
+    },
+    {
+      "name": "Panther.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Panther.png",
+      "folder": ""
+    },
+    {
+      "name": "Parrot.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Parrot.png",
+      "folder": ""
+    },
+    {
+      "name": "Peacock.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Peacock.png",
+      "folder": ""
+    },
+    {
+      "name": "Penguin.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Penguin.png",
+      "folder": ""
+    },
+    {
+      "name": "PolarBear.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/PolarBear.png",
+      "folder": ""
+    },
+    {
+      "name": "Raccoon.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Raccoon.png",
+      "folder": ""
+    },
+    {
+      "name": "Reindeer.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Reindeer.png",
+      "folder": ""
+    },
+    {
+      "name": "SeaHorse.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/SeaHorse.png",
+      "folder": ""
+    },
+    {
+      "name": "Seal.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Seal.png",
+      "folder": ""
+    },
+    {
+      "name": "Shark.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Shark.png",
+      "folder": ""
+    },
+    {
+      "name": "Snake.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Snake.png",
+      "folder": ""
+    },
+    {
+      "name": "SnowyOwl.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/SnowyOwl.png",
+      "folder": ""
+    },
+    {
+      "name": "Turtle.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Turtle.png",
+      "folder": ""
+    },
+    {
+      "name": "Walrus.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Walrus.png",
+      "folder": ""
+    },
+    {
+      "name": "WhiteTiger.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/WhiteTiger.png",
+      "folder": ""
+    },
+    {
+      "name": "Zebra.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Zebra.png",
+      "folder": ""
+    },
+    {
+      "name": "Zebrasoma.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/Zebrasoma.png",
+      "folder": ""
+    },
+    {
+      "name": "cloud_dark.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/clouds/cloud_dark.png",
+      "folder": ""
+    },
+    {
+      "name": "cloud_lightning.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/clouds/cloud_lightning.png",
+      "folder": ""
+    },
+    {
+      "name": "cloud_white.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/clouds/cloud_white.png",
+      "folder": ""
+    },
+    {
+      "name": "lightning_1.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/clouds/lightning_1.png",
+      "folder": ""
+    },
+    {
+      "name": "lightning_2.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/clouds/lightning_2.png",
+      "folder": ""
+    },
+    {
+      "name": "lightning_3.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/clouds/lightning_3.png",
+      "folder": ""
+    },
+    {
+      "name": "lock_chain.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/lock_chain.png",
+      "folder": ""
+    },
+    {
+      "name": "lock_place.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/lock_place.png",
+      "folder": ""
+    },
+    {
+      "name": "shadow.png",
+      "path": "D:/JS_GAMES/_Squinkies_/GRAPHICS/new pets/shadow.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "units",
+    "textureFormat": "png",
+    "removeFileExtension": true,
+    "prependFolderName": false,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "",
+    "width": 1900,
+    "height": 1900,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 2,
+    "extrude": 2,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}
