@@ -64,12 +64,13 @@ export function showFullScreenAdSDK() {
     gamePause()
     SDK.showFullScreenAd( () => gameResume() )
 }
-export function showRewardAdSDK() {
+export function showRewardAdSDK( callback ) {
     gamePause()
     SDK.showRewardAd( (isOk) => {
         gameResume()
         /*
         if (isOk) { логика получения награды }
         */
+        callback(isOk)
     })
 }

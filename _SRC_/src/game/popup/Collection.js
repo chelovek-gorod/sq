@@ -2,7 +2,7 @@ import { Container, Graphics, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 import { images, atlases } from "../../app/assets";
 import { showPopup } from "../../app/events";
-import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PLACE_PETS } from "../scenes/game/constants";
+import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PLACE_PETS } from "../scenes/level/constants";
 import { availablePetLevel } from "../state";
 import { POPUP_TYPE } from "./constants";
 

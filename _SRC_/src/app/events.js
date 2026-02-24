@@ -34,6 +34,8 @@ export const events = {
 
     helpShow: 'helpShow',
     helpHide: 'helpHide',
+
+    getRewardFromAd: 'getRewardFromAd',
 }
 
 export function screenResize( data ) {
@@ -115,4 +117,8 @@ export function helpShow() {
 }
 export function helpHide() {
     EventHub.emit( events.helpHide )
+}
+
+export function getRewardFromAd(rewardIndex) {
+    EventHub.emit( events.getRewardFromAd, rewardIndex )
 }

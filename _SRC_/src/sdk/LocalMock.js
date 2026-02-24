@@ -2,14 +2,14 @@ const MOCK_LANGUAGE = 'ru'
 const MOCK_STORAGE_KEY = 'test-04'
 
 /**
- * Моковый Yandex SDK для тестирования
+ * Моковый SDK для тестирования
  * @class
  * @param {function} readyCallback - вызывается сразу
  * @param {function} getStateForSaveCallback - возвращает данные для сохранения
  * @param {function} setSavedStateCallback - принимает загруженные данные
  * @param {Array} leaderboardNames - не используется
  */
-export default class YaGamesSDK {
+export default class LocalMockSDK {
     constructor(
             readyCallback = null,
             getStateForSaveCallback = null,
@@ -70,7 +70,7 @@ export default class YaGamesSDK {
     }
 
     showRewardAd(callback = null) {
-        alert('showRewardAd')
-        if (callback) callback(true)
+        const reward = confirm('showRewardAd')
+        if (callback) callback(!!reward)
     }
 }

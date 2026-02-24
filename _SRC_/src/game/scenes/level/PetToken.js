@@ -145,6 +145,7 @@ export default class PetToken extends Container {
     moveToCeil(ceil) {
         if (this.ceil !== ceil) getTargetTurn()
 
+        const isDragonsMerge = ceil.pet && ceil.pet.type === 51 && this.type === 51
         this.ceil.pet = null
         this.ceil = ceil
         this.ceil.pet = this
@@ -162,8 +163,10 @@ export default class PetToken extends Container {
             this.isUpgraded = false
             this.isOtherPetShine = false
 
-            this.type++
-            this.image.texture = atlases.units.textures[LEVEL_PET[this.type]]
+            if (!isDragonsMerge) {
+                this.type++
+                this.image.texture = atlases.units.textures[LEVEL_PET[this.type]]
+            }
 
             score += this.type > availablePetLevel ? 2 : 0
             addFlyText({text: "+" + score, x: this.x, y: this.y})
@@ -177,7 +180,7 @@ export default class PetToken extends Container {
                 soundPlay( sounds.se_squinki_max )
                 this.ceil.pet = null
                 addFireworks({x: this.x, y: this.y})
-                getTargetPet()
+                if (!isDragonsMerge) getTargetPet()
                 kill(this)
                 return
             }

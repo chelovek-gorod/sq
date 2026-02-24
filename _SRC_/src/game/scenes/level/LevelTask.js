@@ -19,7 +19,7 @@ const Y_TASK_OTHER = 10
 const Y_TURNS = 17
 const Y_COUNT = 16
 
-export default class GameTask extends Container {
+export default class LevelTask extends Container {
     constructor(task, levelIndex) {
         super()
 

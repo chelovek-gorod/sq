@@ -1,6 +1,7 @@
 import { getDeviceType } from "../app/application"
 import { createEnum } from "../utils/functions"
-import { PET, PLACE } from "./scenes/game/constants"
+import { POPUP_AD_TYPE } from "./popup/constants"
+import { PET, PLACE } from "./scenes/level/constants"
 import { TASK } from "./scenes/world/constants"
 
 const isMobile = getDeviceType() !== 'desktop'
@@ -19,7 +20,7 @@ export const TEXT_GET_FIRST_CLICK = {
     cs: isMobile ? 'Klepněte pro start' : 'Klikněte pro start'
 }
 
-export const TEXT_BUTTON_TYPE = createEnum(['START', 'OK', 'RETRY'])
+export const TEXT_BUTTON_TYPE = createEnum(['START', 'OK', 'RETRY', 'VIEW_AD', 'CANCEL'])
 export const TEXT_BUTTON = {
     [TEXT_BUTTON_TYPE.START]: {
         en: 'Play',
@@ -59,6 +60,32 @@ export const TEXT_BUTTON = {
         it: 'Ancora',
         nl: 'Opnieuw',
         cs: 'Znovu'
+    },
+    [TEXT_BUTTON_TYPE.VIEW_AD]: {
+        en: 'Watch',
+        ru: 'Смотреть',
+        tr: 'İzle',
+        es: 'Ver',
+        de: 'Ansehen',
+        pt: 'Assistir',
+        fr: 'Regarder',
+        pl: 'Oglądaj',
+        it: 'Guarda',
+        nl: 'Bekijk',
+        cs: 'Sledovat'
+    },
+    [TEXT_BUTTON_TYPE.CANCEL]: {
+        en: 'Cancel',
+        ru: 'Отмена',
+        tr: 'İptal',
+        es: 'Cancelar',
+        de: 'Abbrechen',
+        pt: 'Cancelar',
+        fr: 'Annuler',
+        pl: 'Anuluj',
+        it: 'Annulla',
+        nl: 'Annuleren',
+        cs: 'Zrušit'
     }
 }
 
@@ -1113,6 +1140,105 @@ export const TEXT_SETTINGS = {
         nl: (count) => `Om alle spelvoortgang te resetten en opnieuw te beginnen - druk ${count} keer op de knop met het kruisje`,
         cs: (count) => `Pro resetování veškerého postupu ve hře a začátek od začátku - stiskněte tlačítko s křížkem ${count}krát`
     }
+}
+
+export const TEXT_ALL_PETS_TITLE = {
+    en: 'Complete Collection!',
+    ru: 'Полная коллекция!',
+    tr: 'Tam Koleksiyon!',
+    es: '¡Colección Completa!',
+    de: 'Komplette Sammlung!',
+    pt: 'Coleção Completa!',
+    fr: 'Collection Complète !',
+    pl: 'Kompletna Kolekcja!',
+    it: 'Collezione Completa!',
+    nl: 'Complete Collectie!',
+    cs: 'Kompletní Sbírka!'
+}
+
+export const TEXT_ALL_PETS_DESCRIPTION = {
+    en: 'All Squinki are unlocked!',
+    ru: 'Все Сквинки открыты!',
+    tr: 'Tüm Squinki\'ler açıldı!',
+    es: '¡Todos los Squinki están desbloqueados!',
+    de: 'Alle Squinki sind freigeschaltet!',
+    pt: 'Todos os Squinki estão desbloqueados!',
+    fr: 'Tous les Squinki sont débloqués !',
+    pl: 'Wszystkie Squinki odblokowane!',
+    it: 'Tutti gli Squinki sono sbloccati!',
+    nl: 'Alle Squinki zijn ontgrendeld!',
+    cs: 'Všichni Squinki jsou odemčení!'
+}
+
+export const TEXT_AD_TITLE = {
+    [POPUP_AD_TYPE.DRAGON]: {
+        en: 'Get the Dragon',
+        ru: 'Получи Дракона',
+        tr: 'Ejderhayı Al',
+        es: 'Obtén al Dragón',
+        de: 'Hole den Drachen',
+        pt: 'Ganhe o Dragão',
+        fr: 'Obtenez le Dragon',
+        pl: 'Zdobądź Smoka',
+        it: 'Ottieni il Drago',
+        nl: 'Krijg de Draak',
+        cs: 'Získej Draka'
+    },
+    [POPUP_AD_TYPE.SPARKS]: {
+        en: (count) => `+ ${count} Glimmers`,
+        ru: (count) => `+ ${count} Сияния`,
+        tr: (count) => `+ ${count} Parıltı`,
+        es: (count) => `+ ${count} Destellos`,
+        de: (count) => `+ ${count} Glitzer`,
+        pt: (count) => `+ ${count} Brilhos`,
+        fr: (count) => `+ ${count} Étincelles`,
+        pl: (count) => `+ ${count} Błysków`,
+        it: (count) => `+ ${count} Bagliori`,
+        nl: (count) => `+ ${count} Glinsteringen`,
+        cs: (count) => `+ ${count} Září`
+    }
+}
+
+export const TEXT_AD_DESCRIPTION = {
+    en: 'Watch an ad to get',
+    ru: 'За просмотр рекламы',
+    tr: 'Reklam izleyerek al',
+    es: 'Por ver un anuncio',
+    de: 'Für das Ansehen einer Werbung',
+    pt: 'Assista um anúncio para ganhar',
+    fr: 'Regardez une pub pour obtenir',
+    pl: 'Obejrzyj reklamę, aby otrzymać',
+    it: 'Guarda un annuncio per ottenere',
+    nl: 'Bekijk een advertentie om te krijgen',
+    cs: 'Sleduj reklamu a získej'
+}
+
+export const TEXT_ERROR_AD_TITLE = {
+    en: 'Oops! Error...',
+    ru: 'Упс! Ошибка...',
+    tr: 'Ups! Hata...',
+    es: '¡Ups! Error...',
+    de: 'Ups! Fehler...',
+    pt: 'Ops! Erro...',
+    fr: 'Oups ! Erreur...',
+    pl: 'Ups! Błąd...',
+    it: 'Ops! Errore...',
+    nl: 'Oeps! Fout...',
+    cs: 'Jejda! Chyba...'
+}
+
+export const TEXT_ERROR_AD_DESCRIPTION = {
+    en: 'Ad is not available right now',
+    ru: 'Почему-то реклама не доступна',
+    tr: 'Reklam şu anda kullanılamıyor',
+    es: 'El anuncio no está disponible ahora',
+    de: 'Werbung ist gerade nicht verfügbar',
+    pt: 'O anúncio não está disponível agora',
+    fr: 'La publicité n\'est pas disponible pour le moment',
+    pl: 'Rekklama nie jest teraz dostępna',
+    it: 'L\'annuncio non è disponibile al momento',
+    nl: 'Advertentie is momenteel niet beschikbaar',
+    cs: 'Reklama není momentálně dostupná'
 }
 
 export const TEXT_EMPTY = {

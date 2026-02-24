@@ -7,8 +7,8 @@ import { styles } from "../../app/styles";
 import { createEnum, removeCursorPointer, setCursorPointer } from "../../utils/functions";
 import HelpFinger from "../effects/HelpFinger";
 import { SCENE_NAME } from "../scenes/constants";
-import { FIELD_OFFSET_Y, FIELD_OFFSET_X } from "../scenes/game/constants";
-import { LEVELS_LIST } from "../scenes/game/levels";
+import { FIELD_OFFSET_Y, FIELD_OFFSET_X } from "../scenes/Level/constants";
+import { LEVELS_LIST } from "../scenes/Level/levels";
 import { TASK } from "../scenes/world/constants";
 import { isNeedHelp, setLevelTask, world } from "../state";
 import Button from "../UI/Button";
@@ -125,7 +125,7 @@ class Card extends Container {
         if (this.state !== CARD_STATE.READY) return
 
         setLevelTask( this.levelIndex )
-        startScene( SCENE_NAME.Game )
+        startScene( SCENE_NAME.Level )
         soundPlay(sounds.se_click)
     }
 

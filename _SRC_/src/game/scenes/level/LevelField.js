@@ -21,7 +21,7 @@ function getMapObject( code ) {
     }
 }
 
-export default class GameField extends Container {
+export default class LevelField extends Container {
     constructor(levelMap) {
         super()
 

@@ -9,7 +9,7 @@ import { EventHub, startScene, events } from '../../../app/events'
 import { SCENE_NAME } from '../constants'
 import { getFirstUserAction, soundPlay } from '../../../app/sound'
 import { getLanguage } from '../../localization'
-import { BG_GRADIENT_COLORS, BG_GRADIENT_NAME } from '../game/constants'
+import { BG_GRADIENT_COLORS, BG_GRADIENT_NAME } from '../Level/constants'
 import { TEXT_GET_FIRST_CLICK } from '../../localText'
 
 export const ALPHA_STEP = 0.003

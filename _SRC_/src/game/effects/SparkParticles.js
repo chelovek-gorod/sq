@@ -2,7 +2,7 @@ import { Particle, ParticleContainer } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 import { atlases } from "../../app/assets";
 import { EventHub, events } from "../../app/events";
-import { PLACE } from "../scenes/game/constants";
+import { PLACE } from "../scenes/level/constants";
 
 const CEIL_HALF_SIZE = 120
 const CEIL_SIZE = CEIL_HALF_SIZE * 2

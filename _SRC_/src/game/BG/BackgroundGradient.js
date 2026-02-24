@@ -1,7 +1,7 @@
 import { Sprite, Texture } from "pixi.js"
 import { getAppScreen } from "../../app/application"
 import { getRecTexture } from "../../utils/textureGenerator"
-import { BG_GRADIENT_COLORS, BG_GRADIENT_NAME } from "../scenes/game/constants"
+import { BG_GRADIENT_COLORS, BG_GRADIENT_NAME } from "../scenes/level/constants"
 
 let bg = null
 let dx = null

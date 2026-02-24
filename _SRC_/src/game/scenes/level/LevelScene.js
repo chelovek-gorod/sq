@@ -6,7 +6,7 @@ import BackgroundGradient from '../../BG/BackgroundGradient'
 import { getLanguage } from '../../localization'
 import TapIcon from '../../UI/TapIcon'
 import { BG_GRADIENT_COLORS, CEIL_DATA, FIELD_OFFSET_X, FIELD_OFFSET_Y } from './constants'
-import GameField from './GameField'
+import LevelField from './LevelField'
 import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
 import Collection from '../../popup/Collection'
@@ -14,12 +14,12 @@ import FlyText from '../../effects/FlyText'
 import { isAdAvailable, isNeedHelp, levelIndex, setLevelDraggingAvailable } from '../../state'
 import { LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
-import GameTask from './GameTask'
+import LevelTask from './LevelTask'
 import Popup from '../../popup/Popup'
 import { kill } from '../../../app/application'
-import { POPUP_TYPE } from '../../popup/constants'
+import { POPUP_AD_TYPE, POPUP_TYPE } from '../../popup/constants'
 
-export default class Game extends Container {
+export default class Level extends Container {
     constructor() {
         super()
         this.alpha = 0
@@ -43,13 +43,13 @@ export default class Game extends Container {
         this.bg = new BackgroundGradient( bgColors )
         this.addChild(this.bg)
 
-        this.field = new GameField(this.level.map)
+        this.field = new LevelField(this.level.map)
         this.addChild(this.field)
 
         this.shineBar = new ShineBar()
         this.addChild(this.shineBar)
 
-        this.task = new GameTask(this.level.task, levelIndex)
+        this.task = new LevelTask(this.level.task, levelIndex)
         this.addChild(this.task)
 
         this.collection = new Collection( this.clickBook.bind(this) )
@@ -80,6 +80,7 @@ export default class Game extends Container {
             this.addChild(this.sparksBtn, this.dragonBtn)
 
             EventHub.on( events.userDoStep, this.userDoStep, this )
+            EventHub.on( events.getRewardFromAd, this.getRewardFromAd, this )
         }
 
         this.popup = new Popup()
@@ -89,7 +90,7 @@ export default class Game extends Container {
 
         EventHub.on( events.addShineBall, this.addShineBall, this )
         EventHub.on( events.addFlyText, this.addFlyText, this )
-
+        
         setMusicList([
             music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
             music.bgm_5, music.bgm_6, music.bgm_7, music.bgm_8, music.bgm_9
@@ -188,7 +189,7 @@ export default class Game extends Container {
         startScene( SCENE_NAME.World )
     }
     clickRestart() {
-        setTimeout( () => startScene( SCENE_NAME.Game ), 0 )
+        setTimeout( () => startScene( SCENE_NAME.Level ), 0 )
     }
 
     clickBook() {
@@ -202,45 +203,55 @@ export default class Game extends Container {
     }
 
     clickSparksAd() {
-        let points = 0
-        this.iaAdSparks--
-        const freeCeil = this.field.getFreeCeil()
-        if (this.iaAdSparks === 2) {
-            this.sparksBtn.setActive( false )
-            this.sparksBtn.setIcon(atlases.ui.textures.ui_ad5)
-            points = 7
-            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
-            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
-            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
-        } else if (this.iaAdSparks === 1) {
-            this.sparksBtn.setActive( false )
-            this.sparksBtn.setIcon(atlases.ui.textures.ui_ad3)
-            points = 5
-            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
-            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
-        } else {
-            kill(this.sparksBtn)
-            points = 3
-            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
-        }
-        this.addChild( new FlyText('+' + points, 0, 0) )
-        this.userDoStep()
+        const spCount = this.iaAdSparks === 3 ? 7 : this.iaAdSparks === 2 ? 5 : 3
+        showPopup({type: POPUP_TYPE.AD, data: spCount})
     }
     clickDragonAd() {
-        this.isAdDragon = false
-        kill(this.dragonBtn)
-        const freeCeil = this.field.getFreeCeil()
-        if (freeCeil) {
-            const targetCeil = this.field.ceils.children[freeCeil.index]
-            targetCeil.pet = true
+        showPopup({type: POPUP_TYPE.AD, data: POPUP_AD_TYPE.DRAGON})
+    }
+    getRewardFromAd( rewardIndex ) {
+        if (rewardIndex === 0) return showPopup({type: POPUP_TYPE.ERROR, data: null})
 
-            this.field.addEffect( new ShineBall(
-                {x: this.shineBar.sparksPosition.x + 60, y: this.shineBar.sparksPosition.y + 120},
-                {x: freeCeil.x, y: freeCeil.y},
-                targetCeil,
-                5
-            ))
+        if (rewardIndex === 1) {
+            this.isAdDragon = false
+            kill(this.dragonBtn)
+            const freeCeil = this.field.getFreeCeil()
+            if (freeCeil) {
+                const targetCeil = this.field.ceils.children[freeCeil.index]
+                targetCeil.pet = true
 
+                this.field.addEffect( new ShineBall(
+                    {x: this.shineBar.sparksPosition.x + 60, y: this.shineBar.sparksPosition.y + 120},
+                    {x: freeCeil.x, y: freeCeil.y},
+                    targetCeil,
+                    5
+                ))
+
+                this.userDoStep()
+            }
+        } else {
+            let points = 0
+            this.iaAdSparks--
+            const freeCeil = this.field.getFreeCeil()
+            if (this.iaAdSparks === 2) {
+                this.sparksBtn.setActive( false )
+                this.sparksBtn.setIcon(atlases.ui.textures.ui_ad5)
+                points = 7
+                this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
+                this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
+                this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
+            } else if (this.iaAdSparks === 1) {
+                this.sparksBtn.setActive( false )
+                this.sparksBtn.setIcon(atlases.ui.textures.ui_ad3)
+                points = 5
+                this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
+                this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
+            } else {
+                kill(this.sparksBtn)
+                points = 3
+                this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
+            }
+            this.addChild( new FlyText('+' + points, 0, 0) )
             this.userDoStep()
         }
     }
@@ -252,7 +263,10 @@ export default class Game extends Container {
     kill() {
         kill(this.popup)
 
-        if (this.isAdInLevel) EventHub.off( events.userDoStep, this.userDoStep, this )
+        if (this.isAdInLevel) {
+            EventHub.off( events.userDoStep, this.userDoStep, this )
+            EventHub.on( events.getRewardFromAd, this.getRewardFromAd, this )
+        }
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.addShineBall, this.addShineBall, this )
         EventHub.off( events.addFlyText, this.addFlyText, this )

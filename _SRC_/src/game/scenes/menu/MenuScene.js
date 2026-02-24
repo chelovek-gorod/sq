@@ -24,7 +24,7 @@ export default class Menu extends Container {
         this.logo.anchor.set(1)
         this.addChild(this.logo)
         
-        this.title = new Sprite(atlases.ui.textures.game_title) // GameTitle()
+        this.title = new Sprite(images.game_title)
         this.title.anchor.set(0.5, 0)
         this.titleStartWidth = this.title.width
         this.titleStartHeight = this.title.height

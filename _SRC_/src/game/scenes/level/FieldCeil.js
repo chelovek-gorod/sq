@@ -15,7 +15,7 @@ export default class FieldCeil extends Sprite {
 
         this.place = place
 
-        // nearestCeils add in GameField.js
+        // nearestCeils add in LevelField.js
         // this.nearestCeils = [] 
 
         this.pet = null

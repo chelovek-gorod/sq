@@ -1,5 +1,6 @@
-import { EventHub, events } from "../app/events"
+import { EventHub, events, showPopup } from "../app/events"
 import { updateStoredData } from "../game/storage"
+import { POPUP_TYPE } from "./popup/constants"
 
 export let isAdAvailable = true
 export let isLevelDraggingAvailable = true
@@ -7,7 +8,7 @@ export function setLevelDraggingAvailable( isAvailable = true ) {
     isLevelDraggingAvailable = isAvailable
 }
 
-export let availablePetLevel = 50
+export let availablePetLevel = 1
 export let dragonPointIndex = 0
 export let isNeedHelp = true
 
@@ -15,6 +16,7 @@ export function addAvailablePetLevel() {
     if (availablePetLevel < 50) {
         availablePetLevel++
         updateStoredData()
+        if (availablePetLevel === 50) setTimeout( () => showPopup({type: POPUP_TYPE.ALL_PETS}), 0 )
         return availablePetLevel
     } else {
         return 0

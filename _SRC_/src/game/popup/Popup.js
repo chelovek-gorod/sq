@@ -1,18 +1,18 @@
 import { Container, Sprite, Text } from "pixi.js"
-import { EventHub, events, globalGameReset, startScene } from "../../app/events"
-import { POPUP_HELP_TYPE, POPUP_TYPE } from "./constants"
+import { EventHub, events, globalGameReset, startScene, getRewardFromAd } from "../../app/events"
+import { POPUP_AD_TYPE, POPUP_HELP_TYPE, POPUP_TYPE } from "./constants"
 import Button from "../UI/Button"
 import TapIcon from "../UI/TapIcon"
 import { getAvailableLanguages, getLanguage, getLanguageName, setLanguage } from "../localization"
 import { atlases, images, sounds } from "../../app/assets"
 import { styles } from "../../app/styles"
 import { TASK } from "../scenes/world/constants"
-import { LEVEL_PET, PLACE_PETS } from "../scenes/game/constants"
+import { LEVEL_PET, PLACE_PETS } from "../scenes/level/constants"
 import { availablePetLevel } from "../state"
 import { getAppScreen, kill, tickerAdd, tickerRemove } from "../../app/application"
 import WinDisc from "../effects/WinDisc"
 import SparkParticles from "../effects/SparkParticles"
-import { TEXT_BUTTON_TYPE, TEXT_HELP_DRAGON_ADD_DESCRIPTION, TEXT_HELP_DRAGON_TITLE, TEXT_HELP_DRAGON_USE_DESCRIPTION, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
+import { TEXT_AD_DESCRIPTION, TEXT_AD_TITLE, TEXT_ALL_PETS_DESCRIPTION, TEXT_ALL_PETS_TITLE, TEXT_BUTTON, TEXT_BUTTON_TYPE, TEXT_ERROR_AD_DESCRIPTION, TEXT_ERROR_AD_TITLE, TEXT_HELP_DRAGON_ADD_DESCRIPTION, TEXT_HELP_DRAGON_TITLE, TEXT_HELP_DRAGON_USE_DESCRIPTION, TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
     TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
     TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
 import LoseRain from "../effects/LoseRain"
@@ -20,6 +20,7 @@ import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, sound
 import { SCENE_NAME } from "../scenes/constants"
 import { createEnum } from "../../utils/functions"
 import Overlay from "./Overlay"
+import { showRewardAdSDK } from "../storage"
 
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
@@ -96,6 +97,8 @@ export default class Popup extends Container {
 
         this.settingsUI = null
 
+        this.showAdButton = null
+
         EventHub.on(events.showPopup, this.show, this)
         EventHub.on(events.startScene, this.kill, this)
 
@@ -119,11 +122,14 @@ export default class Popup extends Container {
         if (this.visible) return dataQueue.push(data)
 
         if (data.type === POPUP_TYPE.TASK) this.fillTask(data.data)
-        if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
+        else if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
         else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
         else if (data.type === POPUP_TYPE.NEW) this.fillNew(data.data)
         else if (data.type === POPUP_TYPE.SETTINGS) this.fillSettings()
+        else if (data.type === POPUP_TYPE.AD) this.fillAd(data.data)
+        else if (data.type === POPUP_TYPE.ALL_PETS) this.fillAllPets()
+        else this.fillError()
 
         this.visible = true
         this.shell.show()
@@ -141,7 +147,7 @@ export default class Popup extends Container {
         if (this.isResult) {
             kill(this)
             dataQueue.length = 0
-            setTimeout(() => startScene(this.isResultDone ? SCENE_NAME.World : SCENE_NAME.Game), 0)
+            setTimeout(() => startScene(this.isResultDone ? SCENE_NAME.World : SCENE_NAME.Level), 0)
             return
         }
 
@@ -167,6 +173,8 @@ export default class Popup extends Container {
         }
 
         if (this.settingsUI) this.settingsUI = null
+
+        if (this.showAdButton) this.showAdButton = null
 
         this.visible = false
         this.state = POPUP_STATE.CLOSED
@@ -518,6 +526,78 @@ export default class Popup extends Container {
 
         const resetDescription = TEXT_SETTINGS[TEXT_SETTING_TYPE.RESET][this.currentLanguage](this.settingsUI.resetCount)
         this.settingsUI.resetText.text = resetDescription
+    }
+
+    fillAd(data) {
+        this.title.text = data === POPUP_AD_TYPE.DRAGON
+            ? TEXT_AD_TITLE[POPUP_AD_TYPE.DRAGON][this.currentLanguage]
+            : TEXT_AD_TITLE[POPUP_AD_TYPE.SPARKS][this.currentLanguage](data)
+        
+        const texture = data === POPUP_AD_TYPE.DRAGON
+            ? 'ad_ADD_DRAGON'
+            : 'ad_ADD_SPARKS_' + data
+        const image = new Sprite( atlases.ui.textures[texture] )
+        image.anchor.set(0.5)
+        image.position.set(0, 0)
+        this.content.addChild(image)
+
+        const description = TEXT_AD_DESCRIPTION[this.currentLanguage]
+        const descriptionText = new Text({text: description, style: styles.popupDescription})
+        descriptionText.anchor.set(0.5, 0)
+        descriptionText.position.set(0, 80)
+        this.content.addChild(descriptionText)
+
+        const showAdCallback = data === POPUP_AD_TYPE.DRAGON
+            ? () => showRewardAdSDK( (isOk) => getRewardFromAd( isOk ? 1 : 0 ) ) : data === 7
+            ? () => showRewardAdSDK( (isOk) => getRewardFromAd( isOk ? 7 : 0 )) : data === 5
+            ? () => showRewardAdSDK( (isOk) => getRewardFromAd( isOk ? 5 : 0 ) )
+            : () => showRewardAdSDK( (isOk) => getRewardFromAd( isOk ? 3 : 0 ) )
+        const showAdButton = new Button(
+            null, TEXT_BUTTON_TYPE.VIEW_AD,
+            () => {
+                this.close()
+                showAdCallback()
+            }
+        )
+        showAdButton.position.set(0, 180)
+        showAdButton.scale.set(0.75)
+        this.content.addChild(showAdButton)
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.CANCEL )
+    }
+
+    fillError() {
+        this.title.text = TEXT_ERROR_AD_TITLE[this.currentLanguage]
+
+        const image = new Sprite( atlases.ui.textures.popup_error )
+        image.anchor.set(0.5)
+        image.position.set(0, 50)
+        this.content.addChild(image)
+
+        const description = TEXT_ERROR_AD_DESCRIPTION[this.currentLanguage]
+        const descriptionText = new Text({text: description, style: styles.popupDescription})
+        descriptionText.anchor.set(0.5, 0)
+        descriptionText.position.set(0, 150)
+        this.content.addChild(descriptionText)
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+    }
+
+    fillAllPets() {
+        this.title.text = TEXT_ALL_PETS_TITLE[this.currentLanguage]
+
+        const image = new Sprite( atlases.ui.textures.task_ALL_PETS )
+        image.anchor.set(0.5)
+        image.position.set(0, -50)
+        this.content.addChild(image)
+
+        const description = TEXT_ALL_PETS_DESCRIPTION[this.currentLanguage]
+        const descriptionText = new Text({text: description, style: styles.popupDescription})
+        descriptionText.anchor.set(0.5, 0)
+        descriptionText.position.set(0, 180)
+        this.content.addChild(descriptionText)
+
+        this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
     }
 
     tick(time) {
