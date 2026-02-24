@@ -4,7 +4,7 @@ import { atlases, sounds } from "../../../app/assets";
 import { addShineBall, addSpark, addFireworks, dragging, addFlyText,
     getTargetPet, getTargetTurn, EventHub, events } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import { availablePetLevel } from "../../state";
+import { availablePetLevel, isLevelDraggingAvailable } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
 let isOnDrag = false
@@ -91,7 +91,7 @@ export default class PetToken extends Container {
     }
 
     onDragStart(event) {
-        if (this.state === PET_STATE.DRAGGING || isOnDrag) return
+        if (this.state === PET_STATE.DRAGGING || isOnDrag || !isLevelDraggingAvailable) return
 
         isOnDrag = true
 

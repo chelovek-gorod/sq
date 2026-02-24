@@ -1,5 +1,5 @@
 import { Container } from 'pixi.js'
-import { atlases, music } from '../../../app/assets'
+import { atlases, images, music } from '../../../app/assets'
 import { EventHub, events, showPopup, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'

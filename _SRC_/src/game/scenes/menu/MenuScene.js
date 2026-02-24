@@ -1,6 +1,6 @@
 import { Container, Sprite } from 'pixi.js'
 import { kill } from '../../../app/application'
-import { images, music } from '../../../app/assets'
+import { atlases, images, music } from '../../../app/assets'
 import { startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { SCENE_NAME } from '../../scenes/constants'
@@ -19,12 +19,12 @@ export default class Menu extends Container {
         this.bg = new BackgroundImage( images.bg_main )
         this.addChild(this.bg)
 
-        this.logo = new Sprite(images.img_logo)
+        this.logo = new Sprite(images.logo)
         this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
         this.addChild(this.logo)
         
-        this.title = new Sprite(images.game_title) // GameTitle()
+        this.title = new Sprite(atlases.ui.textures.game_title) // GameTitle()
         this.title.anchor.set(0.5, 0)
         this.titleStartWidth = this.title.width
         this.titleStartHeight = this.title.height

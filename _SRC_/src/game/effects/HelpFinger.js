@@ -1,31 +1,31 @@
-import { Sprite } from "pixi.js";
+import { AnimatedSprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 import { atlases } from "../../app/assets";
 import { EventHub, events } from "../../app/events";
-import { createEnum, moveToTarget } from "../../utils/functions";
+import { createEnum, getDistance, moveToTarget } from "../../utils/functions";
 
-const FINGER_STATE = createEnum(['DOWN', 'TO_TARGET', 'UP', 'TO_START', 'HIDDEN'])
+const FINGER_STATE = createEnum(['DOWN', 'DELAY', 'TO_TARGET', 'UP', 'TO_START', 'HIDDEN'])
 
-const SCALE_UP_SPEED = 0.0003
-const SCALE_DOWN_SPEED = 0.0006
-const SCALE_LEVEL_MIN = 0.8
-const SCALE_LEVEL_MAX = 1.0
-const SCALE_WORLD_MIN = 0.4
-const SCALE_WORLD_MAX = 0.5
-const MOVE_SPEED = 0.5
-const BACK_SPEED = 0.9
+const MOVE_TO_TARGET = 900 // ms
+const BACK_TO_START = 600 // ms
+const MOVE_DELAY = 300 // ms
 
-export default class HelpFinger extends Sprite {
+export default class HelpFinger extends AnimatedSprite {
     constructor(x = null, y = null) {
-        super( atlases.ui.textures.finger )
-        this.anchor.set(0.12, 0.13)
+        super( atlases.ui.animations.finger_in )
+        this.anchor.set(0.25, 0.25)
         this.startPoint = {x: 0, y: 0}
         this.targetPoint = null
+        this.speedTarget = 0
+        this.speedStart = 0
+        this.delay = MOVE_DELAY
 
         this.eventMode = 'none'
 
         this.state = FINGER_STATE.HIDDEN
         this.visible = false
+
+        this.loop = false
 
         EventHub.on( events.helpShow, this.show, this )
         EventHub.on( events.helpHide, this.hide, this )
@@ -36,18 +36,31 @@ export default class HelpFinger extends Sprite {
     help(x, y, merge_x = null, merge_y = null) {
         this.startPoint = {x: x, y: y}
         this.targetPoint = merge_x && merge_y ? {x: merge_x, y: merge_y} : null
-        this.scale.set(1)
+        this.scale.set(this.targetPoint ? 1 : 0.5)
         this.position.set(x, y)
-        this.state = FINGER_STATE.DOWN
-        this.scaleMin = this.targetPoint ? SCALE_LEVEL_MIN : SCALE_WORLD_MIN
-        this.scaleMax = this.targetPoint ? SCALE_LEVEL_MAX : SCALE_WORLD_MAX
-        this.scale.set(this.scaleMax)
-        tickerAdd(this)
+        if (this.targetPoint) {
+            const dist = getDistance(this.startPoint, this.targetPoint)
+            this.speedTarget = dist / MOVE_TO_TARGET
+            this.speedStart = dist / BACK_TO_START
+        } else {
+            this.speedTarget = 0
+            this.speedStart = 0
+        }
         this.visible = true
+        this.run() 
+    }
+
+    run() {
+        tickerRemove(this)
+        this.state = FINGER_STATE.DOWN
+        this.textures = atlases.ui.animations.finger_in
+        this.gotoAndPlay(0)
+        this.onComplete = () => this.onTap()
     }
 
     hide() {
         tickerRemove(this)
+        this.stop()
         this.state = FINGER_STATE.HIDDEN
         this.visible = false
     }
@@ -60,39 +73,50 @@ export default class HelpFinger extends Sprite {
         this.help(x, y, merge_x, merge_y)
     }
 
+    onTap() {
+        this.delay = MOVE_DELAY
+        this.state = FINGER_STATE.DELAY
+        tickerAdd(this)
+    }
+
+    onTapEnd() {
+        tickerRemove(this)
+        this.state = FINGER_STATE.UP
+        this.textures = atlases.ui.animations.finger_out
+        this.gotoAndPlay(0)
+        this.onComplete = () => this.restart()
+    }
+
+    restart() {
+        if (this.targetPoint) {
+            this.state = FINGER_STATE.TO_START
+            tickerAdd(this)
+        } else {
+            this.run()
+        }
+    }
+
     tick(time) {
-        if (this.state === FINGER_STATE.DOWN) {
-            this.scale.set(
-                Math.max(this.scaleMin, this.scale.x - SCALE_DOWN_SPEED * time.deltaMS )
-            )
-            if (this.scale.x === this.scaleMin) {
-                this.state = this.targetPoint ? FINGER_STATE.TO_TARGET : FINGER_STATE.UP
-            }
-            return
-        }
+        switch(this.state) {
+            case FINGER_STATE.DELAY:
+                this.delay -= time.deltaMS
+                if (this.delay <= 0) {
+                    if (this.targetPoint) this.state = FINGER_STATE.TO_TARGET
+                    else this.onTapEnd()
+                }
+                return
 
-        if (this.state === FINGER_STATE.TO_TARGET) {
-            if ( moveToTarget(this, this.targetPoint, MOVE_SPEED * time.deltaMS) ) {
-                this.state = FINGER_STATE.UP
-            }
-            return
-        }
+            case FINGER_STATE.TO_TARGET:
+                if ( moveToTarget(this, this.targetPoint, this.speedTarget * time.deltaMS) ) {
+                    this.onTapEnd()
+                }
+                return
 
-        if (this.state === FINGER_STATE.UP) {
-            this.scale.set(
-                Math.min(this.scaleMax, this.scale.x + SCALE_UP_SPEED * time.deltaMS )
-            )
-            if (this.scale.x === this.scaleMax) {
-                this.state = this.targetPoint ? FINGER_STATE.TO_START : FINGER_STATE.DOWN
-            }
-            return
-        }
-
-        if (this.state === FINGER_STATE.TO_START) {
-            if ( moveToTarget(this, this.startPoint, BACK_SPEED * time.deltaMS) ) {
-                this.state = FINGER_STATE.DOWN
-            }
-            return
+            case FINGER_STATE.TO_START:
+                if ( moveToTarget(this, this.startPoint, this.speedStart * time.deltaMS) ) {
+                    this.run()
+                }
+                return
         }
     }
 

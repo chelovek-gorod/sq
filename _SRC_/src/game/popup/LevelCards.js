@@ -83,7 +83,7 @@ class Card extends Container {
 
         this.scale.set( 0, CARD.minScale )
 
-        this.bg = new Sprite( atlases.world.textures['card_' + this.index] )
+        this.bg = new Sprite( atlases.ui.textures['card_' + this.index] )
         this.bg.anchor.set(0.5)
         this.addChild(this.bg)
 

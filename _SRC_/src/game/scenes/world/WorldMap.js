@@ -80,7 +80,7 @@ export default class WorldMap extends Container {
         for (let p = 0; p < POINTS.length; p++) this.points.addChild(new MapPoint(p))
         for (let f = 0; f < FREE_POINTS.length; f++) this.points.addChild(new FreePoint(f))
 
-        this.ship = new Sprite(images.ship)
+        this.ship = new Sprite(atlases.world.textures.ship)
         //this.ship.scale.set(0.4)
         this.ship.anchor.set(0.5, 0.8)
         this.ship.position.set(-600, 380)

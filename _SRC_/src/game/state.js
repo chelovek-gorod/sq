@@ -1,6 +1,12 @@
 import { EventHub, events } from "../app/events"
 import { updateStoredData } from "../game/storage"
 
+export let isAdAvailable = true
+export let isLevelDraggingAvailable = true
+export function setLevelDraggingAvailable( isAvailable = true ) {
+    isLevelDraggingAvailable = isAvailable
+}
+
 export let availablePetLevel = 50
 export let dragonPointIndex = 0
 export let isNeedHelp = true
@@ -87,6 +93,7 @@ EventHub.on( events.globalGameReset, () => {
 })
 
 EventHub.on( events.levelDone, (isDone) => {
+    isLevelDraggingAvailable = false
     if (!isDone) return
 
     const pointIndex = Math.floor(levelIndex / 3)
@@ -94,7 +101,7 @@ EventHub.on( events.levelDone, (isDone) => {
 
     const levels = world[pointIndex]
     const doneCount = +levels[0] + +levels[1] + +levels[2]
-    console.log(levels, doneCount)
+
     if(doneCount === 1) {
         world.push( [false, false, false] )
     }

@@ -4,8 +4,6 @@ import { sounds } from "../../../app/assets";
 import { addSpark, showSparksShadow } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { moveToTarget } from "../../../utils/functions";
-import StarSpark from "../../effects/SparkParticles";
-import { PLACE } from "./constants";
 
 const getSparksByPoints = ( points ) => {
     switch (points) {

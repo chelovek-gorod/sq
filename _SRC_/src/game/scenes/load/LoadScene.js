@@ -79,12 +79,12 @@ export default class LoadScene extends Container {
 
     preloadLogo() {
         if (!this.logo) {
-            preloadAsset(assetType.images, 'img_logo', this.setLogo.bind(this))
+            preloadAsset(assetType.images, 'logo', this.setLogo.bind(this))
         }
     }
 
     setLogo() {
-        this.logo = new Sprite(assets.images.img_logo)
+        this.logo = new Sprite(assets.images.logo)
         this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
         const screenData = getAppScreen()

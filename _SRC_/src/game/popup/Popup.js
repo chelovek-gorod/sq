@@ -77,7 +77,7 @@ export default class Popup extends Container {
         this.box.scale.set(0)
         this.addChild(this.box)
 
-        this.bg = new Sprite( atlases.ui.textures.popup_bg )
+        this.bg = new Sprite( images.popup_bg )
         this.bg.anchor.set(0.5)
         this.box.addChild(this.bg)
 

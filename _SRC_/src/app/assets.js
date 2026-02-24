@@ -21,9 +21,9 @@ export const fonts = {
 }
 
 export const images = {
-    img_logo: 'logo.png',
+    logo: 'logo.png',
     bg_main: 'main_bg.png',
-    game_title: 'game_title_width_shadow.png',
+    popup_bg: 'popup_bg.png',
     collection_bg: 'collection_bg.png',
 
     map_static: 'map_static.png',
@@ -36,7 +36,7 @@ export const images = {
     star_radial_3: 'star_radial_c.png',
     dpf_radial: 'dpf_radial.png',
 
-    ship: 'ship.png',
+
 }
 export const atlases = {
     units: 'units.json',

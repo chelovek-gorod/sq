@@ -262,7 +262,22 @@ export default class GameField extends Container {
         if (locks.length) return locks[ Math.floor(Math.random() * locks.length) ]
         if (storms.length) return storms[ Math.floor(Math.random() * storms.length) ]
         if (clouds.length) return clouds[ Math.floor(Math.random() * clouds.length) ]
-        return free[ Math.floor(Math.random() * free.length) ]
+        if (free.length) return free[ Math.floor(Math.random() * free.length) ]
+        return null
+    }
+
+    getFreeCeil() {
+        let ceil = null
+
+        const ceils = this.ceils.children
+        for (let i = ceils.length - 1; i >= 0; i--) {
+            if (ceils[i].pet === null) {
+                ceil = {x: ceils[i].x, y: ceils[i].y, index: i}
+                break
+            }
+        }
+        
+        return ceil
     }
 
     tick() {

@@ -1,5 +1,5 @@
 import { Container } from 'pixi.js'
-import { atlases, music } from '../../../app/assets'
+import { atlases, images, music } from '../../../app/assets'
 import { EventHub, events, showPopup, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import BackgroundGradient from '../../BG/BackgroundGradient'
@@ -11,7 +11,7 @@ import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
 import Collection from '../../popup/Collection'
 import FlyText from '../../effects/FlyText'
-import { levelIndex } from '../../state'
+import { isAdAvailable, isNeedHelp, levelIndex, setLevelDraggingAvailable } from '../../state'
 import { LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
 import GameTask from './GameTask'
@@ -27,8 +27,10 @@ export default class Game extends Container {
         this.currentLanguage = getLanguage()
         EventHub.on( events.updateLanguage, this.updateLanguage, this )
 
-        this.stepsCount = 0
-        EventHub.on( events.userDoStep, this.userDoStep, this )
+        // нужна свободная клетка
+        this.isAdDragon = isAdAvailable
+        // нужен замок / туча / свободная клетка
+        this.iaAdSparks = isAdAvailable ? 3 : 0
 
         this.level = LEVELS_LIST[ levelIndex ]
 
@@ -41,11 +43,11 @@ export default class Game extends Container {
         this.bg = new BackgroundGradient( bgColors )
         this.addChild(this.bg)
 
-        this.shineBar = new ShineBar()
-        this.addChild(this.shineBar)
-
         this.field = new GameField(this.level.map)
         this.addChild(this.field)
+
+        this.shineBar = new ShineBar()
+        this.addChild(this.shineBar)
 
         this.task = new GameTask(this.level.task, levelIndex)
         this.addChild(this.task)
@@ -54,17 +56,36 @@ export default class Game extends Container {
         this.collection.visible = false
         this.addChild(this.collection)
 
-        this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, this.clickHome.bind(this) )
-        this.homeBtn.anchor.set(0, 1)
-        this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, this.clickBook.bind(this) )
-        this.bookBtn.anchor.set(1, 1)
         this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, this.clickSettings.bind(this) )
         this.settingsBtn.anchor.set(1, 0)
+        this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, this.clickBook.bind(this) )
+        this.bookBtn.anchor.set(1, 1)
+        this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, this.clickHome.bind(this) )
+        this.homeBtn.anchor.set(0, 1)
+        this.restartBtn = new TapIcon( atlases.ui.textures.ui_restart, this.clickRestart.bind(this) )
+        this.restartBtn.anchor.set(0, 1)
         
-        this.addChild(this.homeBtn, this.bookBtn, this.settingsBtn)
+        this.addChild(this.settingsBtn, this.bookBtn, this.homeBtn, this.restartBtn)
+
+        this.isAdInLevel = isAdAvailable && !isNeedHelp
+        if (this.isAdInLevel) {
+            this.sparksBtn = new TapIcon( atlases.ui.textures.ui_ad7, this.clickSparksAd.bind(this) )
+            this.sparksBtn.anchor.set(0, 0)
+            this.sparksBtn.setActive(false)
+
+            this.dragonBtn = new TapIcon( atlases.ui.textures.ui_dragon, this.clickDragonAd.bind(this) )
+            this.dragonBtn.anchor.set(1, 1)
+            this.dragonBtn.setActive(false)
+            
+            this.addChild(this.sparksBtn, this.dragonBtn)
+
+            EventHub.on( events.userDoStep, this.userDoStep, this )
+        }
 
         this.popup = new Popup()
         this.addChild(this.popup)
+
+        setLevelDraggingAvailable(true)
 
         EventHub.on( events.addShineBall, this.addShineBall, this )
         EventHub.on( events.addFlyText, this.addFlyText, this )
@@ -83,10 +104,15 @@ export default class Game extends Container {
 
         this.collection.screenResize(screenData)
 
-        this.homeBtn.position.set(-screenData.centerX, screenData.centerY)
-        this.bookBtn.position.set(screenData.centerX, screenData.centerY)
-        this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
         this.shineBar.position.set(-screenData.centerX, -screenData.centerY)
+        this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
+        this.bookBtn.position.set(screenData.centerX, screenData.centerY)
+        this.homeBtn.position.set(-screenData.centerX, screenData.centerY)
+        this.restartBtn.position.set(-screenData.centerX, screenData.centerY - 100)
+        if (this.isAdInLevel) {
+            this.sparksBtn.position.set(-screenData.centerX, -screenData.centerY + 110)
+            this.dragonBtn.position.set(screenData.centerX, screenData.centerY - 100)
+        }
 
         this.task.position.set(0, -screenData.centerY + 20)
 
@@ -110,7 +136,13 @@ export default class Game extends Container {
     }
 
     userDoStep() {
-        this.stepsCount++
+        if (!this.isAdInLevel) return
+
+        if (!this.isAdDragon && this.iaAdSparks === 0) return
+
+        const isFreeCeil = this.field.getFreeCeil()
+        this.sparksBtn.setActive( this.iaAdSparks > 0 && isFreeCeil )
+        this.dragonBtn.setActive( this.isAdDragon > 0 && isFreeCeil )
     }
 
     addShineBall( data ) {
@@ -127,6 +159,8 @@ export default class Game extends Container {
         } else {
             // magic from bar
             const targetCeilIndex = this.field.getMagicTargetCeilIndex()
+            if (targetCeilIndex === null) return
+
             const targetCeil = this.field.ceils.children[targetCeilIndex]
             if (targetCeil.pet === null) targetCeil.pet = true
 
@@ -153,6 +187,9 @@ export default class Game extends Container {
         kill(this.popup)
         startScene( SCENE_NAME.World )
     }
+    clickRestart() {
+        setTimeout( () => startScene( SCENE_NAME.Game ), 0 )
+    }
 
     clickBook() {
         this.collection.visible = !this.collection.visible
@@ -164,6 +201,50 @@ export default class Game extends Container {
         showPopup({type: POPUP_TYPE.SETTINGS, data: null})
     }
 
+    clickSparksAd() {
+        let points = 0
+        this.iaAdSparks--
+        const freeCeil = this.field.getFreeCeil()
+        if (this.iaAdSparks === 2) {
+            this.sparksBtn.setActive( false )
+            this.sparksBtn.setIcon(atlases.ui.textures.ui_ad5)
+            points = 7
+            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
+            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
+            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
+        } else if (this.iaAdSparks === 1) {
+            this.sparksBtn.setActive( false )
+            this.sparksBtn.setIcon(atlases.ui.textures.ui_ad3)
+            points = 5
+            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
+            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 2} )
+        } else {
+            kill(this.sparksBtn)
+            points = 3
+            this.addShineBall( {x: freeCeil.x, y: freeCeil.y, points: 3} )
+        }
+        this.addChild( new FlyText('+' + points, 0, 0) )
+        this.userDoStep()
+    }
+    clickDragonAd() {
+        this.isAdDragon = false
+        kill(this.dragonBtn)
+        const freeCeil = this.field.getFreeCeil()
+        if (freeCeil) {
+            const targetCeil = this.field.ceils.children[freeCeil.index]
+            targetCeil.pet = true
+
+            this.field.addEffect( new ShineBall(
+                {x: this.shineBar.sparksPosition.x + 60, y: this.shineBar.sparksPosition.y + 120},
+                {x: freeCeil.x, y: freeCeil.y},
+                targetCeil,
+                5
+            ))
+
+            this.userDoStep()
+        }
+    }
+
     updateLanguage(lang) {
         this.currentLanguage = lang
     }
@@ -171,8 +252,8 @@ export default class Game extends Container {
     kill() {
         kill(this.popup)
 
+        if (this.isAdInLevel) EventHub.off( events.userDoStep, this.userDoStep, this )
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
-        EventHub.off( events.userDoStep, this.userDoStep, this )
         EventHub.off( events.addShineBall, this.addShineBall, this )
         EventHub.off( events.addFlyText, this.addFlyText, this )
     }

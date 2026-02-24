@@ -157,7 +157,7 @@ export default class GameTask extends Container {
         if (this.task.value > 0) return
 
         if ( this.task.isLastLevel ) {
-            petLevel = addAvailablePetLevel()
+            const petLevel = addAvailablePetLevel()
             if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
         }
 
@@ -172,7 +172,7 @@ export default class GameTask extends Container {
         if (this.task.value > 0) return
 
         if ( this.task.isLastLevel ) {
-            petLevel = addAvailablePetLevel()
+            const petLevel = addAvailablePetLevel()
             if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
         }
 
@@ -191,7 +191,10 @@ export default class GameTask extends Container {
     }
 
     checkDone() { 
-        if (this.parent.field.effects.children.length) return
+        if (this.parent.field.effects.children.length) {
+            this.isNeedCheckDoneAgain = true
+            return
+        }
 
         if (this.isDone) {
             showPopup({type: POPUP_TYPE.RESULT, data: this.isDone})
@@ -200,7 +203,10 @@ export default class GameTask extends Container {
         }
 
 
-        if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) return
+        if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) {
+            this.isNeedCheckDoneAgain = true
+            return
+        }
 
         if (this.isNeedCheckDoneAgain) {
             this.isNeedCheckDoneAgain = false
