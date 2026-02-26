@@ -211,7 +211,6 @@ export default class LevelTask extends Container {
             return
         }
 
-
         if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) {
             this.checkDoneAgain = 3
             return

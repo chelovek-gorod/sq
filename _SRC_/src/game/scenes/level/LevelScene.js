@@ -43,11 +43,11 @@ export default class Level extends Container {
         this.bg = new BackgroundGradient( bgColors )
         this.addChild(this.bg)
 
-        this.field = new LevelField(this.level.map)
-        this.addChild(this.field)
-
         this.shineBar = new ShineBar()
         this.addChild(this.shineBar)
+
+        this.field = new LevelField(this.level.map)
+        this.addChild(this.field)
 
         this.task = new LevelTask(this.level.task, levelIndex)
         this.addChild(this.task)
@@ -190,7 +190,7 @@ export default class Level extends Container {
         startScene( SCENE_NAME.World )
     }
     clickRestart() {
-        setTimeout( () => startScene( SCENE_NAME.Level ), 0 )
+        startScene( SCENE_NAME.Level )
     }
 
     clickBook() {
@@ -234,7 +234,6 @@ export default class Level extends Container {
             let points = 0
             this.iaAdSparks--
             const freeCeil = this.field.getFreeCeil()
-            console.log(freeCeil)
             if (this.iaAdSparks === 2) {
                 this.sparksBtn.setActive( false )
                 this.sparksBtn.setIcon(atlases.ui.textures.ui_ad5)
@@ -267,7 +266,7 @@ export default class Level extends Container {
 
         if (this.isAdInLevel) {
             EventHub.off( events.userDoStep, this.userDoStep, this )
-            EventHub.on( events.getRewardFromAd, this.getRewardFromAd, this )
+            EventHub.off( events.getRewardFromAd, this.getRewardFromAd, this )
         }
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.addShineBall, this.addShineBall, this )

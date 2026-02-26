@@ -151,22 +151,21 @@ export default class LevelField extends Container {
     }
 
     checkAvailablePetsMerge() {
-        let isMergeAvailable = false
         const pets = []
 
-        for(let p = this.pets.children.length - 1; p >= 0 && !isMergeAvailable; p--) {
-            isMergeAvailable = pets.indexOf(this.pets.children[p].type) > -1
-                || (this.pets.children[p].type === 51 && pets.length)
-            pets.push(this.pets.children[p].type)
-        }
-        if (isMergeAvailable) return true
-
-        for(let d = this.draggingPets.children.length - 1; d >= 0 && !isMergeAvailable; d--) {
-            isMergeAvailable = pets.indexOf(this.draggingPets.children[d].type) > -1
-                || (this.draggingPets.children[d].type === 51 && pets.length)
+        for(let d = this.draggingPets.children.length - 1; d >= 0; d--) {
             pets.push(this.pets.children[d].type)
         }
-        if (isMergeAvailable) return true
+
+        for(let p = this.pets.children.length - 1; p >= 0; p--) {
+            if (pets.length) {
+                if ( pets.indexOf(this.pets.children[p].type) > -1 ) return true
+                if ( pets.indexOf(51) > -1 ) return true
+                if ( this.pets.children[p].type === 51 ) return true
+            }
+            pets.push(this.pets.children[p].type)
+        }
+        console.log(pets)
 
         return false
     }
@@ -267,17 +266,13 @@ export default class LevelField extends Container {
     }
 
     getFreeCeil() {
-        let ceil = null
-
-        const ceils = this.ceils.children
-        for (let i = ceils.length - 1; i >= 0; i--) {
-            if (ceils[i].pet === null) {
-                ceil = {x: ceils[i].x, y: ceils[i].y, index: i}
-                break
+        for (let i = this.ceils.children.length - 1; i >= 0; i--) {
+            if (!this.ceils.children[i].pet) {
+                return {x: this.ceils.children[i].x, y: this.ceils.children[i].y, index: i}
             }
         }
         
-        return ceil
+        return null
     }
 
     checkLevelCleared() {
