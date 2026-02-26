@@ -30,8 +30,6 @@ export const images = {
     map_static: 'map_static.png',
     map_action: 'map_action.png',
 
-    dpf: 'dpf.png',
-
     star_radial_1: 'star_radial_a.png',
     star_radial_2: 'star_radial_b.png',
     star_radial_3: 'star_radial_c.png',
@@ -49,6 +47,8 @@ export const atlases = {
 
     world: 'world.json',
     map_dots: 'map_dots.json',
+
+    smoke: 'smoke.json',
 }
 export const sounds = {
     se_hover: 'se_hover.mp3',

@@ -1,4 +1,4 @@
-import { Container, Sprite, MeshPlane } from 'pixi.js'
+import { Container, Sprite, DisplacementFilter } from 'pixi.js'
 import { tickerAdd } from '../../../app/application'
 import { atlases, images } from '../../../app/assets'
 import { EventHub, events } from '../../../app/events'
@@ -11,15 +11,8 @@ import { MAP_WIDTH, MAP_HEIGHT, POINTS, MAP_HALF_WIDTH, MAP_HALF_HEIGHT, FREE_PO
 import FreePoint from './FreePoint'
 import MapDot from './MapDot'
 import MapPoint from './MapPoint'
-import SmokeContainer from './SmokeContainer'
 
-const WATER_SPEED = 0.003     // Общая скорость анимации
-const WATER_AMPLITUDE = 3     // Максимальное смещение в пикселях (сила шторма)
-const WATER_WAVELENGTH = 0.03 // Частота волн (чем меньше, тем шире волны)
-const WATER_X_FREQ = 0.5      // Коэффициент разницы фаз по X
-const WATER_Y_FREQ = 0.7      // Коэффициент разницы фаз по Y
-const WATER_GRID_X = 30       // Плотность сетки (количество полигонов) по X
-const WATER_GRID_Y = 20       // Плотность сетки (количество полигонов) по Y
+const DP_FILTER_SPEED = 0.03
 
 const DRAG_SENSITIVITY = 1.2
 const EDGE_PAN_SPEED = 6 // 0.6px в миллисекунду или 600px в секунду
@@ -39,22 +32,19 @@ export default class WorldMap extends Container {
         this.staticImage.anchor.set(0.5)
         this.addChild(this.staticImage)
 
-        this.actionImage = new MeshPlane({
-            texture: images.map_action,
-            verticesX: WATER_GRID_X,
-            verticesY: WATER_GRID_Y
-        })
-        this.actionImage.pivot.set(
-            images.map_action.width * 0.5, 
-            images.map_action.height * 0.5
-        )
-        this.addChild(this.actionImage)
-        this.originalVertices = this.actionImage.geometry.getBuffer('aPosition').data.slice()
+        this.actionContainer = new Container()
+        this.addChild(this.actionContainer)
 
-        this.waterTime = 0
+        this.actionImage = new Sprite(images.map_action)
+        this.actionImage.anchor.set(0.5)
 
-        //--//
-        this.addChild( new SmokeContainer() )
+        this.DPFilterSprite = new Sprite(images.dpf)
+        this.DPFilterSprite.texture.source.style.addressMode = 'repeat'
+        this.actionContainer.addChild(this.DPFilterSprite)
+
+        this.DPFilter = new DisplacementFilter(this.DPFilterSprite)
+        this.actionImage.filters = [this.DPFilter]
+        this.actionContainer.addChild(this.actionImage)
 
         // ================= STATE =================
 
@@ -184,31 +174,9 @@ export default class WorldMap extends Container {
             moveToTarget(this.dragon, this.dragon.target, 0.3 * deltaMS)
         }
 
-        // water
-        this.waterTime += WATER_SPEED * deltaMS
-    
-        const geometry = this.actionImage.geometry
-        const vertices = geometry.getBuffer('aPosition').data
-        const orig = this.originalVertices
-        
-        // Проходим по сетке вершин и создаем эффект "колыхания"
-        for (let i = 0; i < vertices.length; i += 2) {
-            const ox = orig[i]
-            const oy = orig[i + 1]
-
-            // Чтобы волна шла равномерно по X и Y, используем общую метрику (WAVELENGTH)
-            // Но добавляем FREQ для создания интерференции (сложного движения)
-            
-            // Смещение по X зависит от Y-координаты и времени
-            const angleX = this.waterTime * WATER_X_FREQ + (oy * WATER_WAVELENGTH)
-            // Смещение по Y зависит от X-координаты и времени
-            const angleY = this.waterTime * WATER_Y_FREQ + (ox * WATER_WAVELENGTH)
-
-            // Используем нормализованные смещения
-            vertices[i] = ox + Math.sin(angleX) * WATER_AMPLITUDE
-            vertices[i + 1] = oy + Math.cos(angleY) * WATER_AMPLITUDE
-        }
-        geometry.getBuffer('aPosition').update()
+        // displacement
+        this.DPFilterSprite.x += deltaMS * DP_FILTER_SPEED
+        this.DPFilterSprite.y += deltaMS * DP_FILTER_SPEED
 
         // ================= AUTO FOCUS =================
 

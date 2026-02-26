@@ -8,6 +8,7 @@ import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
 import FirefliesContainer from '../../effects/Fireflies'
 import { TEXT_BUTTON_TYPE } from '../../localText'
+import Title from './Title'
 
 export default class Menu extends Container {
     constructor() {
@@ -24,8 +25,7 @@ export default class Menu extends Container {
         this.logo.anchor.set(1)
         this.addChild(this.logo)
         
-        this.title = new Sprite(images.game_title)
-        this.title.anchor.set(0.5, 0)
+        this.title = new Title()
         this.titleStartWidth = this.title.width
         this.titleStartHeight = this.title.height
         this.addChild(this.title)
@@ -57,7 +57,7 @@ export default class Menu extends Container {
 
         const titleScaleX = Math.min(1, screenData.width / (this.titleStartWidth + 120))
         const titleScaleY = Math.min(1, screenData.centerY / (this.titleStartHeight + 60))
-        const pointY = screenData.centerY * 0.75
+        const pointY = screenData.centerY * 0.3
         this.title.scale.set( Math.min(titleScaleX, titleScaleY) )
         this.title.position.set(0, -pointY)
 
