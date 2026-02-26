@@ -156,14 +156,14 @@ export default class LevelField extends Container {
 
         for(let p = this.pets.children.length - 1; p >= 0 && !isMergeAvailable; p--) {
             isMergeAvailable = pets.indexOf(this.pets.children[p].type) > -1
-                || this.pets.children[p].type === 51
+                || (this.pets.children[p].type === 51 && pets.length)
             pets.push(this.pets.children[p].type)
         }
         if (isMergeAvailable) return true
 
         for(let d = this.draggingPets.children.length - 1; d >= 0 && !isMergeAvailable; d--) {
             isMergeAvailable = pets.indexOf(this.draggingPets.children[d].type) > -1
-                || this.draggingPets.children[d].type === 51
+                || (this.draggingPets.children[d].type === 51 && pets.length)
             pets.push(this.pets.children[d].type)
         }
         if (isMergeAvailable) return true
@@ -278,6 +278,20 @@ export default class LevelField extends Container {
         }
         
         return ceil
+    }
+
+    checkLevelCleared() {
+        let isFree = true
+
+        const ceils = this.ceils.children
+        for (let i = ceils.length - 1; i >= 0; i--) {
+            if (ceils[i].pet) {
+                isFree = false
+                break
+            }
+        }
+        
+        return isFree
     }
 
     tick() {

@@ -1,10 +1,9 @@
 import { Container, Sprite } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
-import { atlases, images, sounds } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { EventHub, events, getTargetCloud } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { CLOUDS_STATE, OBSTACLE } from "./constants";
-
 
 export default class Clouds extends Container {
     constructor(ceil, turnsToStartStorm = 3) {
@@ -102,7 +101,7 @@ export default class Clouds extends Container {
 
     fillClouds() {
         this.children.forEach( (container, index) => {
-            if (container instanceof Sprite) return
+            if (container instanceof Sprite) return // IMPORTANT PROTECTION
 
             container.lightning = new Sprite()
             container.lightningTextureIndex = index
@@ -111,14 +110,37 @@ export default class Clouds extends Container {
             container.lightning.alpha = 0
             container.addChild(container.lightning)
 
+            let darkAlpha = 0
+            let whiteAlpha = 0
+            switch (index) {
+                // far back
+                case 1 :
+                    darkAlpha = this.turnsToStartStorm < 3 ? 1 : 0
+                    whiteAlpha =this.turnsToStartStorm < 3 ? 0 : 1
+                break
+
+                // back
+                case 2 :
+                    darkAlpha = this.turnsToStartStorm < 1 ? 1 : 0
+                    whiteAlpha =this.turnsToStartStorm < 1 ? 0 : 1
+                break
+
+                // front
+                case 0 :
+                    darkAlpha = this.turnsToStartStorm < 2 ? 1 : 0
+                    whiteAlpha =this.turnsToStartStorm < 2 ? 0 : 1
+                break
+            }
+
             container.cloudDark = new Sprite( atlases.units.textures.cloud_dark )
-            container.cloudDark.alpha = this.state === CLOUDS_STATE.Storm ? 1 : 0
+            // turnsToStartStorm
+            container.cloudDark.alpha = this.state === CLOUDS_STATE.Storm ? 1 : darkAlpha
             container.cloudDark.anchor.set(0.5)
             container.cloudDark.scale.x = index < 2 ? -1 : 1
             container.addChild(container.cloudDark)
 
             container.cloudWhite = new Sprite( atlases.units.textures.cloud_white )
-            container.cloudWhite.alpha = this.state === CLOUDS_STATE.Storm ? 0 : 1
+            container.cloudWhite.alpha = this.state === CLOUDS_STATE.Storm ? 0 : whiteAlpha
             container.cloudWhite.anchor.set(0.5)
             container.cloudWhite.scale.x = index < 2 ? -1 : 1
             container.addChild(container.cloudWhite)
@@ -133,6 +155,27 @@ export default class Clouds extends Container {
         if (this.state !== CLOUDS_STATE.Clouds) return
 
         this.turnsToStartStorm--
+
+        switch(this.turnsToStartStorm) {
+            // far back
+            case 2 :
+                this.clouds[1].cloudDark.alpha = 1
+                this.clouds[1].cloudWhite.alpha = 0
+            break
+
+            // back
+            case 1 :
+                this.clouds[0].cloudDark.alpha = 1
+                this.clouds[0].cloudWhite.alpha = 0
+            break
+
+            // front
+            case 0 :
+                this.clouds[2].cloudDark.alpha = 1
+                this.clouds[2].cloudWhite.alpha = 0
+            break
+        }
+
         if (this.turnsToStartStorm > 0) return
 
         this.state = CLOUDS_STATE.Storm
@@ -144,7 +187,6 @@ export default class Clouds extends Container {
             container.cloudWhite.alpha = 0
         })
 
-        this.turnsToStartStorm = 3
         soundPlay(sounds.se_storm)
     }
     
@@ -155,10 +197,10 @@ export default class Clouds extends Container {
             soundPlay(sounds.se_clouds)
             return
         }
-        
+        console.log(this.turnsToStartStorm)
         if (this.state === CLOUDS_STATE.Storm) {
             this.state = CLOUDS_STATE.Clouds
-
+            this.turnsToStartStorm = 3 + 1 // +1 for event userDoStep
             this.children.forEach( container => {
                 if (container instanceof Sprite) return
                 

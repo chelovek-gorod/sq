@@ -29,8 +29,10 @@ export function setDragonPointIndex( index ) {
 
 // levelTask = {type: TASK.NEW, value: 2, turns: 0}
 export let levelIndex = -1
-export function setLevelTask(index) {
+export let isLevelFree = false
+export function setLevelTask(index, isFree = false) {
     levelIndex = index
+    isLevelFree = isFree
 }
 
 export let world = [
@@ -91,7 +93,7 @@ EventHub.on( events.globalGameReset, () => {
     world = [ [false, false, false], ]
 
     updateStoredData()
-    setTimeout( () => location.reload(), 1000 )
+    setTimeout( () => location.reload(), 3000 )
 })
 
 EventHub.on( events.levelDone, (isDone) => {

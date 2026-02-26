@@ -1,4 +1,4 @@
-import { Container, Sprite, Text } from "pixi.js";
+import { Container, Graphics, Sprite, Text, Rectangle } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { EventHub, events, levelDone, showPopup } from "../../../app/events";
@@ -6,7 +6,7 @@ import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
 import { POPUP_TYPE } from "../../popup/constants";
-import { addAvailablePetLevel, getWorldPointDataByLevelIndex } from "../../state";
+import { isLevelFree, addAvailablePetLevel, getWorldPointDataByLevelIndex } from "../../state";
 import { TASK } from "../world/constants";
 import { DONE_AWAIT_TIMEOUT } from "./constants";
 
@@ -24,21 +24,24 @@ export default class LevelTask extends Container {
         super()
 
         this.isDone = false
-        this.isTurns = true
-        this.isNeedCheckDoneAgain = true
+        this.isTurns = isLevelFree ? false : true
+        this.checkDoneAgain = 3
         this.doneCheckTime = DONE_AWAIT_TIMEOUT
 
-        const pointLevels = getWorldPointDataByLevelIndex(levelIndex)
-        const isLastLevel = +pointLevels[0] + +pointLevels[1] + +pointLevels[2] === 2
+        const pointLevels = isLevelFree ? null : getWorldPointDataByLevelIndex(levelIndex)
+        const isLastLevel = isLevelFree
+            ? false
+            : +pointLevels[0] + +pointLevels[1] + +pointLevels[2] === 2
         // {type: TASK.NEW, value: 0, turns: 0}
         this.task = {...task, isLastLevel: isLastLevel}
 
-        this.taskIcon = new Sprite( atlases.ui.textures[task.type.toLowerCase()] )
+        const mainIcon = isLevelFree ? 'task_FREE' : task.type.toLowerCase()
+        this.taskIcon = new Sprite( atlases.ui.textures[mainIcon] )
         this.taskIcon.anchor.set(task.type === TASK.NEW ? 0.5: 1, 0)
         this.taskIcon.scale.set(0.22)
         this.addChild(this.taskIcon)
 
-        this.taskCount = task.type === TASK.NEW
+        this.taskCount = task.type === TASK.NEW || isLevelFree
             ? null
             : new Text({text: task.value, style: styles.taskCount})
         if (this.taskCount) this.addChild(this.taskCount)
@@ -91,6 +94,12 @@ export default class LevelTask extends Container {
         } else {
             //  ?
             this.taskIcon.x += 5
+            if (isLevelFree) {
+                this.taskIcon.x += 100
+                this.taskIcon.y -= 50
+                this.hitArea = new Rectangle(-42, 10, 120, 60)
+                //this.addChild( new Graphics().rect(-42, 10, 120, 60).fill(0x00ff00) )
+            }
         }
 
         this.isOnHover = false
@@ -190,9 +199,9 @@ export default class LevelTask extends Container {
         this.isTurns = false
     }
 
-    checkDone() { 
+    checkDone() {
         if (this.parent.field.effects.children.length) {
-            this.isNeedCheckDoneAgain = true
+            this.checkDoneAgain = 3
             return
         }
 
@@ -204,12 +213,21 @@ export default class LevelTask extends Container {
 
 
         if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) {
-            this.isNeedCheckDoneAgain = true
+            this.checkDoneAgain = 3
             return
         }
 
-        if (this.isNeedCheckDoneAgain) {
-            this.isNeedCheckDoneAgain = false
+        if (isLevelFree && this.parent.field.checkAvailablePetsMerge()) {
+            return
+        }
+        if (isLevelFree && this.parent.field.checkLevelCleared()) {
+            showPopup({type: POPUP_TYPE.RESULT, data: true})
+            tickerRemove(this)
+            return
+        }
+
+        if (this.checkDoneAgain > 0) {
+            this.checkDoneAgain--
             return
         }
 

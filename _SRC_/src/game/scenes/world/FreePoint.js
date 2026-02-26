@@ -1,9 +1,11 @@
 import { Container, Graphics, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
-import { addSpark } from "../../../app/events";
+import { addSpark, startScene } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum, removeCursorPointer, setCursorPointer } from "../../../utils/functions";
+import { setLevelTask } from "../../state";
+import { SCENE_NAME } from "../constants";
 import { FREE_POINTS } from "./constants";
 
 const minScale = 1.0
@@ -25,7 +27,7 @@ export default class FreePoint extends Container {
         this.isHoveredNow = false
 
         this.index = index
-        this.isAvailable = false
+        this.isAvailable = true
 
         this.base = new Sprite( atlases.world.textures.free_base )
         this.base.anchor.set(0.5)
@@ -68,7 +70,9 @@ export default class FreePoint extends Container {
     }
 
     click() {
-        console.log('bonus level')
+        setLevelTask( this.index, true )
+        startScene( SCENE_NAME.Level )
+        soundPlay(sounds.se_click)
     }
 
     onHover() {

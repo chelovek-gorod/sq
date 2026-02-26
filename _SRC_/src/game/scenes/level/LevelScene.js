@@ -1,5 +1,5 @@
 import { Container } from 'pixi.js'
-import { atlases, images, music } from '../../../app/assets'
+import { atlases, music } from '../../../app/assets'
 import { EventHub, events, showPopup, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import BackgroundGradient from '../../BG/BackgroundGradient'
@@ -11,8 +11,8 @@ import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
 import Collection from '../../popup/Collection'
 import FlyText from '../../effects/FlyText'
-import { isAdAvailable, isNeedHelp, levelIndex, setLevelDraggingAvailable } from '../../state'
-import { LEVELS_LIST } from './levels'
+import { isAdAvailable, isNeedHelp, levelIndex, isLevelFree, setLevelDraggingAvailable } from '../../state'
+import { LEVELS_FREE_LIST, LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
 import LevelTask from './LevelTask'
 import Popup from '../../popup/Popup'
@@ -32,7 +32,7 @@ export default class Level extends Container {
         // нужен замок / туча / свободная клетка
         this.iaAdSparks = isAdAvailable ? 3 : 0
 
-        this.level = LEVELS_LIST[ levelIndex ]
+        this.level = isLevelFree ? LEVELS_FREE_LIST[ levelIndex ] : LEVELS_LIST[ levelIndex ]
 
         const levelCeilsInWidth = this.level.map[0].length / 6
         const levelCeilsInHeight = (this.level.map.length + 1) / 2
@@ -141,9 +141,10 @@ export default class Level extends Container {
 
         if (!this.isAdDragon && this.iaAdSparks === 0) return
 
-        const isFreeCeil = this.field.getFreeCeil()
-        this.sparksBtn.setActive( this.iaAdSparks > 0 && isFreeCeil )
-        this.dragonBtn.setActive( this.isAdDragon > 0 && isFreeCeil )
+        const isAvailablePetsMerge = this.field.checkAvailablePetsMerge()
+
+        this.sparksBtn.setActive( this.iaAdSparks > 0 && isAvailablePetsMerge )
+        this.dragonBtn.setActive( this.isAdDragon > 0 && isAvailablePetsMerge )
     }
 
     addShineBall( data ) {
@@ -233,6 +234,7 @@ export default class Level extends Container {
             let points = 0
             this.iaAdSparks--
             const freeCeil = this.field.getFreeCeil()
+            console.log(freeCeil)
             if (this.iaAdSparks === 2) {
                 this.sparksBtn.setActive( false )
                 this.sparksBtn.setIcon(atlases.ui.textures.ui_ad5)

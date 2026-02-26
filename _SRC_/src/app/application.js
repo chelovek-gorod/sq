@@ -44,7 +44,7 @@ export default function initApp(container, callback) {
     appReadyCallback = callback
 
     appSettings.resizeTo = appContainer
-    Promise.all( [app.init( appSettings )] ).then( appReady )
+    app.init( appSettings ).then( appReady )
 }
 
 function appReady() {
@@ -90,6 +90,13 @@ export function getAppScreen() {
 
 export function getAppPointer(target) {
     return appPointer.getLocalPosition(target)
+}
+
+export function blackStageEventMode() {
+    app.stage.eventMode = 'none'
+}
+export function unblockStageEventMode() {
+    app.stage.eventMode = 'static'
 }
 
 export function sceneAdd(...elements) {
