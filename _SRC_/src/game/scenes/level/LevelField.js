@@ -56,6 +56,7 @@ export default class LevelField extends Container {
             this.setHelp()
 
             EventHub.on( events.levelDone, this.stopHelp, this )
+            EventHub.on( events.blockDragging, this.stopHelp, this )
         }
     }
 
@@ -165,13 +166,12 @@ export default class LevelField extends Container {
             }
             pets.push(this.pets.children[p].type)
         }
-        console.log(pets)
 
         return false
     }
 
     dragging( dragData ) {
-        if (this.isNeedHideHelp) {
+        if (this.isNeedHideHelp && this.helpFinger) {
             this.isNeedHideHelp = false
             this.helpFinger.hide()
         }
@@ -308,6 +308,9 @@ export default class LevelField extends Container {
         tickerRemove(this)
         EventHub.off( events.dragging, this.dragging, this)
         EventHub.off( events.addFireworks, this.addFireworks, this )
-        if (isNeedHelp) EventHub.off( events.levelDone, this.stopHelp, this )
+        if (isNeedHelp) {
+            EventHub.off( events.levelDone, this.stopHelp, this )
+            EventHub.off( events.blockDragging, this.stopHelp, this )
+        }
     }
 }

@@ -197,6 +197,3 @@ export const BG_GRADIENT_COLORS = {
     [BG_GRADIENT_NAME.Pink] :    [0xffb3f5, 0xec4bd7, 0x610990],
     [BG_GRADIENT_NAME.Glam] :    [0x2ffeb9, 0x0fae79, 0x8f00b3],
 }
-
-// не ниже 1667, так как облака и замки исчезают именно столько!
-export const DONE_AWAIT_TIMEOUT = 1200 // 3 * 1200 = 3600

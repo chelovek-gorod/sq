@@ -1,16 +1,35 @@
 import { EventHub, events, showPopup } from "../app/events"
 import { updateStoredData } from "../game/storage"
 import { POPUP_TYPE } from "./popup/constants"
+import { LEVELS_FREE_LIST, LEVELS_LIST } from "./scenes/level/levels"
 
 export let isAdAvailable = true
-export let isLevelDraggingAvailable = true
-export function setLevelDraggingAvailable( isAvailable = true ) {
-    isLevelDraggingAvailable = isAvailable
-}
 
 export let availablePetLevel = 1
 export let dragonPointIndex = 0
 export let isNeedHelp = true
+export let isCollectionHelpDone = false
+export function collectionHelpDone() {
+    isCollectionHelpDone = true
+}
+
+export let levelState = {
+    type: null, // "CLOUD", "LOCK", "NEW", "FREE"
+    turns: Infinity, // 0-999
+    targets: 0, // "CLOUD" or "LOCK" target
+    targetAnimations: 0, // "CLOUD" or "LOCK"
+    sparks: 0, // count of sparks launched
+    isLastLevel: false,
+    isTaskDone: false,
+}
+
+export function levelStateSetTurn() { levelState.turns = Math.max(0, levelState.turns - 1) }
+export function levelStateSetTarget() { levelState.targets = Math.max(0, levelState.targets - 1) }
+export function levelStateTargetAnimationAdd() { levelState.targetAnimations++ }
+export function levelStateTargetAnimationRemove() { levelState.targetAnimations = Math.max(0, levelState.targetAnimations - 1) }
+export function levelStateSparkAdd() { levelState.sparks++ }
+export function levelStateSparkRemove() { levelState.sparks = Math.max(0, levelState.sparks - 1) }
+export function levelStateSetTaskDone( isDone ) { levelState.isTaskDone = isDone }
 
 export function addAvailablePetLevel() {
     if (availablePetLevel < 50) {
@@ -33,6 +52,15 @@ export let isLevelFree = false
 export function setLevelTask(index, isFree = false) {
     levelIndex = index
     isLevelFree = isFree
+
+    const level = isLevelFree ? LEVELS_FREE_LIST[ levelIndex ] : LEVELS_LIST[ levelIndex ]
+    levelState.type = level.task.type
+    levelState.turns = level.task.turns === 0 ? Infinity : level.task.turns
+    levelState.targets = level.task.value
+    levelState.targetAnimations = 0
+    levelState.sparks = 0
+    levelState.isLastLevel = isLevelFree ? false : isLastLevel(),
+    levelState.isTaskDone = false
 }
 
 export let world = [
@@ -85,6 +113,7 @@ export function setStoredState( storedState ) {
     }
 
     isNeedHelp = world.length < 3
+    isCollectionHelpDone = !isNeedHelp
 }
 
 EventHub.on( events.globalGameReset, () => {
@@ -97,7 +126,6 @@ EventHub.on( events.globalGameReset, () => {
 })
 
 EventHub.on( events.levelDone, (isDone) => {
-    isLevelDraggingAvailable = false
     if (!isDone) return
 
     const pointIndex = Math.floor(levelIndex / 3)
@@ -116,12 +144,14 @@ EventHub.on( events.levelDone, (isDone) => {
     updateStoredData()
 })
 
-export function getWorldPointIndexByLevelIndex(levelIndex) {
-    return Math.floor(levelIndex / 3)
-}
-
-export function getWorldPointDataByLevelIndex(levelIndex) {
-    const worldPointIndex = getWorldPointIndexByLevelIndex(levelIndex)
-    if (worldPointIndex < world.length) return [...world[worldPointIndex]]
-    else return null
+function isLastLevel() {
+    const worldPointIndex = Math.floor(levelIndex / 3)
+    if (worldPointIndex < world.length) {
+        let doneCount = 0
+        for(let i = world[worldPointIndex].length - 1; i >= 0; i--) {
+            doneCount += +world[worldPointIndex][i]
+        }
+        return doneCount === 2
+    }
+    return false
 }

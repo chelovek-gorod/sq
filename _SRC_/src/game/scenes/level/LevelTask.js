@@ -1,14 +1,13 @@
-import { Container, Graphics, Sprite, Text, Rectangle } from "pixi.js";
+import { Container, Sprite, Text, Rectangle } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
-import { EventHub, events, levelDone, showPopup } from "../../../app/events";
+import { EventHub, events, blockDragging, levelDone, showPopup } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
-import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
+import { createEnum, removeCursorPointer, setCursorPointer } from "../../../utils/functions";
 import { POPUP_TYPE } from "../../popup/constants";
-import { isLevelFree, addAvailablePetLevel, getWorldPointDataByLevelIndex } from "../../state";
+import { isLevelFree, levelState, addAvailablePetLevel } from "../../state";
 import { TASK } from "../world/constants";
-import { DONE_AWAIT_TIMEOUT } from "./constants";
 
 const minScale = 1.0
 const maxScale = 1.1
@@ -20,33 +19,24 @@ const Y_TURNS = 17
 const Y_COUNT = 16
 
 export default class LevelTask extends Container {
-    constructor(task, levelIndex) {
+    constructor() {
         super()
 
-        this.isDone = false
-        this.isTurns = isLevelFree ? false : true
-        this.checkDoneAgain = 3
-        this.doneCheckTime = DONE_AWAIT_TIMEOUT
+        this.isDone = false // is complete message shown
+        this.isOnAwaitResult = false // used in ticker
 
-        const pointLevels = isLevelFree ? null : getWorldPointDataByLevelIndex(levelIndex)
-        const isLastLevel = isLevelFree
-            ? false
-            : +pointLevels[0] + +pointLevels[1] + +pointLevels[2] === 2
-        // {type: TASK.NEW, value: 0, turns: 0}
-        this.task = {...task, isLastLevel: isLastLevel}
-
-        const mainIcon = isLevelFree ? 'task_FREE' : task.type.toLowerCase()
+        const mainIcon = isLevelFree ? 'task_FREE' : levelState.type.toLowerCase()
         this.taskIcon = new Sprite( atlases.ui.textures[mainIcon] )
-        this.taskIcon.anchor.set(task.type === TASK.NEW ? 0.5: 1, 0)
+        this.taskIcon.anchor.set(levelState.type === TASK.NEW ? 0.5: 1, 0)
         this.taskIcon.scale.set(0.22)
         this.addChild(this.taskIcon)
 
-        this.taskCount = task.type === TASK.NEW || isLevelFree
+        this.taskCount = levelState.type === TASK.NEW || isLevelFree
             ? null
-            : new Text({text: task.value, style: styles.taskCount})
+            : new Text({text: levelState.targets, style: styles.taskCount})
         if (this.taskCount) this.addChild(this.taskCount)
 
-        this.turnsIcon = task.turns === 0
+        this.turnsIcon = levelState.turns === Infinity
             ? null
             : new Sprite( atlases.ui.textures[TASK.TIME.toLowerCase()] )
         if (this.turnsIcon) {
@@ -55,16 +45,16 @@ export default class LevelTask extends Container {
             this.addChild(this.turnsIcon)
         }
 
-        this.turnsCount = task.turns === 0
+        this.turnsCount = levelState.turns === Infinity
             ? null
-            : new Text({text: task.turns, style: styles.taskCount})
+            : new Text({text: levelState.turns, style: styles.taskCount})
         if (this.turnsCount) this.addChild(this.turnsCount)
 
         // set positions
         this.taskIcon.y += TASK.CLOUD ? Y_TASK_CLOUD : Y_TASK_OTHER
-        if (task.turns) {
+        if (levelState.turns < Infinity) {
             // turns
-            if (task.type === TASK.NEW) {
+            if (levelState.type === TASK.NEW) {
                 //  ?   T 12
                 this.taskIcon.x -= 35
 
@@ -110,23 +100,23 @@ export default class LevelTask extends Container {
         this.on('pointerover', this.onHover, this)
         this.on('pointerout', this.onOut, this)
 
-        // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
-        if (this.task.type === TASK.NEW) EventHub.on( events.getTargetPet, this.getTargetPet, this )
-        if (this.task.type === TASK.LOCK) EventHub.on( events.getTargetLock, this.getTargetLock, this )
-        if (this.task.type === TASK.CLOUD) EventHub.on( events.getTargetCloud, this.getTargetCloud, this )
-        EventHub.on( events.getTargetTurn, this.getTargetTurn, this )
+        if (levelState.type === TASK.NEW) EventHub.on( events.getTargetPet, this.getTargetPet, this )
+        if (levelState.type === TASK.LOCK) EventHub.on( events.getTargetLock, this.getTargetLock, this )
+        if (levelState.type === TASK.CLOUD) EventHub.on( events.getTargetCloud, this.getTargetCloud, this )
+        EventHub.on( events.getPlayerTurn, this.getPlayerTurn, this )
 
-        setTimeout( () => showPopup( {type: POPUP_TYPE.TASK, data: this.task} ), 0 )
+        setTimeout( () => showPopup( {type: POPUP_TYPE.TASK, data: null} ), 0 )
         tickerAdd(this)
     }
 
     click() {
+        if (this.isDone) return
         soundPlay(sounds.se_click)
-        showPopup( {type: POPUP_TYPE.TASK, data: this.task} )
+        showPopup( {type: POPUP_TYPE.TASK, data: null} )
     }
 
     onHover() {
-        if (this.isOnHover) return
+        if (this.isOnHover || this.isDone) return
 
         this.isOnHover = true
         this.isHoverUsed = true
@@ -140,109 +130,85 @@ export default class LevelTask extends Container {
         this.isHoverUsed = true
     }
 
-    // {type: TASK.NEW, value: 2, turns: 12, levelIndex: 0, doneTasksCount, isLastLevel}
+    targetDone() {
+        this.isOnAwaitResult = false
+        tickerRemove(this)
+        if (levelState.isLastLevel) this.messageNewPet()
+        showPopup({type: POPUP_TYPE.RESULT, data: this.isDone})
+        levelDone( this.isDone )
+    }
+
+    messageNewPet() {
+        const petLevel = addAvailablePetLevel()
+        if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+    }
+
     getTargetPet() {
         if(this.isDone) return
 
-        while (this.task.value) {
-            this.task.value--
-            const petLevel = addAvailablePetLevel()
-            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
-        }
-
-        if ( this.task.isLastLevel ) {
-            const petLevel = addAvailablePetLevel()
-            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
-        }
-
-        levelDone( true )
         this.isDone = true
+        blockDragging()
+        this.messageNewPet()
+        this.targetDone()
     }
+    
     getTargetLock() {
         if(this.isDone) return
 
-        this.task.value--
-        this.taskCount.text = this.task.value
-        if (this.task.value > 0) return
-
-        if ( this.task.isLastLevel ) {
-            const petLevel = addAvailablePetLevel()
-            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        this.taskCount.text = levelState.targets
+        if (levelState.targets === 0) {
+            blockDragging()
+            this.isDone = true
+            this.isOnAwaitResult = true
         }
-
-        levelDone( true )
-        this.isDone = true
     }
+
     getTargetCloud() {
         if(this.isDone) return
         
-        this.task.value--
-        this.taskCount.text = this.task.value
-        if (this.task.value > 0) return
-
-        if ( this.task.isLastLevel ) {
-            const petLevel = addAvailablePetLevel()
-            if ( petLevel > 0 ) showPopup( {type: POPUP_TYPE.NEW, data: petLevel} )
+        this.taskCount.text = levelState.targets
+        if (levelState.targets === 0) {
+            blockDragging()
+            this.isDone = true
+            this.isOnAwaitResult = true
         }
-
-        levelDone( true )
-        this.isDone = true
     }
-    getTargetTurn() {
-        if (!this.turnsCount) return
+    
+    getPlayerTurn() {
+        if(this.isDone) return
 
-        this.task.turns--
-        this.turnsCount.text = this.task.turns
-        if (this.task.turns > 0) return
+        if (this.turnsCount) this.turnsCount.text = levelState.turns
 
-        levelDone( false )
-        this.isTurns = false
+        this.isOnAwaitResult = true
     }
 
-    checkDone() {
-        if (this.parent.field.effects.children.length) {
-            this.checkDoneAgain = 3
-            return
-        }
+    checkResult() {
+        /* levelState = {
+            type: null, // "CLOUD", "LOCK", "NEW", "FREE"
+            turns: Infinity, // 0-999
+            targets: 0, // "CLOUD" or "LOCK" target
+            targetAnimations: 0, // "CLOUD" or "LOCK"
+            sparks: 0, // count of sparks launched
+            isLastLevel: false,
+            isTaskDone: false,
+        } */
 
-        if (this.isDone) {
-            showPopup({type: POPUP_TYPE.RESULT, data: this.isDone})
-            tickerRemove(this)
-            return
-        }
+        // await when all effects completed
+        if (levelState.targetAnimations || levelState.sparks) return
 
-        if (this.isTurns && this.parent.field.checkAvailablePetsMerge()) {
-            this.checkDoneAgain = 3
-            return
-        }
+        // target is already reached
+        if (this.isDone || levelState.turns === 0) return this.targetDone()
 
-        if (isLevelFree && this.parent.field.checkAvailablePetsMerge()) {
-            return
-        }
-        if (isLevelFree && this.parent.field.checkLevelCleared()) {
-            showPopup({type: POPUP_TYPE.RESULT, data: true})
-            tickerRemove(this)
-            return
-        }
-
-        if (this.checkDoneAgain > 0) {
-            this.checkDoneAgain--
-            return
-        }
-
-        levelDone(false)
-        this.checkDoneTimeout = setTimeout( () => 
-            showPopup({type: POPUP_TYPE.RESULT, data: this.task.isDone}),
-            tickerRemove(this)
-        )
+        // if player can't merge
+        const isMergeAvailable = this.parent.field.checkAvailablePetsMerge()
+        if ( !isMergeAvailable ) return this.targetDone()
+        
+        // stop checking
+        this.isOnAwaitResult = false
     }
 
     tick(time) {
-        this.doneCheckTime -= time.deltaMS
-        if (this.doneCheckTime < 0) {
-            this.doneCheckTime = DONE_AWAIT_TIMEOUT
-            this.checkDone()
-        }
+        if (this.isOnAwaitResult) this.checkResult()
 
         if (!this.isHoverUsed) return
 
@@ -264,9 +230,9 @@ export default class LevelTask extends Container {
         this.off('pointerover', this.onHover, this)
         this.off('pointerout', this.onOut, this)
 
-        if (this.task.type === TASK.NEW) EventHub.off( events.getTargetPet, this.getTargetPet, this )
-        if (this.task.type === TASK.LOCK) EventHub.off( events.getTargetLock, this.getTargetLock, this )
-        if (this.task.type === TASK.CLOUD) EventHub.off( events.getTargetCloud, this.getTargetCloud, this )
-        EventHub.off( events.getTargetTurn, this.getTargetTurn, this )
+        if (levelState.type === TASK.NEW) EventHub.off( events.getTargetPet, this.getTargetPet, this )
+        if (levelState.type === TASK.LOCK) EventHub.off( events.getTargetLock, this.getTargetLock, this )
+        if (levelState.type === TASK.CLOUD) EventHub.off( events.getTargetCloud, this.getTargetCloud, this )
+        EventHub.off( events.getPlayerTurn, this.getPlayerTurn, this )
     }
 }

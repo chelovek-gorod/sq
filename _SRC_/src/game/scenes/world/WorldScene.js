@@ -12,7 +12,8 @@ import { SCENE_NAME } from '../constants'
 import Popup from '../../popup/Popup'
 import { POPUP_HELP_TYPE, POPUP_TYPE } from '../../popup/constants'
 import { kill } from '../../../app/application'
-import { isNeedHelp, world } from '../../state'
+import { isCollectionHelpDone, isNeedHelp, world } from '../../state'
+import HelpFinger from '../../effects/HelpFinger'
 
 export default class World extends Container {
     constructor() {
@@ -56,6 +57,10 @@ export default class World extends Container {
                 stars += +world[i][0] + +world[i][1] + +world[i][2]
             }
             switch (stars) {
+                case 1 : 
+                    if (!isCollectionHelpDone) this.clickBook()
+                break
+
                 case 2 : 
                 setTimeout(
                     () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD}), 0

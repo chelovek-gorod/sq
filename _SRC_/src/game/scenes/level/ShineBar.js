@@ -4,6 +4,7 @@ import { atlases } from "../../../app/assets";
 import { addSpark } from "../../../app/events";
 import { styles } from "../../../app/styles";
 import StarSpark from "../../effects/SparkParticles";
+import { levelStateSparkRemove } from "../../state";
 import { PLACE } from "./constants";
 
 const types = Object.keys(PLACE)
@@ -34,7 +35,9 @@ export default class ShineBar extends Container {
         this.alphaStep = 1 / 2400
 
         this.isUpFrame = true
-        this.restPoints = 0
+        this.restPoints = 0 // 0-40
+
+        this.resultPoints = 0 // 0-10
 
         // this.scale.set(0.5)
 
@@ -47,6 +50,14 @@ export default class ShineBar extends Container {
 
     useMagic( points = 1 ) {
         this.restPoints += points * 4
+
+        this.resultPoints += points
+        if (this.resultPoints < 10) {
+            levelStateSparkRemove()
+        } else {
+            this.resultPoints -= 10
+            // this sparks fly to field
+        }
     }
 
     convertPoints() {
@@ -72,7 +83,6 @@ export default class ShineBar extends Container {
             this.yellow.texture = atlases.shine_ui.textures[this.level + "Y"]
             this.purple.texture = atlases.shine_ui.textures[this.level + "P"]
         }
-
     }
 
     tick(time) {

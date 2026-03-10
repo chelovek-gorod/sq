@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js'
 import { atlases, music } from '../../../app/assets'
-import { EventHub, events, showPopup, startScene } from '../../../app/events'
+import { unblockDragging, EventHub, events, showPopup, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import BackgroundGradient from '../../BG/BackgroundGradient'
 import { getLanguage } from '../../localization'
@@ -11,7 +11,7 @@ import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
 import Collection from '../../popup/Collection'
 import FlyText from '../../effects/FlyText'
-import { isAdAvailable, isNeedHelp, levelIndex, isLevelFree, setLevelDraggingAvailable } from '../../state'
+import { isAdAvailable, isNeedHelp, levelIndex, isLevelFree, levelStateSparkAdd, levelStateSparkRemove, setLevelTask, levelState } from '../../state'
 import { LEVELS_FREE_LIST, LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
 import LevelTask from './LevelTask'
@@ -27,29 +27,32 @@ export default class Level extends Container {
         this.currentLanguage = getLanguage()
         EventHub.on( events.updateLanguage, this.updateLanguage, this )
 
+        // update levelData if level restarted
+        setLevelTask(levelIndex, isLevelFree)
+
         // нужна свободная клетка
         this.isAdDragon = isAdAvailable
         // нужен замок / туча / свободная клетка
         this.iaAdSparks = isAdAvailable ? 3 : 0
 
-        this.level = isLevelFree ? LEVELS_FREE_LIST[ levelIndex ] : LEVELS_LIST[ levelIndex ]
+        const level = isLevelFree ? LEVELS_FREE_LIST[ levelIndex ] : LEVELS_LIST[ levelIndex ]
 
-        const levelCeilsInWidth = this.level.map[0].length / 6
-        const levelCeilsInHeight = (this.level.map.length + 1) / 2
+        const levelCeilsInWidth = level.map[0].length / 6
+        const levelCeilsInHeight = ( level.map.length + 1) / 2
         this.fieldWidth = levelCeilsInWidth * CEIL_DATA.width
         this.fieldHeight = levelCeilsInHeight * CEIL_DATA.height
 
-        const bgColors = BG_GRADIENT_COLORS[this.level.bg]
+        const bgColors = BG_GRADIENT_COLORS[ level.bg]
         this.bg = new BackgroundGradient( bgColors )
         this.addChild(this.bg)
 
         this.shineBar = new ShineBar()
         this.addChild(this.shineBar)
 
-        this.field = new LevelField(this.level.map)
+        this.field = new LevelField( level.map )
         this.addChild(this.field)
 
-        this.task = new LevelTask(this.level.task, levelIndex)
+        this.task = new LevelTask()
         this.addChild(this.task)
 
         this.collection = new Collection( this.clickBook.bind(this) )
@@ -81,12 +84,15 @@ export default class Level extends Container {
 
             EventHub.on( events.userDoStep, this.userDoStep, this )
             EventHub.on( events.getRewardFromAd, this.getRewardFromAd, this )
+
+            this.checkAdTimeout = null
+            this.userDoStep()
         }
 
         this.popup = new Popup()
         this.addChild(this.popup)
 
-        setLevelDraggingAvailable(true)
+        unblockDragging() // unblock pets
 
         EventHub.on( events.addShineBall, this.addShineBall, this )
         EventHub.on( events.addFlyText, this.addFlyText, this )
@@ -141,10 +147,12 @@ export default class Level extends Container {
 
         if (!this.isAdDragon && this.iaAdSparks === 0) return
 
-        const isAvailablePetsMerge = this.field.checkAvailablePetsMerge()
+        if (levelState.sparks) return this.checkAdTimeout = setTimeout( () => this.userDoStep(), 600 )
 
-        this.sparksBtn.setActive( this.iaAdSparks > 0 && isAvailablePetsMerge )
-        this.dragonBtn.setActive( this.isAdDragon > 0 && isAvailablePetsMerge )
+        const isFreeCeil = this.field.getFreeCeil() !== null
+        const isSparksAd = isFreeCeil || levelState.targets
+        this.sparksBtn.setActive( this.iaAdSparks > 0 && isSparksAd)
+        this.dragonBtn.setActive( this.isAdDragon && isFreeCeil )
     }
 
     addShineBall( data ) {
@@ -161,7 +169,7 @@ export default class Level extends Container {
         } else {
             // magic from bar
             const targetCeilIndex = this.field.getMagicTargetCeilIndex()
-            if (targetCeilIndex === null) return
+            if (targetCeilIndex === null) return levelStateSparkRemove()
 
             const targetCeil = this.field.ceils.children[targetCeilIndex]
             if (targetCeil.pet === null) targetCeil.pet = true
@@ -213,6 +221,8 @@ export default class Level extends Container {
     getRewardFromAd( rewardIndex ) {
         if (rewardIndex === 0) return showPopup({type: POPUP_TYPE.ERROR, data: null})
 
+        levelStateSparkAdd()
+
         if (rewardIndex === 1) {
             this.isAdDragon = false
             kill(this.dragonBtn)
@@ -233,7 +243,10 @@ export default class Level extends Container {
         } else {
             let points = 0
             this.iaAdSparks--
-            const freeCeil = this.field.getFreeCeil()
+            const freeCeil = {
+                x: this.field.x + this.field.width,
+                y: this.field.y + this.field.height
+            }
             if (this.iaAdSparks === 2) {
                 this.sparksBtn.setActive( false )
                 this.sparksBtn.setIcon(atlases.ui.textures.ui_ad5)
@@ -267,6 +280,7 @@ export default class Level extends Container {
         if (this.isAdInLevel) {
             EventHub.off( events.userDoStep, this.userDoStep, this )
             EventHub.off( events.getRewardFromAd, this.getRewardFromAd, this )
+            clearTimeout(this.checkAdTimeout)
         }
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.addShineBall, this.addShineBall, this )

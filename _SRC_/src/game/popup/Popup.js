@@ -8,7 +8,7 @@ import { atlases, images, sounds } from "../../app/assets"
 import { styles } from "../../app/styles"
 import { TASK } from "../scenes/world/constants"
 import { LEVEL_PET, PLACE_PETS } from "../scenes/level/constants"
-import { availablePetLevel } from "../state"
+import { availablePetLevel, levelState } from "../state"
 import { getAppScreen, kill, tickerAdd, tickerRemove, blackStageEventMode } from "../../app/application"
 import WinDisc from "../effects/WinDisc"
 import SparkParticles from "../effects/SparkParticles"
@@ -65,8 +65,7 @@ export default class Popup extends Container {
         this.scaleSpeedMax = 1
         this.scaleAcceleration = 1.1
 
-        this.isResult = false
-        this.isResultDone = false
+        this.nextSceneAfterResult = null
 
         this.currentLanguage = getLanguage()
 
@@ -124,7 +123,7 @@ export default class Popup extends Container {
 
         if (this.visible) return dataQueue.push(data)
 
-        if (data.type === POPUP_TYPE.TASK) this.fillTask(data.data)
+        if (data.type === POPUP_TYPE.TASK) this.fillTask()
         else if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
         else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
@@ -136,9 +135,10 @@ export default class Popup extends Container {
 
         this.visible = true
         this.shell.show()
-        this.isResult = data.type === POPUP_TYPE.RESULT
-        this.isResultDone = this.isResult ? data.data : false
-
+        if (data.type === POPUP_TYPE.RESULT) {
+            this.nextSceneAfterResult = !!data.data ? SCENE_NAME.World : SCENE_NAME.Level
+        }
+        
         this.state = POPUP_STATE.OPEN_UP
         this.scaleSpeed = this.scaleSpeedMax
         tickerAdd(this)
@@ -146,13 +146,6 @@ export default class Popup extends Container {
 
     close() {
         if (this.state !== POPUP_STATE.ACTIVE) return
-
-        if (this.isResult) {
-            kill(this)
-            dataQueue.length = 0
-            setTimeout(() => startScene(this.isResultDone ? SCENE_NAME.World : SCENE_NAME.Level), 0)
-            return
-        }
 
         this.shell.hide()
         this.state = POPUP_STATE.CLOSE_UP
@@ -181,15 +174,26 @@ export default class Popup extends Container {
 
         this.visible = false
         this.state = POPUP_STATE.CLOSED
+
+        if (this.nextSceneAfterResult) {
+            dataQueue.length = 0
+            const scene = this.nextSceneAfterResult
+            this.nextSceneAfterResult = null
+            startScene(scene)
+            this.kill()
+            return
+        }
+
         if ( dataQueue.length ) this.show( dataQueue.shift() )
     }
 
-    fillTask(data) {
+    fillTask() {
+        levelState
         // data = {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
 
-        this.title.text = TEXT_TASK_TITLE[data.type][this.currentLanguage]
+        this.title.text = TEXT_TASK_TITLE[levelState.type][this.currentLanguage]
 
-        if (data.type === TASK.NEW) {
+        if (levelState.type === TASK.NEW) {
             this.setTaskImageNEW()
 
             const petName = LEVEL_PET[ Math.min(50, availablePetLevel) ]
@@ -199,7 +203,7 @@ export default class Popup extends Container {
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
-        } else if (data.type === TASK.CLOUD) {
+        } else if (levelState.type === TASK.CLOUD) {
             const image = new Sprite( atlases.ui.textures['task_' + TASK.CLOUD] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
@@ -210,7 +214,7 @@ export default class Popup extends Container {
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
-        } else if (data.type === TASK.LOCK) {
+        } else if (levelState.type === TASK.LOCK) {
             const image = new Sprite( atlases.ui.textures['task_' + TASK.LOCK] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
@@ -221,7 +225,7 @@ export default class Popup extends Container {
             descriptionText.anchor.set(0.5, 0)
             descriptionText.position.set(0, 50)
             this.content.addChild(descriptionText)
-        } else if (data.type === TASK.FREE) {
+        } else if (levelState.type === TASK.FREE) {
             const image = new Sprite( atlases.ui.textures['task_' + TASK.FREE] )
             image.anchor.set(0.5)
             image.position.set(0, -50)
@@ -234,8 +238,8 @@ export default class Popup extends Container {
             this.content.addChild(descriptionText)
         }
 
-        if (data.turns > 0) {
-            const turnsDescription = TEXT_TASK_TURNS[this.currentLanguage](data.turns)
+        if (levelState.turns < Infinity) {
+            const turnsDescription = TEXT_TASK_TURNS[this.currentLanguage](levelState.turns)
             const turnsText = new Text({text: turnsDescription, style: styles.popupTurnsText})
             this.content.addChild(turnsText)
 
@@ -648,8 +652,11 @@ export default class Popup extends Container {
     }
 
     kill() {
+        if (this.parent) this.parent.removeChild(this)
+        dataQueue.length = 0
         if (this.sparks) this.sparks.kill()
         EventHub.off(events.startScene, this.kill, this)
         EventHub.off(events.showPopup, this.show, this)
+        this.destroy({children: true})
     }
 }

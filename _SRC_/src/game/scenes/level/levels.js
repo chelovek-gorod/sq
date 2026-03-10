@@ -69,7 +69,7 @@ export const LEVELS_LIST = [
             '.........<S-01>.........',
             '........................',
         ],
-        task: {type: TASK.NEW, value: 1, turns: 0},
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Blue
     },
 
@@ -84,7 +84,7 @@ export const LEVELS_LIST = [
             '.........<S-[]>.........',
             '........................',
         ],
-        task: {type: TASK.NEW, value: 1, turns: 0},
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Pink
     },
 
@@ -99,7 +99,7 @@ export const LEVELS_LIST = [
             '...<J-01><J-[]><J-01>...',
             '......<J-01><J-01>......',
         ],
-        task: {type: TASK.NEW, value: 1, turns: 0},
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Gold
     },
 
@@ -145,7 +145,7 @@ export const LEVELS_LIST = [
             '......<J-02><J-02>......',
             '.........<J-01>.........',
         ],
-        task: {type: TASK.NEW, value: 2, turns: 0},
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Indigo
     },
 
@@ -161,7 +161,7 @@ export const LEVELS_LIST = [
             '......<F-01><J-01>......',
             '.........<J-01>.........',
         ],
-        task: {type: TASK.NEW, value: 2, turns: 0},
+        task: {type: TASK.NEW, value: 0, turns: 0},
         bg: BG_GRADIENT_NAME.Indigo
     },
 

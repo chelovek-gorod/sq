@@ -1,13 +1,14 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, Sprite, Ellipse, Graphics, ColorMatrixFilter } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { addShineBall, addSpark, addFireworks, dragging, addFlyText,
-    getTargetPet, getTargetTurn, EventHub, events } from "../../../app/events";
+    getTargetPet, getPlayerTurn, EventHub, events, blockDragging } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import { availablePetLevel, isLevelDraggingAvailable } from "../../state";
+import { availablePetLevel, levelState, levelStateSetTurn, levelStateSparkAdd } from "../../state";
 import { LEVEL_PET, PET_DATA, PET_STATE, PLACE_PETS } from "./constants";
 
 let isOnDrag = false
+EventHub.on( events.unblockDragging, () => isOnDrag = false )
 
 const merge_sounds = [1, 2, 3]
 let merge_sound_index = 0
@@ -23,6 +24,15 @@ export default class PetToken extends Container {
 
         // reset global flag
         isOnDrag = false
+
+        this.filter = new ColorMatrixFilter()
+        this.filterDuration = 300
+        this.filterMax = 1.2
+        this.filterValue = 1
+        this.filterStep = (this.filterMax - 1) / this.filterDuration
+        this.filter.brightness( this.filterValue, false )
+        this.filterAdd = 0
+        this.filters = [this.filter]
 
         this.type = type
         this.ceil = ceil
@@ -57,6 +67,15 @@ export default class PetToken extends Container {
         this.image.scale.set(PET_DATA.scale)
         this.addChild(this.image)
 
+        this.hitArea = new Ellipse(0, -42, 100, 125)
+        /*
+        this.test = new Graphics()
+        this.test.ellipse(0, -42, 100, 125)
+        this.test.fill(0x00ff00)
+        this.test.alpha = 0.8
+        this.addChild(this.test)
+        */
+
         this.on('pointerdown', this.onDragStart, this)
         this.on('pointerup', this.onDragEnd, this)
         this.on('pointerupoutside', this.onDragEnd, this)
@@ -64,9 +83,17 @@ export default class PetToken extends Container {
 
         this.position.set(ceil.x, ceil.y)
 
-        EventHub.on( events.levelDone, this.levelDone, this )
+        EventHub.on( events.blockDragging, this.blockDragging, this )
 
         tickerAdd(this)
+    }
+
+    filterOn() {
+        this.filterAdd = 1
+    }
+
+    filterOff() {
+        this.filterAdd = -1
     }
 
     startSwing(steps = 1) {
@@ -79,7 +106,7 @@ export default class PetToken extends Container {
         this.swingSteps = steps * 2
     }
 
-    returnToNeutral() {
+    stopSwing() {
         if (Math.abs(this.image.rotation) < 0.001) {
             this.image.rotation = 0
             this.state = PET_STATE.EMPTY
@@ -91,7 +118,7 @@ export default class PetToken extends Container {
     }
 
     onDragStart(event) {
-        if (this.state === PET_STATE.DRAGGING || isOnDrag || !isLevelDraggingAvailable) return
+        if (this.state === PET_STATE.DRAGGING || isOnDrag ) return
 
         isOnDrag = true
 
@@ -143,7 +170,11 @@ export default class PetToken extends Container {
     }
     
     moveToCeil(ceil) {
-        if (this.ceil !== ceil) getTargetTurn()
+        if (this.ceil !== ceil) {
+            levelStateSetTurn()
+            if (levelState.turns === 0) blockDragging()
+            setTimeout(getPlayerTurn, 0)
+        }
 
         const isDragonsMerge = ceil.pet && ceil.pet.type === 51 && this.type === 51
         this.ceil.pet = null
@@ -154,6 +185,7 @@ export default class PetToken extends Container {
         let score = 1 + +this.isOtherPetShine + +this.isShining
 
         if (this.isUpgraded) {
+            levelStateSparkAdd()
             addShineBall({
                 x: this.x,
                 y: this.y,
@@ -172,6 +204,7 @@ export default class PetToken extends Container {
             addFlyText({text: "+" + score, x: this.x, y: this.y})
 
             if (this.type > availablePetLevel) {
+                levelStateSparkAdd()
                 addShineBall({
                     x: this.x,
                     y: this.y,
@@ -209,8 +242,9 @@ export default class PetToken extends Container {
         }
     }
 
-    levelDone() {
+    blockDragging() {
         this.onDragEnd()
+        isOnDrag = true
     }
 
     tick(time) {
@@ -218,6 +252,19 @@ export default class PetToken extends Container {
 
         if(this.isShining && Math.random() > 0.9) {
             addSpark({x: this.x, y: this.y, type: this.ceil.place})
+        }
+
+        if (this.filterAdd !== 0) {
+            const fStep = this.filterStep * delta
+            if (this.filterAdd > 0) {
+                this.filterValue = Math.min(this.filterMax, this.filterValue + fStep)
+                if (this.filterValue === this.filterMax) this.filterAdd = 0              
+            } else {
+                this.filterValue = Math.max(1, this.filterValue - fStep)
+                if (this.scale.x === 1) this.filterAdd = 0
+            }
+            this.filter.brightness( this.filterValue, false )
+            this.scale.set( 1 + (this.filterValue - 1) * 0.5 )
         }
         
         switch(this.state) {
@@ -249,13 +296,13 @@ export default class PetToken extends Container {
                         this.swingProgress = 0
                         this.swingDirection *= -1
                         
-                        if (this.swingStep >= this.swingSteps) this.returnToNeutral()
+                        if (this.swingStep >= this.swingSteps) this.stopSwing()
                     }
                     
                     const angle = this.swingAmplitude * this.swingDirection
                     this.image.rotation = Math.sin(this.swingProgress * Math.PI) * angle
                 } else {
-                    this.returnToNeutral()
+                    this.stopSwing()
                 }
                 
                 if (this.image.scale.x > PET_DATA.scale) {
@@ -267,6 +314,6 @@ export default class PetToken extends Container {
 
     kill() {
         tickerRemove(this)
-        EventHub.off( events.levelDone, this.levelDone, this )
+        EventHub.off( events.blockDragging, this.blockDragging, this )
     }
 }

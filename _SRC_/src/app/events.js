@@ -26,11 +26,14 @@ export const events = {
     setMapCameraInteractive: 'setMapCameraInteractive',
     globalGameReset: 'globalGameReset',
 
+    getPlayerTurn: 'getPlayerTurn',
     getTargetPet: 'getTargetPet',
-    getTargetTurn: 'getTargetTurn',
     getTargetLock: 'getTargetLock',
     getTargetCloud: 'getTargetCloud',
+    getObstacleRemoved: 'getObstacleRemoved',
     levelDone: 'levelDone',
+    blockDragging: 'blockDragging',
+    unblockDragging: 'unblockDragging',
 
     helpShow: 'helpShow',
     helpHide: 'helpHide',
@@ -96,17 +99,24 @@ export function globalGameReset() {
     EventHub.emit( events.globalGameReset )
 }
 
+export function getPlayerTurn() {
+    EventHub.emit( events.getPlayerTurn )
+}
 export function getTargetPet() {
     EventHub.emit( events.getTargetPet )
-}
-export function getTargetTurn() {
-    EventHub.emit( events.getTargetTurn )
 }
 export function getTargetLock() {
     EventHub.emit( events.getTargetLock )
 }
 export function getTargetCloud() {
     EventHub.emit( events.getTargetCloud )
+}
+
+export function blockDragging() {
+    EventHub.emit( events.blockDragging )
+}
+export function unblockDragging() {
+    EventHub.emit( events.unblockDragging )
 }
 export function levelDone( isDone ) {
     EventHub.emit( events.levelDone, isDone )

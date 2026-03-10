@@ -2,7 +2,8 @@ import { Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { soundPlay } from "../../../app/sound";
-import { CEIL_DATA, OBSTACLE } from "./constants";
+import { levelStateSparkRemove } from "../../state";
+import { CEIL_DATA, OBSTACLE, PET_STATE } from "./constants";
 import PetToken from "./PetToken";
 
 export default class FieldCeil extends Sprite {
@@ -48,6 +49,8 @@ export default class FieldCeil extends Sprite {
         this.isHighlighted = true
         this.targetScale = CEIL_DATA.highlightScale
         this.targetAlpha = CEIL_DATA.highlightAlpha
+
+        if (this.pet && this.pet.state !== PET_STATE.DRAGGING) this.pet.filterOn()
         
         if (!this.isAnimating) {
             this.isAnimating = true
@@ -58,6 +61,7 @@ export default class FieldCeil extends Sprite {
     highlightOff() {
         if (!this.isHighlighted) return
         
+        if (this.pet) this.pet.filterOff()
         this.isHighlighted = false
         this.targetScale = CEIL_DATA.scale
         this.targetAlpha = CEIL_DATA.alpha
@@ -69,6 +73,8 @@ export default class FieldCeil extends Sprite {
     }
 
     useMagic() {
+        setTimeout( levelStateSparkRemove, 0 )
+
         if (this.pet === true || this.pet === null) {
             this.parent.parent.addSplash( this )
             this.pet = new PetToken( 51 , this )

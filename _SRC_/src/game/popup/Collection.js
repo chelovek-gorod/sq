@@ -1,9 +1,10 @@
 import { Container, Graphics, Sprite } from "pixi.js";
-import { tickerAdd, tickerRemove } from "../../app/application";
+import { kill, tickerAdd, tickerRemove } from "../../app/application";
 import { images, atlases } from "../../app/assets";
 import { showPopup } from "../../app/events";
+import HelpFinger from "../effects/HelpFinger";
 import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PLACE_PETS } from "../scenes/level/constants";
-import { availablePetLevel } from "../state";
+import { availablePetLevel, collectionHelpDone, isCollectionHelpDone } from "../state";
 import { POPUP_TYPE } from "./constants";
 
 const BG = {
@@ -77,6 +78,8 @@ const POINTS = [
     {x: psx + pdx * 9, y: psy - pdy * 4},
 ]
 
+let helpFinger = null
+
 class Pet extends Sprite {
     constructor(type) {
         super( atlases.units.textures[LEVEL_PET[type]] )
@@ -104,6 +107,13 @@ class Pet extends Sprite {
 
     click() {
         showPopup({type: POPUP_TYPE.INFO, data: this.type})
+
+        if (!isCollectionHelpDone) {
+            collectionHelpDone()
+            console.log(helpFinger)
+            kill( helpFinger )
+            helpFinger = null
+        }
     }
     
     onHover() {
@@ -163,6 +173,12 @@ export default class Collection extends Container {
         this.container.addChild(this.pets)
 
         for(let i = 1; i <= availablePetLevel; i++) this.addPet(i)
+
+        if (!isCollectionHelpDone) {
+            helpFinger = new HelpFinger()
+            helpFinger.help(this.pets.children[0].x, this.pets.children[0].y)
+            this.container.addChild(helpFinger)
+        }
     }
 
     screenResize(screenData) {
