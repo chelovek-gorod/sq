@@ -1,7 +1,7 @@
 import { Container, Sprite, Text, Rectangle } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
-import { EventHub, events, blockDragging, levelDone, showPopup } from "../../../app/events";
+import { EventHub, events, blockDragging, levelDone, showPopup, helpHide } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
 import { createEnum, removeCursorPointer, setCursorPointer } from "../../../utils/functions";
@@ -133,7 +133,7 @@ export default class LevelTask extends Container {
     targetDone() {
         this.isOnAwaitResult = false
         tickerRemove(this)
-        if (levelState.isLastLevel) this.messageNewPet()
+        if (this.isDone && levelState.isLastLevel) this.messageNewPet()
         showPopup({type: POPUP_TYPE.RESULT, data: this.isDone})
         levelDone( this.isDone )
     }
@@ -147,6 +147,7 @@ export default class LevelTask extends Container {
         if(this.isDone) return
 
         this.isDone = true
+        helpHide()
         blockDragging()
         this.messageNewPet()
         this.targetDone()
@@ -159,6 +160,7 @@ export default class LevelTask extends Container {
         if (levelState.targets === 0) {
             blockDragging()
             this.isDone = true
+            helpHide()
             this.isOnAwaitResult = true
         }
     }
@@ -198,6 +200,9 @@ export default class LevelTask extends Container {
 
         // target is already reached
         if (this.isDone || levelState.turns === 0) return this.targetDone()
+
+        // FREE
+        if (this.parent.field.checkLevelCleared()) this.isDone = true
 
         // if player can't merge
         const isMergeAvailable = this.parent.field.checkAvailablePetsMerge()

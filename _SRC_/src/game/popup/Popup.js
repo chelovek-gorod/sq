@@ -14,6 +14,8 @@ import WinDisc from "../effects/WinDisc"
 import SparkParticles from "../effects/SparkParticles"
 import { TEXT_AD_DESCRIPTION, TEXT_AD_TITLE, TEXT_ALL_PETS_DESCRIPTION, TEXT_ALL_PETS_TITLE,
     TEXT_BUTTON, TEXT_BUTTON_TYPE, TEXT_ERROR_AD_DESCRIPTION, TEXT_ERROR_AD_TITLE,
+    TEXT_HELP_CLEAR_LOCATION_DESCRIPTION,
+    TEXT_HELP_CLEAR_LOCATION_TITLE,
     TEXT_HELP_DRAGON_ADD_DESCRIPTION, TEXT_HELP_DRAGON_TITLE, TEXT_HELP_DRAGON_USE_DESCRIPTION,
     TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
     TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
@@ -271,19 +273,23 @@ export default class Popup extends Container {
     }
 
     fillHelp(data) {
-        this.title.text = TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
+        this.title.text = data === POPUP_HELP_TYPE.CLEAR_LOCATION
+            ? TEXT_HELP_CLEAR_LOCATION_TITLE[this.currentLanguage]
+            : TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
         
-        const texture = data === POPUP_HELP_TYPE.DRAGON_ADD
-            ? 'help_ADD_DRAGON'
-            : 'help_USE_DRAGON'
-        const image = new Sprite( atlases.ui.textures[texture] )
+        const texture =
+            data === POPUP_HELP_TYPE.DRAGON_ADD ? atlases.ui.textures['help_ADD_DRAGON'] : 
+            data === POPUP_HELP_TYPE.DRAGON_USE ? atlases.ui.textures['help_USE_DRAGON'] :
+            images.help_CLEAR_LOCATION
+        const image = new Sprite( texture )
         image.anchor.set(0.5)
         image.position.set(0, -50)
         this.content.addChild(image)
 
-        const description = data === POPUP_HELP_TYPE.DRAGON_ADD
-            ? TEXT_HELP_DRAGON_ADD_DESCRIPTION[this.currentLanguage]
-            : TEXT_HELP_DRAGON_USE_DESCRIPTION[this.currentLanguage]
+        const description =
+            data === POPUP_HELP_TYPE.DRAGON_ADD ? TEXT_HELP_DRAGON_ADD_DESCRIPTION[this.currentLanguage] : 
+            data === POPUP_HELP_TYPE.DRAGON_USE ? TEXT_HELP_DRAGON_USE_DESCRIPTION[this.currentLanguage] :
+            TEXT_HELP_CLEAR_LOCATION_DESCRIPTION[this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5, 0)
         descriptionText.position.set(0, 50)

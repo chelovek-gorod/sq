@@ -21,19 +21,21 @@ export const fonts = {
 }
 
 export const images = {
-    logo: 'logo.png',
-    game_title: 'game_title.png',
-    bg_main: 'main_bg.png',
-    popup_bg: 'popup_bg.png',
-    collection_bg: 'collection_bg.png',
+    logo: 'logo.webp',
+    game_title: 'game_title.webp',
+    bg_main: 'main_bg.webp',
+    popup_bg: 'popup_bg.webp',
+    collection_bg: 'collection_bg.webp',
 
-    map_static: 'map_static.png',
-    map_action: 'map_action.png',
+    map_static: 'map_static.webp',
+    map_action: 'map_action.webp',
 
-    star_radial_1: 'star_radial_a.png',
-    star_radial_2: 'star_radial_b.png',
-    star_radial_3: 'star_radial_c.png',
-    dpf_radial: 'dpf_radial.png',
+    star_radial_1: 'star_radial_a.webp',
+    star_radial_2: 'star_radial_b.webp',
+    star_radial_3: 'star_radial_c.webp',
+    dpf_radial: 'dpf_radial.webp',
+
+    help_CLEAR_LOCATION: 'help_CLEAR_LOCATION.webp',
 }
 export const atlases = {
     units: 'units.json',

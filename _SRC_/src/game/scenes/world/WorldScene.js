@@ -12,8 +12,7 @@ import { SCENE_NAME } from '../constants'
 import Popup from '../../popup/Popup'
 import { POPUP_HELP_TYPE, POPUP_TYPE } from '../../popup/constants'
 import { kill } from '../../../app/application'
-import { isCollectionHelpDone, isNeedHelp, world } from '../../state'
-import HelpFinger from '../../effects/HelpFinger'
+import { collectionHelpCount, world } from '../../state'
 
 export default class World extends Container {
     constructor() {
@@ -58,7 +57,7 @@ export default class World extends Container {
             }
             switch (stars) {
                 case 1 : 
-                    if (!isCollectionHelpDone) this.clickBook()
+                    if (collectionHelpCount > 0) this.clickBook()
                 break
 
                 case 2 : 
@@ -74,14 +73,24 @@ export default class World extends Container {
                 break
 
                 case 4 : 
+                    if (collectionHelpCount > 0) this.clickBook()
+                break
+
+                case 5 : 
                 setTimeout(
                     () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD}), 0
                 )
                 break
 
-                case 5 : 
+                case 6 : 
                 setTimeout(
                     () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_USE}), 0
+                )
+                break
+
+                case 7 : 
+                setTimeout(
+                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.CLEAR_LOCATION}), 0
                 )
                 break
             }

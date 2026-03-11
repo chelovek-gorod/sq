@@ -1442,9 +1442,7 @@
     }
   },
   "meta": {
-    "app": "http://free-tex-packer.com",
-    "version": "0.6.7",
-    "image": "units.png",
+    "image": "units.webp",
     "format": "RGBA8888",
     "size": {
       "w": 1884,

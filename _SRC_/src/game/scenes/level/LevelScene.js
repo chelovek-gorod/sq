@@ -11,13 +11,14 @@ import ShineBall from './ShineBall'
 import ShineBar from './ShineBar'
 import Collection from '../../popup/Collection'
 import FlyText from '../../effects/FlyText'
-import { isAdAvailable, isNeedHelp, levelIndex, isLevelFree, levelStateSparkAdd, levelStateSparkRemove, setLevelTask, levelState } from '../../state'
+import { isAdAvailable, isNeedHelp, levelIndex, isLevelFree, levelStateSparkAdd, levelStateSparkRemove, setLevelTask, levelState, availablePetLevel } from '../../state'
 import { LEVELS_FREE_LIST, LEVELS_LIST } from './levels'
 import { SCENE_NAME } from '../constants'
 import LevelTask from './LevelTask'
 import Popup from '../../popup/Popup'
 import { kill } from '../../../app/application'
 import { POPUP_AD_TYPE, POPUP_TYPE } from '../../popup/constants'
+import { TASK } from '../world/constants'
 
 export default class Level extends Container {
     constructor() {
@@ -48,8 +49,11 @@ export default class Level extends Container {
 
         this.shineBar = new ShineBar()
         this.addChild(this.shineBar)
-
-        this.field = new LevelField( level.map )
+        
+        const addPetLevel = isLevelFree || level.task.type !== TASK.NEW
+            ? null
+            : Math.max(0, (availablePetLevel + 1) - level.task.value)
+        this.field = new LevelField( level.map, addPetLevel )
         this.addChild(this.field)
 
         this.task = new LevelTask()

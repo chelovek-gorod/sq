@@ -1000,6 +1000,20 @@ export const TEXT_HELP_DRAGON_TITLE = {
     cs: 'Magický Drak'
 }
 
+export const TEXT_HELP_CLEAR_LOCATION_TITLE = {
+    en: 'Complete all tasks in the location',
+    ru: 'Выполняй все задания в локации',
+    tr: 'Konumdaki tüm görevleri tamamla',
+    es: 'Completa todas las tareas en la ubicación',
+    de: 'Erledige alle Aufgaben am Ort',
+    pt: 'Complete todas as tarefas no local',
+    fr: 'Terminez toutes les tâches dans le lieu',
+    pl: 'Wykonaj wszystkie zadania w lokacji',
+    it: 'Completa tutte le attività nella località',
+    nl: 'Voltooi alle taken in de locatie',
+    cs: 'Dokončete všechny úkoly v lokalitě'
+}
+
 export const TEXT_HELP_DRAGON_ADD_DESCRIPTION = {
     en: 'Collect 10 Glimmers to get the Dragon',
     ru: 'Собери 10 сияний и получи Дракона',
@@ -1026,6 +1040,20 @@ export const TEXT_HELP_DRAGON_USE_DESCRIPTION = {
     it: 'Il Drago può unirsi a qualsiasi Squinki',
     nl: 'De Draak kan met elke Squinki samenvoegen',
     cs: 'Drak se může spojit s jakýmkoli Squinki'
+}
+
+export const TEXT_HELP_CLEAR_LOCATION_DESCRIPTION = {
+    en: 'To unlock a new Squinky',
+    ru: 'Что бы открыть нового Сквинки',
+    tr: 'Yeni bir Squinky açmak için',
+    es: 'Para abrir un nuevo Squinky',
+    de: 'Um einen neuen Squinky zu öffnen',
+    pt: 'Para abrir um novo Squinky',
+    fr: 'Pour ouvrir un nouveau Squinky',
+    pl: 'Aby otworzyć nowego Squinky',
+    it: 'Per aprire un nuovo Squinky',
+    nl: 'Om een nieuwe Squinky te openen',
+    cs: 'Chcete-li otevřít nového Squinky'
 }
 
 export const TEXT_RESULT_WIN = {

@@ -9,7 +9,7 @@ import Splash from "../../effects/Splash";
 import Lock from "./Lock";
 import SparkParticles from "../../effects/SparkParticles";
 import Fireworks from "../../effects/Fireworks";
-import { isNeedHelp } from "../../state";
+import { availablePetLevel, isNeedHelp } from "../../state";
 import HelpFinger from "../../effects/HelpFinger";
 
 function getMapObject( code ) {
@@ -22,7 +22,7 @@ function getMapObject( code ) {
 }
 
 export default class LevelField extends Container {
-    constructor(levelMap) {
+    constructor(levelMap, addPetLevel) {
         super()
 
         this.ceils = new Container()
@@ -41,7 +41,7 @@ export default class LevelField extends Container {
         this.dragData = { pet: null, isDone: false }
         this.closestDragCeil = null
 
-        this.fill(levelMap)
+        this.fill(levelMap, addPetLevel)
 
         EventHub.on( events.dragging, this.dragging, this )
         EventHub.on( events.addFireworks, this.addFireworks, this )
@@ -60,7 +60,7 @@ export default class LevelField extends Container {
         }
     }
 
-    fill(levelMap) {
+    fill(levelMap, addPetLevel) {
         const ceilsMap = new Map()
     
         const halfWidth = CEIL_DATA.width * 0.5
@@ -89,7 +89,11 @@ export default class LevelField extends Container {
                         this.sky.addChild( ceil.pet )
                     }
                     if (typeof object === 'number') {
-                        ceil.pet = new PetToken( object , ceil )
+                        let level = object
+                        if (addPetLevel !== null && object !== 51) {
+                            level = Math.min(availablePetLevel, object + addPetLevel)
+                        }
+                        ceil.pet = new PetToken( level , ceil )
                         this.pets.addChild( ceil.pet )
                     }
                     this.ceils.addChild( ceil )

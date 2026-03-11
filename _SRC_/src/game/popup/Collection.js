@@ -4,7 +4,7 @@ import { images, atlases } from "../../app/assets";
 import { showPopup } from "../../app/events";
 import HelpFinger from "../effects/HelpFinger";
 import { FIELD_OFFSET_Y, FIELD_OFFSET_X, LEVEL_PET, PLACE_PETS } from "../scenes/level/constants";
-import { availablePetLevel, collectionHelpDone, isCollectionHelpDone } from "../state";
+import { availablePetLevel, collectionHelpDone, collectionHelpCount } from "../state";
 import { POPUP_TYPE } from "./constants";
 
 const BG = {
@@ -108,9 +108,8 @@ class Pet extends Sprite {
     click() {
         showPopup({type: POPUP_TYPE.INFO, data: this.type})
 
-        if (!isCollectionHelpDone) {
+        if (collectionHelpCount > 0) {
             collectionHelpDone()
-            console.log(helpFinger)
             kill( helpFinger )
             helpFinger = null
         }
@@ -174,9 +173,10 @@ export default class Collection extends Container {
 
         for(let i = 1; i <= availablePetLevel; i++) this.addPet(i)
 
-        if (!isCollectionHelpDone) {
+        if (collectionHelpCount > 0) {
             helpFinger = new HelpFinger()
-            helpFinger.help(this.pets.children[0].x, this.pets.children[0].y)
+            const lastPet = this.pets.children[this.pets.children.length - 1]
+            helpFinger.help(lastPet.x, lastPet.y)
             this.container.addChild(helpFinger)
         }
     }

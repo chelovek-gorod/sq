@@ -1374,7 +1374,7 @@
     "finger_out" : ["finger_4", "finger_3", "finger_3", "finger_2", "finger_2", "finger_1"]
   },
   "meta": {
-    "image": "ui.png",
+    "image": "ui.webp",
     "format": "RGBA8888",
     "size": {
       "w": 1997,

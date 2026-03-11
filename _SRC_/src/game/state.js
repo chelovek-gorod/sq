@@ -8,9 +8,9 @@ export let isAdAvailable = true
 export let availablePetLevel = 1
 export let dragonPointIndex = 0
 export let isNeedHelp = true
-export let isCollectionHelpDone = false
+export let collectionHelpCount = 2
 export function collectionHelpDone() {
-    isCollectionHelpDone = true
+    collectionHelpCount = Math.max(0, collectionHelpCount - 1)
 }
 
 export let levelState = {
@@ -113,7 +113,6 @@ export function setStoredState( storedState ) {
     }
 
     isNeedHelp = world.length < 3
-    isCollectionHelpDone = !isNeedHelp
 }
 
 EventHub.on( events.globalGameReset, () => {
