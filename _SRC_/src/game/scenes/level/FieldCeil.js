@@ -7,7 +7,7 @@ import { CEIL_DATA, OBSTACLE, PET_STATE } from "./constants";
 import PetToken from "./PetToken";
 
 export default class FieldCeil extends Sprite {
-    constructor(x, y, place) {
+    constructor(x, y, place, field) {
         super( atlases.world.textures[place] )
         this.anchor.set(0.5)
         this.position.set(x, y)
@@ -15,6 +15,7 @@ export default class FieldCeil extends Sprite {
         this.scale.set(CEIL_DATA.scale)
 
         this.place = place
+        this.field = field
 
         // nearestCeils add in LevelField.js
         // this.nearestCeils = [] 
@@ -76,9 +77,9 @@ export default class FieldCeil extends Sprite {
         setTimeout( levelStateSparkRemove, 0 )
 
         if (this.pet === true || this.pet === null) {
-            this.parent.parent.addSplash( this )
-            this.pet = new PetToken( 51 , this )
-            this.parent.parent.pets.addChild( this.pet )
+            this.field.addSplash( this )
+            this.pet = new PetToken( 51 , this, this.field )
+            this.field.pets.addChild( this.pet )
             soundPlay(sounds.se_squinki_dragon)
             return
         }

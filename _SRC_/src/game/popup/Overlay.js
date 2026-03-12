@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 
-const maxAlpha = 0.5
+const maxAlpha = 0.7
 const showTime = 300
 const alphaSpeed = maxAlpha / showTime
 

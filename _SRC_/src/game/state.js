@@ -75,6 +75,8 @@ export let world = [
     [true, true, false],
     [true, true, false],
     [true, true, false],
+    [true, true, false],
+    [true, true, false],
     [false, false, false],
 ]
 

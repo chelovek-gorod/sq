@@ -3,7 +3,8 @@ import { kill, tickerAdd } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { EventHub, events, getTargetCloud } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import { levelStateSetTarget, levelStateTargetAnimationAdd, levelStateTargetAnimationRemove } from "../../state";
+import { levelState, levelStateSetTarget, levelStateTargetAnimationAdd, levelStateTargetAnimationRemove } from "../../state";
+import { TASK } from "../world/constants";
 import { CLOUDS_STATE, OBSTACLE } from "./constants";
 
 export default class Clouds extends Container {
@@ -194,9 +195,11 @@ export default class Clouds extends Container {
     clearClouds( isFull = false ) {
         if (isFull || this.state === CLOUDS_STATE.Clouds) {
             this.state = CLOUDS_STATE.Open
-            levelStateTargetAnimationAdd()
-            levelStateSetTarget()
-            getTargetCloud()
+            if (levelState.type === TASK.CLOUD) {
+                levelStateTargetAnimationAdd()
+                levelStateSetTarget()
+                getTargetCloud()
+            }
             this.ceil.pet = null
             soundPlay(sounds.se_clouds)
             return
@@ -258,7 +261,7 @@ export default class Clouds extends Container {
             this.alpha -= disappearStep
             this.scale.set( this.scale.x + disappearStep )
             if (this.alpha < 0) {
-                levelStateTargetAnimationRemove()
+                if (levelState.type === TASK.CLOUD) levelStateTargetAnimationRemove()
                 kill(this)
             }
         }

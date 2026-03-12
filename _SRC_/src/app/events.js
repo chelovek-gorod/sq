@@ -18,7 +18,6 @@ export const events = {
     showSparksShadow: 'showSparksShadow',
     addFireworks: 'addFireworks',
     addFlyText: 'addFlyText',
-    dragging: 'dragging',
     userDoStep: 'userDoStep',
     addShineBall: 'addShineBall',
     showLevelCards: 'showLevelCards',
@@ -76,9 +75,6 @@ export function addFireworks( data ) {
 }
 export function addFlyText( data ) {
     EventHub.emit( events.addFlyText, data )
-}
-export function dragging( dragData ) {
-    EventHub.emit( events.dragging, dragData )
 }
 export function userDoStep() {
     EventHub.emit( events.userDoStep )

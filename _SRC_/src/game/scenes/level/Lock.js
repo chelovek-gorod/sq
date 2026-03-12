@@ -3,7 +3,8 @@ import { kill, tickerAdd } from "../../../app/application"
 import { atlases, sounds } from "../../../app/assets"
 import { getTargetLock } from "../../../app/events"
 import { soundPlay } from "../../../app/sound"
-import { levelStateSetTarget, levelStateTargetAnimationAdd, levelStateTargetAnimationRemove } from "../../state";
+import { levelState, levelStateSetTarget, levelStateTargetAnimationAdd, levelStateTargetAnimationRemove } from "../../state";
+import { TASK } from "../world/constants"
 import { LOCKS_STATE, OBSTACLE } from "./constants"
 
 export default class Lock extends Container {
@@ -74,9 +75,11 @@ export default class Lock extends Container {
 
     open() {
         this.state = LOCKS_STATE.Open
-        levelStateTargetAnimationAdd()
-        levelStateSetTarget()
-        getTargetLock()
+        if (levelState.type === TASK.LOCK) {
+            levelStateTargetAnimationAdd()
+            levelStateSetTarget()
+            getTargetLock()
+        }
         this.ceil.pet = null
         soundPlay(sounds.se_lock)
     }
@@ -104,7 +107,7 @@ export default class Lock extends Container {
             this.alpha -= disappearStep
             this.scale.set( this.scale.x + disappearStep )
             if (this.alpha < 0) {
-                levelStateTargetAnimationRemove()
+                if (levelState.type === TASK.LOCK) levelStateTargetAnimationRemove()
                 kill(this)
             }
         }

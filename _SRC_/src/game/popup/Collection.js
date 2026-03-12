@@ -189,7 +189,7 @@ export default class Collection extends Container {
             screenData.width + FIELD_OFFSET_X * 2,
             screenData.height + FIELD_OFFSET_Y * 2
         )
-        this.overlay.fill({ color: 0x000000, alpha: 0.5 })
+        this.overlay.fill({ color: 0x000000, alpha: 0.7 })
 
         const scaleX = (screenData.width - BG.offset * 2) / BG.width
         const scaleY = (screenData.height - BG.offset * 2) / BG.height

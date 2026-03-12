@@ -59,10 +59,6 @@ export default class Level extends Container {
         this.task = new LevelTask()
         this.addChild(this.task)
 
-        this.collection = new Collection( this.clickBook.bind(this) )
-        this.collection.visible = false
-        this.addChild(this.collection)
-
         this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, this.clickSettings.bind(this) )
         this.settingsBtn.anchor.set(1, 0)
         this.helpBtn = new TapIcon( atlases.ui2.textures.help_icon, this.clickHelp.bind(this) )
@@ -74,7 +70,7 @@ export default class Level extends Container {
         this.restartBtn = new TapIcon( atlases.ui.textures.ui_restart, this.clickRestart.bind(this) )
         this.restartBtn.anchor.set(0, 1)
         
-        this.addChild(this.settingsBtn, this.helpBtn, this.bookBtn, this.restartBtn, this.homeBtn)
+        this.addChild(this.settingsBtn, this.helpBtn, this.restartBtn, this.homeBtn)
 
         this.isAdInLevel = isAdAvailable && !isNeedHelp
         if (this.isAdInLevel) {
@@ -94,6 +90,12 @@ export default class Level extends Container {
             this.checkAdTimeout = null
             this.userDoStep()
         }
+
+        this.collection = new Collection( this.clickBook.bind(this) )
+        this.collection.visible = false
+        this.addChild(this.collection)
+
+        this.addChild(this.bookBtn)
 
         this.popup = new Popup()
         this.addChild(this.popup)

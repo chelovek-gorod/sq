@@ -38,12 +38,11 @@ export default class LevelField extends Container {
             this.draggingPets
         )
 
-        this.dragData = { pet: null, isDone: false }
+        this.dragPet = null
         this.closestDragCeil = null
 
         this.fill(levelMap, addPetLevel)
 
-        EventHub.on( events.dragging, this.dragging, this )
         EventHub.on( events.addFireworks, this.addFireworks, this )
         tickerAdd(this)
 
@@ -79,7 +78,7 @@ export default class LevelField extends Container {
                 if (line[i] === '<') {
                     const place = PLACE_MAP[ line[i + 1] ]
                     const object = getMapObject( line[i + 3] + line[i + 4] )
-                    const ceil = new FieldCeil(xx, yy, place)
+                    const ceil = new FieldCeil(xx, yy, place, this)
                     if (object === OBSTACLE.Clouds) {
                         ceil.pet = new Clouds( ceil )
                         this.sky.addChild( ceil.pet )
@@ -93,7 +92,7 @@ export default class LevelField extends Container {
                         if (addPetLevel !== null && object !== 51) {
                             level = Math.min(availablePetLevel, object + addPetLevel)
                         }
-                        ceil.pet = new PetToken( level , ceil )
+                        ceil.pet = new PetToken( level , ceil, this )
                         this.pets.addChild( ceil.pet )
                     }
                     this.ceils.addChild( ceil )
@@ -150,8 +149,8 @@ export default class LevelField extends Container {
     }
     stopHelp() {
         if (this.helpFinger) {
-            this.helpFinger = null
             kill(this.helpFinger)
+            this.helpFinger = null
         }
     }
 
@@ -159,7 +158,7 @@ export default class LevelField extends Container {
         const pets = []
 
         for(let d = this.draggingPets.children.length - 1; d >= 0; d--) {
-            pets.push(this.pets.children[d].type)
+            pets.push(this.draggingPets.children[d].type)
         }
 
         for(let p = this.pets.children.length - 1; p >= 0; p--) {
@@ -174,38 +173,27 @@ export default class LevelField extends Container {
         return false
     }
 
-    dragging( dragData ) {
-        if (this.isNeedHideHelp && this.helpFinger) {
-            this.isNeedHideHelp = false
-            this.helpFinger.hide()
+    startDragging(pet) {
+        if (this.dragPet && this.dragPet !== pet) {
+            this.finishDragging(this.dragPet)
         }
-        // this.dragData.pet = dragData.pet
-        // this.dragData.isDone = dragData.isDone
+        this.dragPet = pet
+    }
+    endDragging(pet) {
+        if (this.dragPet !== pet) return
 
-        if (dragData.isDone) {
-            // Немедленно обрабатываем завершение перетаскивания
-            const pet = dragData.pet
-    
-            // Временно сохраняем питомца, чтобы getClosestDragCeil использовал его
-            this.dragData.pet = pet
-            const closest = this.getClosestDragCeil()
-    
-            if (closest) closest.highlightOff()
-            this.closestDragCeil = closest
-    
-            // Выполняем слияние или возврат
-            this.setDraggingPet()
-        } else {
-            this.dragData.pet = dragData.pet
-            this.dragData.isDone = false
-        }
+        const closest = this.getClosestDragCeil()
+        if (this.closestDragCeil) this.closestDragCeil.highlightOff()
+        this.closestDragCeil = closest
+
+        this.finishDragging(pet)
     }
 
     getClosestDragCeil() {
         let closestCell = null
         let minDistanceSq = Infinity
-        const petX = this.dragData.pet.x
-        const petY = this.dragData.pet.y
+        const petX = this.dragPet.x
+        const petY = this.dragPet.y
         for (let i = 0, len = this.ceils.children.length; i < len; i++) {
             const dx = petX - this.ceils.children[i].x
             const dy = petY - this.ceils.children[i].y
@@ -218,33 +206,39 @@ export default class LevelField extends Container {
         }
 
         if (minDistanceSq > CEIL_DATA.collideRadiusSq
-        || !closestCell.checkAvailable(this.dragData.pet.type)) return null
+        || !closestCell.checkAvailable(this.dragPet.type)) return null
         
         return closestCell
     }
 
-    setDraggingPet() {
+    finishDragging(dragPet) {
         if (isNeedHelp && this.helpFinger) setTimeout( () => this.setHelp(), 0 )
 
-        const dragPet = this.dragData.pet
-        const targetCeil = this.closestDragCeil
-        
-        this.dragData.pet = null
+        if (!dragPet || !dragPet.parent) return
+
+        // пересчёт closestCeil прямо здесь
+        const targetCeil = this.getClosestDragCeil() || null
+
+        this.dragPet = null
         this.closestDragCeil = null
-        
-        if (!dragPet) return
-        
+
         if (targetCeil) targetCeil.highlightOff()
 
-        if (targetCeil === null) return dragPet.returnToStart(false)
-        if (targetCeil.pet === dragPet) return dragPet.returnToStart(true)
+        if (targetCeil === null) {
+            dragPet.returnToStart(false)
+            return
+        }
+        if (targetCeil.pet === dragPet) {
+            dragPet.returnToStart(true)
+            return
+        }
+
         if (targetCeil.pet) {
             targetCeil.nearestCeils.forEach(c => c.checkClouds())
             dragPet.upgrade(targetCeil.pet.isShining, targetCeil.pet.type)
-            kill(targetCeil.pet)
             this.addSplash(targetCeil)
         }
-        
+
         dragPet.moveToCeil(targetCeil)
         setTimeout(userDoStep, 0)
     }
@@ -312,7 +306,7 @@ export default class LevelField extends Container {
     }
 
     tick() {
-        if (!this.dragData.pet) return
+        if (!this.dragPet) return
 
         const newClosestCeil = this.getClosestDragCeil()
         if (newClosestCeil !== this.closestDragCeil) {
@@ -321,14 +315,11 @@ export default class LevelField extends Container {
             
             this.closestDragCeil = newClosestCeil
         }
-
-        if (this.dragData.isDone) this.setDraggingPet()
     }
 
     kill() {
         this.sparks.kill()
         tickerRemove(this)
-        EventHub.off( events.dragging, this.dragging, this)
         EventHub.off( events.addFireworks, this.addFireworks, this )
         if (isNeedHelp) {
             EventHub.off( events.levelDone, this.stopHelp, this )

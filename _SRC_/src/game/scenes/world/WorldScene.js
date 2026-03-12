@@ -28,10 +28,6 @@ export default class World extends Container {
         this.fireflies = new FirefliesContainer()
         this.addChild(this.fireflies)
 
-        this.collection = new Collection( this.clickBook.bind(this) )
-        this.collection.visible = false
-        this.addChild(this.collection)
-
         this.searchBtn = new TapIcon( atlases.ui.textures.ui_search, this.clickSearch.bind(this) )
         this.searchBtn.anchor.set(0, 0)
         this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, this.clickHome.bind(this) )
@@ -41,10 +37,16 @@ export default class World extends Container {
         this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, this.clickSettings.bind(this) )
         this.settingsBtn.anchor.set(1, 0)
         
-        this.addChild(this.searchBtn, this.homeBtn, this.bookBtn, this.settingsBtn)
+        this.addChild(this.searchBtn, this.homeBtn, this.settingsBtn)
 
         this.levelCards = new LevelCards()
         this.addChild(this.levelCards)
+
+        this.collection = new Collection( this.clickBook.bind(this) )
+        this.collection.visible = false
+        this.addChild(this.collection)
+
+        this.addChild(this.bookBtn)
 
         this.popup = new Popup()
         this.addChild(this.popup)
