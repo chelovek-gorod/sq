@@ -1,4 +1,4 @@
-import { Container, Sprite, Ellipse, Graphics, ColorMatrixFilter } from "pixi.js";
+import { Container, Sprite, Ellipse, ColorMatrixFilter } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { addShineBall, addSpark, addFireworks, dragging, addFlyText,

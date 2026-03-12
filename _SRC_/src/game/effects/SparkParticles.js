@@ -1,4 +1,4 @@
-import { Particle, ParticleContainer } from "pixi.js";
+import { Particle, ParticleContainer, ColorMatrixFilter } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 import { atlases } from "../../app/assets";
 import { EventHub, events } from "../../app/events";
@@ -16,7 +16,7 @@ const STAR = {
     alphaStep: 0.0006,
     scaleStep: 0.0006,
     rotationSpeed: 0.0003,
-    alphaMax: 0.8,
+    alphaMax: 1.0,
 }
 
 let sparkIndex = Math.floor( Math.random() * 13 ) // 0...12

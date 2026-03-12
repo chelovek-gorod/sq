@@ -1,6 +1,6 @@
 import { Container, Sprite, DisplacementFilter } from "pixi.js";
 import { tickerAdd } from "../../app/application";
-import { images } from "../../app/assets";
+import { atlases } from "../../app/assets";
 
 const minScale = 0.5
 const maxScale = 1
@@ -11,8 +11,10 @@ export default class WinDisc extends Container {
     constructor() {
         super() 
 
-        this.DPFSprite = new Sprite(images.dpf_radial)
+        this.DPFSprite = new Sprite(atlases.ui2.textures.radial_dpf)
         this.DPFSprite.anchor.set(0.5)
+        this.DPFSprite.pivot.set(320, 320)
+        this.DPFSprite.scale.set(2)
         this.DPFSprite.texture.source.style.addressMode = 'repeat'
         this.addChild(this.DPFSprite)
 
@@ -22,21 +24,21 @@ export default class WinDisc extends Container {
         this.filteredContainer.filters = [this.DPFilter]
         this.addChild(this.filteredContainer)
 
-        this.starA = new Sprite(images.star_radial_3)
+        this.starA = new Sprite(atlases.ui2.textures.radial_star_a)
         this.starA.alpha = 0.7
         this.starA.anchor.set(0.5)
         this.starA.scale.set(startScales[0])
         this.starA.blendMode = 'add'
         this.starA.isScaleUp = false
 
-        this.starB = new Sprite(images.star_radial_2)
+        this.starB = new Sprite(atlases.ui2.textures.radial_star_b)
         this.starB.alpha = 0.7
         this.starB.anchor.set(0.5)
         this.starB.scale.set(startScales[1])
         this.starB.blendMode = 'add'
         this.starB.isScaleUp = true
 
-        this.starC = new Sprite(images.star_radial_1)
+        this.starC = new Sprite(atlases.ui2.textures.radial_star_c)
         this.starC.alpha = 0.7
         this.starC.anchor.set(0.5)
         this.starC.scale.set(startScales[2])

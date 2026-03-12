@@ -23,19 +23,13 @@ export const fonts = {
 export const images = {
     logo: 'logo.webp',
     game_title: 'game_title.webp',
+    
     bg_main: 'main_bg.webp',
     popup_bg: 'popup_bg.webp',
     collection_bg: 'collection_bg.webp',
 
     map_static: 'map_static.webp',
     map_action: 'map_action.webp',
-
-    star_radial_1: 'star_radial_a.webp',
-    star_radial_2: 'star_radial_b.webp',
-    star_radial_3: 'star_radial_c.webp',
-    dpf_radial: 'dpf_radial.webp',
-
-    help_CLEAR_LOCATION: 'help_CLEAR_LOCATION.webp',
 }
 export const atlases = {
     units: 'units.json',
@@ -45,11 +39,11 @@ export const atlases = {
     stars: 'color_stars.json',
 
     ui: 'ui.json',
+    ui2: 'ui2.json',
     shine_ui: 'shine_ui.json',
 
     world: 'world.json',
     map_dots: 'map_dots.json',
-
     smoke: 'smoke.json',
 }
 export const sounds = {

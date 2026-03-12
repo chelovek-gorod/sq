@@ -5,7 +5,7 @@ import { LEVELS_FREE_LIST, LEVELS_LIST } from "./scenes/level/levels"
 
 export let isAdAvailable = true
 
-export let availablePetLevel = 1
+export let availablePetLevel = 7 // 1
 export let dragonPointIndex = 0
 export let isNeedHelp = true
 export let collectionHelpCount = 2
@@ -67,7 +67,15 @@ export let world = [
     // only opened tasks
     // [0 / 1 / 2] - index -> point index;
     // 0/1/2 - index -> task index, false - not done; true - done;
-    [false, false, false], // first point open; tasks is not completed at first game launch
+    [true, true, false], // first point open; tasks is not completed at first game launch
+
+    [true, true, false],
+    [true, true, false],
+    [true, true, false],
+    [true, true, false],
+    [true, true, false],
+    [true, true, false],
+    [false, false, false],
 ]
 
 export function getStateData() {
@@ -112,7 +120,7 @@ export function setStoredState( storedState ) {
         }
     }
 
-    isNeedHelp = world.length < 3
+    isNeedHelp = checkNeedHelp()
 }
 
 EventHub.on( events.globalGameReset, () => {
@@ -136,7 +144,7 @@ EventHub.on( events.levelDone, (isDone) => {
     if(doneCount === 1) {
         world.push( [false, false, false] )
     }
-    isNeedHelp = world.length < 3
+    isNeedHelp = checkNeedHelp()
 
     world[pointIndex][taskIndex] = true
 
@@ -153,4 +161,16 @@ function isLastLevel() {
         return doneCount === 2
     }
     return false
+}
+
+function checkNeedHelp() {
+    if (world.length > 3) return false
+    let count = 0
+    for(let i = world.length - 1; i >= 0; i--) {
+        for(let t = world[i].length - 1; t >= 0; t--) {
+            count += +world[i][t]
+        }
+    }
+    // help if 1...4
+    return count < 5
 }

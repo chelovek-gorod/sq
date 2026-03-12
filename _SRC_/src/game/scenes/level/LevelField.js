@@ -179,8 +179,26 @@ export default class LevelField extends Container {
             this.isNeedHideHelp = false
             this.helpFinger.hide()
         }
-        this.dragData.pet = dragData.pet
-        this.dragData.isDone = dragData.isDone
+        // this.dragData.pet = dragData.pet
+        // this.dragData.isDone = dragData.isDone
+
+        if (dragData.isDone) {
+            // Немедленно обрабатываем завершение перетаскивания
+            const pet = dragData.pet
+    
+            // Временно сохраняем питомца, чтобы getClosestDragCeil использовал его
+            this.dragData.pet = pet
+            const closest = this.getClosestDragCeil()
+    
+            if (closest) closest.highlightOff()
+            this.closestDragCeil = closest
+    
+            // Выполняем слияние или возврат
+            this.setDraggingPet()
+        } else {
+            this.dragData.pet = dragData.pet
+            this.dragData.isDone = false
+        }
     }
 
     getClosestDragCeil() {

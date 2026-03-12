@@ -17,7 +17,7 @@ import { SCENE_NAME } from '../constants'
 import LevelTask from './LevelTask'
 import Popup from '../../popup/Popup'
 import { kill } from '../../../app/application'
-import { POPUP_AD_TYPE, POPUP_TYPE } from '../../popup/constants'
+import { POPUP_AD_TYPE, POPUP_HELP_TYPE, POPUP_TYPE } from '../../popup/constants'
 import { TASK } from '../world/constants'
 
 export default class Level extends Container {
@@ -65,6 +65,8 @@ export default class Level extends Container {
 
         this.settingsBtn = new TapIcon( atlases.ui.textures.ui_settings, this.clickSettings.bind(this) )
         this.settingsBtn.anchor.set(1, 0)
+        this.helpBtn = new TapIcon( atlases.ui2.textures.help_icon, this.clickHelp.bind(this) )
+        this.helpBtn.anchor.set(1, 0)
         this.bookBtn = new TapIcon( atlases.ui.textures.ui_book, this.clickBook.bind(this) )
         this.bookBtn.anchor.set(1, 1)
         this.homeBtn = new TapIcon( atlases.ui.textures.ui_home, this.clickHome.bind(this) )
@@ -72,7 +74,7 @@ export default class Level extends Container {
         this.restartBtn = new TapIcon( atlases.ui.textures.ui_restart, this.clickRestart.bind(this) )
         this.restartBtn.anchor.set(0, 1)
         
-        this.addChild(this.settingsBtn, this.bookBtn, this.homeBtn, this.restartBtn)
+        this.addChild(this.settingsBtn, this.helpBtn, this.bookBtn, this.restartBtn, this.homeBtn)
 
         this.isAdInLevel = isAdAvailable && !isNeedHelp
         if (this.isAdInLevel) {
@@ -117,9 +119,10 @@ export default class Level extends Container {
 
         this.shineBar.position.set(-screenData.centerX, -screenData.centerY)
         this.settingsBtn.position.set(screenData.centerX, -screenData.centerY)
+        this.helpBtn.position.set(screenData.centerX - 10, -screenData.centerY + 90)
         this.bookBtn.position.set(screenData.centerX, screenData.centerY)
         this.homeBtn.position.set(-screenData.centerX, screenData.centerY)
-        this.restartBtn.position.set(-screenData.centerX, screenData.centerY - 100)
+        this.restartBtn.position.set(-screenData.centerX + 10, screenData.centerY - 90)
         if (this.isAdInLevel) {
             this.sparksBtn.position.set(-screenData.centerX, -screenData.centerY + 110)
             this.dragonBtn.position.set(screenData.centerX, screenData.centerY - 100)
@@ -213,6 +216,14 @@ export default class Level extends Container {
 
     clickSettings() {
         showPopup({type: POPUP_TYPE.SETTINGS, data: null})
+    }
+    clickHelp() {
+        showPopup( {type: POPUP_TYPE.TASK, data: null} )
+        showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.PET_SPARKS})
+        showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.PET_BONUS})
+        showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD})
+        showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_USE})
+        showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.CLEAR_LOCATION})
     }
 
     clickSparksAd() {

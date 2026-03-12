@@ -11,5 +11,7 @@ export const POPUP_TYPE =  createEnum([
     'ERROR',
     'ALL_PETS'
 ])
-export const POPUP_HELP_TYPE =  createEnum(['DRAGON_ADD', 'DRAGON_USE', 'CLEAR_LOCATION'])
+export const POPUP_HELP_TYPE =  createEnum([
+    'DRAGON_ADD', 'DRAGON_USE', 'CLEAR_LOCATION', 'PET_SPARKS', 'PET_BONUS'
+])
 export const POPUP_AD_TYPE =  createEnum(['DRAGON', 'SPARKS'])

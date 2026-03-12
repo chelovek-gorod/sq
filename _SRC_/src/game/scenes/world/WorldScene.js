@@ -62,13 +62,13 @@ export default class World extends Container {
 
                 case 2 : 
                 setTimeout(
-                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_ADD}), 0
+                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.PET_SPARKS}), 0
                 )
                 break
 
                 case 3 : 
                 setTimeout(
-                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.DRAGON_USE}), 0
+                    () => showPopup({type: POPUP_TYPE.HELP, data: POPUP_HELP_TYPE.PET_BONUS}), 0
                 )
                 break
 

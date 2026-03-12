@@ -17,6 +17,10 @@ import { TEXT_AD_DESCRIPTION, TEXT_AD_TITLE, TEXT_ALL_PETS_DESCRIPTION, TEXT_ALL
     TEXT_HELP_CLEAR_LOCATION_DESCRIPTION,
     TEXT_HELP_CLEAR_LOCATION_TITLE,
     TEXT_HELP_DRAGON_ADD_DESCRIPTION, TEXT_HELP_DRAGON_TITLE, TEXT_HELP_DRAGON_USE_DESCRIPTION,
+    TEXT_HELP_PET_BONUS_DESCRIPTION,
+    TEXT_HELP_PET_BONUS_TITLE,
+    TEXT_HELP_PET_SPARKS_DESCRIPTION,
+    TEXT_HELP_PET_SPARKS_TITLE,
     TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
     TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
     TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
@@ -30,6 +34,8 @@ import { showRewardAdSDK } from "../storage"
 const BG_SIDE_SIZE = 800
 const BG_SIDE_OFFSET = 20
 const BG_SIZE = BG_SIDE_SIZE + BG_SIDE_OFFSET * 2
+
+const IMPORTANT_POPUP_TIMEOUT = 0
 
 function findPetPlace(petName) {
     for (const [place, pets] of Object.entries(PLACE_PETS)) {
@@ -255,6 +261,8 @@ export default class Popup extends Container {
         }
 
         this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+        this.closeButton.setActive(false)
+        setTimeout( () => this.closeButton.setActive(true), IMPORTANT_POPUP_TIMEOUT )
     }
 
     setTaskImageNEW() {
@@ -273,29 +281,47 @@ export default class Popup extends Container {
     }
 
     fillHelp(data) {
-        this.title.text = data === POPUP_HELP_TYPE.CLEAR_LOCATION
-            ? TEXT_HELP_CLEAR_LOCATION_TITLE[this.currentLanguage]
-            : TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
-        
-        const texture =
-            data === POPUP_HELP_TYPE.DRAGON_ADD ? atlases.ui.textures['help_ADD_DRAGON'] : 
-            data === POPUP_HELP_TYPE.DRAGON_USE ? atlases.ui.textures['help_USE_DRAGON'] :
-            images.help_CLEAR_LOCATION
+        let texture = null
+        let description = null
+        if (data === POPUP_HELP_TYPE.DRAGON_ADD) {
+            this.title.text = TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
+            texture = atlases.ui.textures.help_ADD_DRAGON
+            description = TEXT_HELP_DRAGON_ADD_DESCRIPTION[this.currentLanguage]
+        }
+        else if (data === POPUP_HELP_TYPE.DRAGON_USE) {
+            this.title.text = TEXT_HELP_DRAGON_TITLE[this.currentLanguage]
+            texture = atlases.ui.textures.help_USE_DRAGON
+            description = TEXT_HELP_DRAGON_USE_DESCRIPTION[this.currentLanguage]
+        }
+        else if (data === POPUP_HELP_TYPE.PET_SPARKS) {
+            this.title.text = TEXT_HELP_PET_SPARKS_TITLE[this.currentLanguage]
+            texture = atlases.ui2.textures.help_PET_SPARKS
+            description = TEXT_HELP_PET_SPARKS_DESCRIPTION[this.currentLanguage]
+        }
+        else if (data === POPUP_HELP_TYPE.PET_BONUS) {
+            this.title.text = TEXT_HELP_PET_BONUS_TITLE[this.currentLanguage]
+            texture = atlases.ui2.textures.help_PET_BONUS
+            description = TEXT_HELP_PET_BONUS_DESCRIPTION[this.currentLanguage]
+        }
+        else if (data === POPUP_HELP_TYPE.CLEAR_LOCATION) {
+            this.title.text = TEXT_HELP_CLEAR_LOCATION_TITLE[this.currentLanguage]
+            texture = atlases.ui2.textures.help_CLEAR_LOCATION
+            description = TEXT_HELP_CLEAR_LOCATION_DESCRIPTION[this.currentLanguage]
+        }
+
         const image = new Sprite( texture )
         image.anchor.set(0.5)
-        image.position.set(0, -50)
+        image.position.set(0, 20)
         this.content.addChild(image)
 
-        const description =
-            data === POPUP_HELP_TYPE.DRAGON_ADD ? TEXT_HELP_DRAGON_ADD_DESCRIPTION[this.currentLanguage] : 
-            data === POPUP_HELP_TYPE.DRAGON_USE ? TEXT_HELP_DRAGON_USE_DESCRIPTION[this.currentLanguage] :
-            TEXT_HELP_CLEAR_LOCATION_DESCRIPTION[this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5, 0)
-        descriptionText.position.set(0, 50)
+        descriptionText.position.set(0, 150)
         this.content.addChild(descriptionText)
 
         this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+        this.closeButton.setActive(false)
+        setTimeout( () => this.closeButton.setActive(true), IMPORTANT_POPUP_TIMEOUT )
     }
 
     fillInfo(type) {

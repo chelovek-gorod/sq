@@ -29,6 +29,7 @@ export let styles = {
     button: null,
     buttonHover: null,
     shineCounter: null,
+    shineAddText: null,
     taskCount: null,
     cardCount: null,
     popupTitle: null,
@@ -74,8 +75,21 @@ export function initFontStyles() {
         align: 'center',
     
         dropShadow: true,
-        dropShadowColor: '#770077',
-        dropShadowBlur: 6,
+        dropShadowColor: '#550055',
+        dropShadowBlur: 5,
+        dropShadowAngle: 0,
+        dropShadowDistance: 0,
+    })
+
+    styles.shineAddText = new TextStyle({
+        fontFamily: fonts.BSRegular,
+        fontSize: 36,
+        fill: '#ffffff',
+        align: 'center',
+    
+        dropShadow: true,
+        dropShadowColor: '#550055',
+        dropShadowBlur: 5,
         dropShadowAngle: 0,
         dropShadowDistance: 0,
     })

@@ -4,7 +4,7 @@ import { atlases, sounds } from "../../../app/assets";
 import { addSpark, startScene } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum, removeCursorPointer, setCursorPointer } from "../../../utils/functions";
-import { setLevelTask } from "../../state";
+import { setLevelTask, world } from "../../state";
 import { SCENE_NAME } from "../constants";
 import { FREE_POINTS } from "./constants";
 
@@ -27,7 +27,7 @@ export default class FreePoint extends Container {
         this.isHoveredNow = false
 
         this.index = index
-        this.isAvailable = true
+        this.isAvailable = (((index + 1) * 5) + index * 2) < world.length
 
         this.base = new Sprite( atlases.world.textures.free_base )
         this.base.anchor.set(0.5)

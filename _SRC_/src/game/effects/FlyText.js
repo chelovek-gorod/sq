@@ -5,7 +5,7 @@ import { styles } from "../../app/styles";
 export default class FlyText extends Container {
     constructor(text, x, y) {
         super() 
-        this.text = new Text({text, style: styles.shineCounter})
+        this.text = new Text({text, style: styles.shineAddText})
         this.text.anchor.set(0.5, 2)
         this.addChild(this.text)
 

@@ -1000,6 +1000,34 @@ export const TEXT_HELP_DRAGON_TITLE = {
     cs: 'Magický Drak'
 }
 
+export const TEXT_HELP_PET_BONUS_TITLE = {
+    en: 'More Shine',
+    ru: 'Больше Сияния',
+    tr: 'Daha Fazla Parlaklık',
+    es: 'Más Brillo',
+    de: 'Mehr Glanz',
+    pt: 'Mais Brilho',
+    fr: "Plus d'Éclat",
+    pl: 'Więcej Blasku',
+    it: 'Più Splendore',
+    nl: 'Meer Glans',
+    cs: 'Více Záře'
+}
+
+export const TEXT_HELP_PET_SPARKS_TITLE = {
+    en: 'Shiny Squinky',
+    ru: 'Сияющий Сквинки',
+    tr: 'Parlak Squinky',
+    es: 'Squinky Brillante',
+    de: 'Glänzender Squinky',
+    pt: 'Squinky Brilhante',
+    fr: 'Squinky Scintillant',
+    pl: 'Lśniący Squinky',
+    it: 'Squinky Splendente',
+    nl: 'Glanzende Squinky',
+    cs: 'Zářící Squinky'
+}
+
 export const TEXT_HELP_CLEAR_LOCATION_TITLE = {
     en: 'Complete all tasks in the location',
     ru: 'Выполняй все задания в локации',
@@ -1040,6 +1068,34 @@ export const TEXT_HELP_DRAGON_USE_DESCRIPTION = {
     it: 'Il Drago può unirsi a qualsiasi Squinki',
     nl: 'De Draak kan met elke Squinki samenvoegen',
     cs: 'Drak se může spojit s jakýmkoli Squinki'
+}
+
+export const TEXT_HELP_PET_BONUS_DESCRIPTION = {
+    en: 'Get more Shine points by merging Shiny Squinkies!',
+    ru: 'Получай больше очков сияния, соединяя сияющих Сквинки!',
+    tr: 'Parlak Squinky\'leri birleştirerek daha fazla Parlaklık puanı kazan!',
+    es: '¡Obtén más puntos de Brillo fusionando Squinkies Brillantes!',
+    de: 'Erhalte mehr Glanzpunkte durch das Verschmelzen glänzender Squinkies!',
+    pt: 'Ganhe mais pontos de Brilho ao fundir Squinkies Brilhantes!',
+    fr: 'Obtenez plus de points d\'Éclat en fusionnant des Squinkies Scintillants!',
+    pl: 'Zdobądź więcej punktów Blasku, łącząc Lśniące Squinkies!',
+    it: 'Ottieni più punti Splendore fondendo Squinkies Splendenti!',
+    nl: 'Krijg meer Glanspunten door Glanzende Squinkies te fuseren!',
+    cs: 'Získejte více bodů Záře slučováním Zářících Squinkies!'
+}
+
+export const TEXT_HELP_PET_SPARKS_DESCRIPTION = {
+    en: 'If a Squinky stands on its native biome, it becomes Shiny!',
+    ru: 'Если Сквинки стоит на родном биоме - он становится Сияющим!',
+    tr: 'Bir Squinky kendi biyomunda durursa Parlak hale gelir!',
+    es: 'Si un Squinky está en su bioma nativo, se vuelve Brillante.',
+    de: 'Wenn ein Squinky in seinem Heimat-Biom steht, wird er glänzend.',
+    pt: 'Se um Squinky estiver em seu bioma nativo, ele se torna Brilhante.',
+    fr: 'Si un Squinky se trouve sur son biome d\'origine, il devient Scintillant.',
+    pl: 'Jeśli Squinky stoi na swoim rodzimym biomie, staje się Lśniący.',
+    it: 'Se uno Squinky si trova nel suo bioma nativo, diventa Splendente.',
+    nl: 'Als een Squinky in zijn eigen bioom staat, wordt hij Glanzend.',
+    cs: 'Pokud Squinky stojí na svém rodném biomu, stane se Zářícím.'
 }
 
 export const TEXT_HELP_CLEAR_LOCATION_DESCRIPTION = {
