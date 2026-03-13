@@ -1,5 +1,5 @@
 const MOCK_LANGUAGE = 'ru'
-const MOCK_STORAGE_KEY = 'test-25'
+const MOCK_STORAGE_KEY = 'test-30'
 
 /**
  * Моковый SDK для тестирования

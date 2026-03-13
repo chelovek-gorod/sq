@@ -46,10 +46,8 @@ export default class LevelField extends Container {
         EventHub.on( events.addFireworks, this.addFireworks, this )
         tickerAdd(this)
 
-        this.isNeedHideHelp = false
         this.helpFinger = null
         if (isNeedHelp) {
-            this.isNeedHideHelp = true
             this.helpFinger = new HelpFinger()
             this.addChild( this.helpFinger )
             this.setHelp()
@@ -126,26 +124,32 @@ export default class LevelField extends Container {
     }
 
     setHelp() {
-        if (!this.helpFinger || this.pets.children.length < 2) return
+        if (!this.helpFinger) return
+        if (this.pets.children.length < 2) return this.helpFinger.hide()
 
         const sameIndexes = []
-        const seenTypes = new Map()
+        const seenTypes = new Map() // key: TYPE, value: INDEX
         for (let i = this.pets.children.length - 1; i >= 0; i--) {
             const currentType = this.pets.children[i].type
+            if (currentType === 51) {
+                sameIndexes.push(i)
+                sameIndexes.push(i - 1 < 0 ? i + 1 : i - 1)
+                break
+            }
+
             if (seenTypes.has(currentType)) {
                 sameIndexes.push(seenTypes.get(currentType), i)
                 break
-            } else {
-                seenTypes.set(currentType, i)
             }
+            
+            seenTypes.set(currentType, i)
         }
 
-        if (sameIndexes.length < 2) return
+        if (sameIndexes.length < 2) return this.helpFinger.hide()
 
         const p1 = {...this.pets.children[ sameIndexes[0] ].position}
         const p2 = {...this.pets.children[ sameIndexes[1] ].position}
         this.helpFinger.help(p1._x, p1._y, p2._x, p2._y)
-        this.isNeedHideHelp = true
     }
     stopHelp() {
         if (this.helpFinger) {

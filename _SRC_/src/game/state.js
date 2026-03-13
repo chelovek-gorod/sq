@@ -77,6 +77,8 @@ export let world = [
     [true, true, false],
     [true, true, false],
     [true, true, false],
+    [true, true, false],
+    [true, true, false],
     [false, false, false],
 ]
 
@@ -166,7 +168,7 @@ function isLastLevel() {
 }
 
 function checkNeedHelp() {
-    if (world.length > 3) return false
+    if (world.length > 2) return false
     let count = 0
     for(let i = world.length - 1; i >= 0; i--) {
         for(let t = world[i].length - 1; t >= 0; t--) {

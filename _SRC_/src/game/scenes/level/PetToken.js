@@ -1,4 +1,4 @@
-import { Container, Sprite, Ellipse, ColorMatrixFilter } from "pixi.js";
+import { Container, Sprite, Ellipse } from "pixi.js";
 import { tickerAdd, tickerRemove, kill } from "../../../app/application";
 import { atlases, sounds } from "../../../app/assets";
 import { addShineBall, addSpark, addFireworks, addFlyText,
@@ -23,16 +23,6 @@ export default class PetToken extends Container {
         super()
         isOnDrag = false
         this.field = field
-
-        // Фильтр яркости
-        this.filter = new ColorMatrixFilter()
-        this.filterDuration = 300
-        this.filterMax = 1.2
-        this.filterValue = 1
-        this.filterStep = (this.filterMax - 1) / this.filterDuration
-        this.filter.brightness(this.filterValue, false)
-        this.filterAdd = 0
-        this.filters = [this.filter]
 
         this.type = type
         this.ceil = ceil
@@ -64,13 +54,21 @@ export default class PetToken extends Container {
         this.image.scale.set(PET_DATA.scale)
         this.addChild(this.image)
 
+        // подкраска
+        this.filterImage = null
+        this.filterDuration = 300
+        this.filterAlphaMax = 0.3
+        this.filterScaleMax = 1.1
+        this.filterAlphaStep = this.filterAlphaMax / this.filterDuration
+        this.filterScaleStep = (this.filterScaleMax - 1) / this.filterDuration
+        this.filterAdd = 0
+
         this.hitArea = new Ellipse(0, -42, 100, 125)
 
         this.on('pointerdown', this.onDragStart, this)
         this.on('pointerup', this.onDragEnd, this)
         this.on('pointerupoutside', this.onDragEnd, this)
         this.on('globalpointermove', this.onDragMove, this)
-        window.addEventListener( 'pointerup', () => this.onDragEnd() )
 
         this.position.set(ceil.x, ceil.y)
         EventHub.on(events.blockDragging, this.blockDragging, this)
@@ -78,8 +76,22 @@ export default class PetToken extends Container {
         tickerAdd(this)
     }
 
-    filterOn() { this.filterAdd = 1 }
-    filterOff() { this.filterAdd = -1 }
+    filterOn() {
+        if (!this.filterImage) {
+            this.filterImage = new Sprite(this.image.texture)
+            this.filterImage.anchor.set(PET_DATA.anchor.x, PET_DATA.anchor.y)
+            this.filterImage.scale.set(PET_DATA.scale)
+            this.filterImage.blendMode = 'add'
+            this.filterImage.alpha = 0
+            this.addChild(this.filterImage)
+        }
+        this.filterAdd = 1
+    }
+    
+
+    filterOff() {
+        this.filterAdd = -1
+    }
 
     startSwing(steps = 1) {
         if (this.state === PET_STATE.DRAGGING) return
@@ -103,6 +115,9 @@ export default class PetToken extends Container {
     onDragStart(event) {
         if (this.state === PET_STATE.DRAGGING || isOnDrag) return
         isOnDrag = true
+
+        this._onWindowPointerUp = () => this.onDragEnd()
+        window.addEventListener('pointerup', this._onWindowPointerUp)
 
         this.state = PET_STATE.DRAGGING
         this.swingSteps = 0
@@ -130,6 +145,11 @@ export default class PetToken extends Container {
         if (this.state !== PET_STATE.DRAGGING) return
         isOnDrag = false
 
+        if (this._onWindowPointerUp) {
+            window.removeEventListener('pointerup', this._onWindowPointerUp)
+            this._onWindowPointerUp = null
+        }
+
         this.parent.parent.pets.addChild(this)
         this.state = PET_STATE.EMPTY
         this.shadow.position.set(0, 0)
@@ -154,6 +174,8 @@ export default class PetToken extends Container {
             if (levelState.turns === 0) blockDragging()
             setTimeout(getPlayerTurn, 0)
         }
+
+        if (this.filterImage) this.filterImage.texture = this.image.texture
 
         const isDragonsMerge = ceil.pet && ceil.pet.type === 51 && this.type === 51
 
@@ -211,83 +233,6 @@ export default class PetToken extends Container {
         if (this.isShining) {
             setTimeout( soundPlay, this.isUpgraded ? 300 : 0, sounds.se_squinki_sparks )
         }
-
-        /*
-        const isDragonsMerge = ceil.pet && ceil.pet.type === 51 && this.type === 51
-
-        // 1. вернуть из draggingPets
-        if (this.parent === this.field.draggingPets) {
-            this.field.draggingPets.removeChild(this)
-            this.field.pets.addChild(this)
-        }
-
-        // 2. убить pet на целевой клетке, если есть
-        if (ceil.pet && ceil.pet !== this) {
-            if (isDragonsMerge) {
-                levelStateSparkAdd()
-                addShineBall({ x: this.x, y: this.y, points: 5 })
-                addFlyText({ text: "+5", x: this.x, y: this.y })
-                addFireworks({ x: this.x, y: this.y })
-                kill(ceil.pet)
-                kill(this)
-                ceil.pet = null
-                return
-            } else {
-                kill(ceil.pet)
-                ceil.pet = null
-            }
-        }
-
-        // 3. отвязать от старой клетки
-        if (this.ceil && this.ceil.pet === this) this.ceil.pet = null
-
-        // 4. привязка к новой клетке
-        this.ceil = ceil
-        this.ceil.pet = this
-        this.position.set(this.ceil.x, this.ceil.y)
-
-        // 5. события хода
-        levelStateSetTurn()
-        if (levelState.turns === 0) blockDragging()
-        setTimeout(getPlayerTurn, 0)
-
-        // 6. апгрейд
-        let score = 1 + +this.isOtherPetShine + +this.isShining
-        if (this.isUpgraded) {
-            levelStateSparkAdd()
-            addShineBall({ x: this.x, y: this.y, points: score })
-
-            this.isUpgraded = false
-            this.isOtherPetShine = false
-
-            if (!isDragonsMerge) {
-                this.type++
-                this.image.texture = atlases.units.textures[LEVEL_PET[this.type]]
-            }
-
-            score += this.type > availablePetLevel ? 2 : 0
-            addFlyText({ text: "+" + score, x: this.x, y: this.y })
-
-            if (this.type > availablePetLevel) {
-                levelStateSparkAdd()
-                addShineBall({ x: this.x, y: this.y, points: 2 })
-                soundPlay(sounds.se_squinki_max)
-                addFireworks({ x: this.x, y: this.y })
-
-                getTargetPet()
-                kill(this)
-                return
-            }
-
-            soundPlay(sounds[get_merge_sound()])
-        }
-
-        soundPlay(sounds.se_squinki_back)
-
-        // 7. свечения
-        this.isShining = PLACE_PETS[this.ceil.place].includes(LEVEL_PET[this.type])
-        if (this.isShining) soundPlay(sounds.se_squinki_sparks) // setTimeout(soundPlay, 300, sounds.se_squinki_sparks)
-        */
     }
 
     upgrade(isOtherPetShine, otherType) {
@@ -310,17 +255,26 @@ export default class PetToken extends Container {
         const delta = time.deltaMS
         if (this.isShining && Math.random() > 0.9) addSpark({ x: this.x, y: this.y, type: this.ceil.place })
 
-        if (this.filterAdd !== 0) {
-            const fStep = this.filterStep * delta
+        if (this.filterImage && this.filterAdd !== 0) {
+            const fStep = this.filterAlphaStep * delta
+            const sStep = this.filterScaleStep * delta
+            let scale = this.scale.x
             if (this.filterAdd > 0) {
-                this.filterValue = Math.min(this.filterMax, this.filterValue + fStep)
-                if (this.filterValue === this.filterMax) this.filterAdd = 0
+                this.filterImage.alpha = Math.min(this.filterAlphaMax, this.filterImage.alpha + fStep)
+                scale = Math.min(this.filterScaleMax, scale + sStep)
+                if (this.filterImage.alpha === this.filterAlphaMax) this.filterAdd = 0
+                this.scale.set(scale)
             } else {
-                this.filterValue = Math.max(1, this.filterValue - fStep)
-                if (this.scale.x === 1) this.filterAdd = 0
+                this.filterImage.alpha = Math.max(0, this.filterImage.alpha - fStep)
+                scale = Math.max(1, scale - sStep)
+                if (this.filterImage.alpha === 0) {
+                    this.filterAdd = 0
+                    this.removeChild(this.filterImage)
+                    this.filterImage.destroy({ children: true })
+                    this.filterImage = null
+                    this.scale.set(1)
+                } else this.scale.set(scale)
             }
-            this.filter.brightness(this.filterValue, false)
-            this.scale.set(1 + (this.filterValue - 1) * 0.5)
         }
 
         switch (this.state) {
@@ -360,7 +314,10 @@ export default class PetToken extends Container {
 
     kill() {
         tickerRemove(this)
-        window.removeEventListener( 'pointerup', () => this.onDragEnd() )
+        if (this._onWindowPointerUp) {
+            window.removeEventListener('pointerup', this._onWindowPointerUp)
+            this._onWindowPointerUp = null
+        }
         EventHub.off(events.blockDragging, this.blockDragging, this)
         this.destroy({ children: true })
     }
