@@ -847,7 +847,7 @@ export const TEXT_SQUINKI_LEVEL = {
     nl: 'Level',
     cs: 'Úroveň'
 }
-export const TEXT_SQUINKI_BIOM = {
+export const TEXT_SQUINKI_BIOME = {
     en: 'Native biome:',
     ru: 'Родной биом:',
     tr: 'Doğal ortam:',

@@ -22,7 +22,7 @@ import { TEXT_AD_DESCRIPTION, TEXT_AD_TITLE, TEXT_ALL_PETS_DESCRIPTION, TEXT_ALL
     TEXT_HELP_PET_SPARKS_DESCRIPTION,
     TEXT_HELP_PET_SPARKS_TITLE,
     TEXT_PLACE, TEXT_RESULT_LOSE, TEXT_RESULT_NEW, TEXT_RESULT_WIN,
-    TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOM, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
+    TEXT_SETTINGS, TEXT_SETTING_TYPE, TEXT_SQUINKI_BIOME, TEXT_SQUINKI_LEVEL, TEXT_SQUINKI_NAME,
     TEXT_TASK_DESCRIPTION, TEXT_TASK_TITLE, TEXT_TASK_TURNS } from "../localText"
 import LoseRain from "../effects/LoseRain"
 import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume, soundGetState, soundGetVolume, soundOff, soundOn, soundPlay, soundSetVolume } from "../../app/sound"
@@ -200,6 +200,8 @@ export default class Popup extends Container {
         // data = {type: TASK.NEW, value: 2, turns: 0, levelIndex: 0}
 
         this.title.text = TEXT_TASK_TITLE[levelState.type][this.currentLanguage]
+        const imageY = (levelState.turns < Infinity ? -50 : -25)
+        const descriptionY = (levelState.turns < Infinity ? 50 : 100)
 
         if (levelState.type === TASK.NEW) {
             this.setTaskImageNEW()
@@ -209,40 +211,40 @@ export default class Popup extends Container {
             const description = TEXT_TASK_DESCRIPTION[TASK.NEW][this.currentLanguage](petLocal)
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
-            descriptionText.position.set(0, 50)
+            descriptionText.position.set(0, descriptionY)
             this.content.addChild(descriptionText)
         } else if (levelState.type === TASK.CLOUD) {
             const image = new Sprite( atlases.ui.textures['task_' + TASK.CLOUD] )
             image.anchor.set(0.5)
-            image.position.set(0, -50)
+            image.position.set(0, imageY)
             this.content.addChild(image)
 
             const description = TEXT_TASK_DESCRIPTION[TASK.CLOUD][this.currentLanguage]
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
-            descriptionText.position.set(0, 50)
+            descriptionText.position.set(0, descriptionY)
             this.content.addChild(descriptionText)
         } else if (levelState.type === TASK.LOCK) {
             const image = new Sprite( atlases.ui.textures['task_' + TASK.LOCK] )
             image.anchor.set(0.5)
-            image.position.set(0, -50)
+            image.position.set(0, imageY)
             this.content.addChild(image)
 
             const description = TEXT_TASK_DESCRIPTION[TASK.LOCK][this.currentLanguage]
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
-            descriptionText.position.set(0, 50)
+            descriptionText.position.set(0, descriptionY)
             this.content.addChild(descriptionText)
         } else if (levelState.type === TASK.FREE) {
             const image = new Sprite( atlases.ui.textures['task_' + TASK.FREE] )
             image.anchor.set(0.5)
-            image.position.set(0, -50)
+            image.position.set(0, imageY)
             this.content.addChild(image)
 
             const description = TEXT_TASK_DESCRIPTION[TASK.FREE][this.currentLanguage]
             const descriptionText = new Text({text: description, style: styles.popupDescription})
             descriptionText.anchor.set(0.5, 0)
-            descriptionText.position.set(0, 50)
+            descriptionText.position.set(0, descriptionY)
             this.content.addChild(descriptionText)
         }
 
@@ -269,14 +271,14 @@ export default class Popup extends Container {
         const imageA = new Sprite( atlases.units.textures[LEVEL_PET[availablePetLevel]] )
         imageA.anchor.set(0.5)
         imageA.scale.set(0.55)
-        imageA.position.set(-265, -60)
+        imageA.position.set(-265, (levelState.turns < Infinity ? -60 : -35))
         const imageB = new Sprite( atlases.units.textures[LEVEL_PET[availablePetLevel]] )
         imageB.anchor.set(0.5)
         imageB.scale.set(0.55)
-        imageB.position.set(0, -60)
+        imageB.position.set(0, (levelState.turns < Infinity ? -60 : -35))
         const imageC = new Sprite( atlases.ui.textures['task_' + TASK.NEW] )
         imageC.anchor.set(0.5)
-        imageC.position.set(0, -50)
+        imageC.position.set(0, (levelState.turns < Infinity ? -50 : -25))
         this.content.addChild(imageA, imageB, imageC)
     }
 
@@ -346,7 +348,7 @@ export default class Popup extends Container {
         petImage.position.set(0, -30)
         this.content.addChild(petImage)
 
-        const description = TEXT_SQUINKI_BIOM[this.currentLanguage] 
+        const description = TEXT_SQUINKI_BIOME[this.currentLanguage] 
             + ' ' + TEXT_PLACE[place][this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5)
