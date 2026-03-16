@@ -62,7 +62,7 @@ export default class FieldCeil extends Sprite {
     highlightOff() {
         if (!this.isHighlighted) return
         
-        if (this.pet) this.pet.filterOff()
+        if (this.pet && this.pet.filterOff) this.pet.filterOff()
         this.isHighlighted = false
         this.targetScale = CEIL_DATA.scale
         this.targetAlpha = CEIL_DATA.alpha

@@ -560,7 +560,7 @@ export const LEVELS_LIST = [
         ],
         // if type = NEW -> value = максимально возможный итоговый PET LEVEL
         // value - какой PET LEVEL можно получить из карты максимум
-        task: {type: TASK.NEW, value: 10, turns: 20},
+        task: {type: TASK.NEW, value: 9, turns: 18},
         bg: BG_GRADIENT_NAME.lilac
     },
 
@@ -627,7 +627,7 @@ export const LEVELS_LIST = [
             '......<J-51><J-51>......',
             '.........<F-XX>.........',
         ],
-        task: {type: TASK.LOCK, value: 3, turns: 24},
+        task: {type: TASK.LOCK, value: 3, turns: 26},
         bg: BG_GRADIENT_NAME.Gold
     },
 
@@ -656,7 +656,7 @@ export const LEVELS_LIST = [
             '<A-02>...<J-51>...<A-02>',
             '...<A-01>......<A-01>...',
             '......<A-02><A-02>......',
-            '.........<A-01>.........',
+            '.........<A-05>.........',
         ],
         // if type = NEW -> value = максимально возможный итоговый PET LEVEL
         // value - какой PET LEVEL можно получить из карты максимум
