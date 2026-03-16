@@ -17,8 +17,10 @@ const alphaSpeed = 0.0006
 const STATE = createEnum(['IN_A', 'OUT_A', 'IN_B', 'OUT_B'])
 
 export default class FreePoint extends Container {
-    constructor( index ) { 
+    constructor( index, map ) { 
         super()
+
+        this.map = map
 
         this.position.set( FREE_POINTS[index].x, FREE_POINTS[index].y )
         this.scale.set( minScale )
@@ -61,7 +63,7 @@ export default class FreePoint extends Container {
             this.addChild(this.clickPoint)
 
             setCursorPointer(this.clickPoint)
-            this.clickPoint.on('pointerdown', this.click, this)
+            this.clickPoint.on('pointerup', this.click, this)
             this.clickPoint.on('pointerover', this.onHover, this)
             this.clickPoint.on('pointerout', this.onOut, this)
 
@@ -70,13 +72,19 @@ export default class FreePoint extends Container {
     }
 
     click() {
+        setTimeout( () => this.getClick(), 0 )
+    }
+
+    getClick() {
+        if (!this.map.isChildrenInteractive) return
+
         setLevelTask( this.index, true )
         startScene( SCENE_NAME.Level )
         soundPlay(sounds.se_click)
     }
 
     onHover() {
-        if (this.isOnHover) return
+        if (this.isOnHover || !this.map.isChildrenInteractive) return
 
         this.isOnHover = true
         this.isHoveredNow = true

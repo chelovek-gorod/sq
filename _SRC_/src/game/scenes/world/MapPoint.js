@@ -12,8 +12,10 @@ const maxScale = 1.1
 const scaleStep = 0.0006
 
 export default class MapPoint extends Container {
-    constructor( index ) { 
+    constructor( index, map ) { 
         super()
+
+        this.map = map
 
         this.position.set( POINTS[index].x, POINTS[index].y )
         this.scale.set( minScale )
@@ -45,7 +47,7 @@ export default class MapPoint extends Container {
         if (doneCount < 3) {
             this.isAvailable = true
             setCursorPointer(this)
-            this.on('pointerdown', this.click, this)
+            this.on('pointerup', this.click, this)
             this.on('pointerover', this.onHover, this)
             this.on('pointerout', this.onOut, this)
         }
@@ -56,6 +58,12 @@ export default class MapPoint extends Container {
     }
 
     click() {
+        setTimeout( () => this.getClick(), 0 )
+    }
+
+    getClick() {
+        if (!this.map.isChildrenInteractive) return
+
         if (isNeedHelp) helpHide()
         
         setDragonPointIndex( this.index )
@@ -65,7 +73,7 @@ export default class MapPoint extends Container {
     }
 
     onHover() {
-        if (this.isOnHover) return
+        if (this.isOnHover || !this.map.isChildrenInteractive) return
 
         this.isOnHover = true
         tickerAdd(this)

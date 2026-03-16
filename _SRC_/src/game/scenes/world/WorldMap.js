@@ -13,6 +13,8 @@ import MapDot from './MapDot'
 import MapPoint from './MapPoint'
 import SmokeContainer from './SmokeContainer'
 
+const DRAG_DISTANCE = 5 // число пикселей, при перетаскивании на которое клики не обработаются
+
 const WATER_SPEED = 0.003     // Общая скорость анимации
 const WATER_AMPLITUDE = 3     // Максимальное смещение в пикселях (сила шторма)
 const WATER_WAVELENGTH = 0.03 // Частота волн (чем меньше, тем шире волны)
@@ -32,6 +34,9 @@ export default class WorldMap extends Container {
         super()
 
         this.isOn = true
+
+        this.dragStartPoint = null
+        this.isChildrenInteractive = false
 
         // ================= MAP =================
 
@@ -87,8 +92,8 @@ export default class WorldMap extends Container {
         this.addChild(this.points)
 
         for (let d = 1; d < 83; d++) this.points.addChild(new MapDot(d))
-        for (let p = 0; p < POINTS.length; p++) this.points.addChild(new MapPoint(p))
-        for (let f = 0; f < FREE_POINTS.length; f++) this.points.addChild(new FreePoint(f))
+        for (let p = 0; p < POINTS.length; p++) this.points.addChild(new MapPoint(p, this))
+        for (let f = 0; f < FREE_POINTS.length; f++) this.points.addChild(new FreePoint(f, this))
 
         this.ship = new Sprite(atlases.world.textures.ship)
         //this.ship.scale.set(0.4)
@@ -250,6 +255,9 @@ export default class WorldMap extends Container {
         this.edgePan.x = 0
         this.edgePan.y = 0
 
+        this.dragStartPoint = {x: e.global.x, y: e.global.y}
+        this.isChildrenInteractive = false
+
         this.dragStart = {
             globalX: e.global.x,
             globalY: e.global.y,
@@ -274,8 +282,18 @@ export default class WorldMap extends Container {
         }
     }
 
-    onPointerUp() {
+    onPointerUp(e) {
         this.isIgnoringPointerMove = false
+
+        if (this.dragStartPoint) { 
+            let dx = this.dragStartPoint.x - e.global.x
+            let dy = this.dragStartPoint.y - e.global.y
+            console.log(dx * dx + dy * dy, DRAG_DISTANCE * DRAG_DISTANCE)
+            if (dx * dx + dy * dy < DRAG_DISTANCE * DRAG_DISTANCE) {
+                this.isChildrenInteractive = true
+            }
+            this.dragStartPoint = null
+        }
 
         if (!this.isDragging) {
             this.edgePan.x = 0
